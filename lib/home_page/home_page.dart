@@ -37,6 +37,7 @@ enum InfoType { HOME, USAGE, TUTORIALS, ABOUT_MUSEUM, ABOUT_PROJECT }
 
 class _HomeState extends State<Home> {
   InfoType _type = InfoType.HOME;
+
   void goBack() => setState(() => _type = InfoType.HOME);
 
   Widget _topInfo1() {
@@ -57,10 +58,7 @@ class _HomeState extends State<Home> {
                             "Geschichte",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: SizeConfig.orientationDevice ==
-                                        Orientation.portrait
-                                    ? SizeConfig.safeBlockHorizontal * 13
-                                    : SizeConfig.safeBlockHorizontal * 2,
+                                fontSize: horSize(13, 2),
                                 fontFamily: "Nunito",
                                 // fontWeight: FontWeight.w700,
                                 color: Colors.white),
@@ -78,10 +76,7 @@ class _HomeState extends State<Home> {
                                   "Vernetzt",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontSize: SizeConfig.orientationDevice ==
-                                              Orientation.portrait
-                                          ? SizeConfig.safeBlockHorizontal * 13
-                                          : SizeConfig.safeBlockHorizontal * 2,
+                                      fontSize: horSize(13, 2),
                                       fontFamily: "Chiller",
                                       // fontWeight: FontWeight.w700,
                                       color: Colors.white),
@@ -96,55 +91,16 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _topInfo() {
-    return Container(
-      height: verSize(30, 45),
-      child: Center(
-        child: Container(
-            margin: EdgeInsets.only(right: 5.0, left: 5.0),
-            child: Image.asset('assets/images/HomePage.png',
-                width: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockHorizontal * 80
-                    : SizeConfig.safeBlockHorizontal * 50,
-                height: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockVertical * 25
-                    : SizeConfig.safeBlockVertical * 50)),
-      ),
-    );
-  }
-
-  Widget _bottomInfo() {
-    return Container(
-      //height: SizeConfig.safeBlockVertical * 100,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.white, width: 2),
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-      ),
-      child: Container(
-          child: Stack(children: [
-        Column(children: [
-          _firstRow(),
-          _secondRow(),
-        ] //next row should be here
-            ),
-      ])),
-    );
-  }
-
   Widget _firstRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         InkWell(
             child: Container(
-                width: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockHorizontal * funcSizeWidthPortrait
-                    : SizeConfig.safeBlockHorizontal * funcSizeWidthLandscape,
-                height: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockVertical * funcSizeHeightPortrait
-                    : SizeConfig.safeBlockVertical * funcSizeHeightLandscape,
+                width: horSize(funcSizeWidthPortrait.toDouble(),
+                    funcSizeWidthLandscape.toDouble()),
+                height: verSize(funcSizeHeightPortrait.toDouble(),
+                    funcSizeHeightLandscape.toDouble()),
                 margin: EdgeInsets.only(
                     left: 16.0, top: 16.0, bottom: 16, right: 5),
                 decoration: BoxDecoration(
@@ -169,16 +125,10 @@ class _HomeState extends State<Home> {
                                 EdgeInsets.only(right: 5.0, left: 5.0, top: 10),
                             child: Image.asset(
                                 'assets/images/Group_2304@3x.png',
-                                width: SizeConfig.orientationDevice ==
-                                        Orientation.portrait
-                                    ? SizeConfig.safeBlockHorizontal * 35
-                                    : SizeConfig.safeBlockHorizontal *
-                                        imageSizeWidthLandscape,
-                                height: SizeConfig.orientationDevice ==
-                                        Orientation.portrait
-                                    ? SizeConfig.safeBlockVertical * 17
-                                    : SizeConfig.safeBlockVertical *
-                                        imageSizeHeightLandscape)),
+                                width: horSize(
+                                    35, imageSizeWidthLandscape.toDouble()),
+                                height: verSize(
+                                    17, imageSizeHeightLandscape.toDouble()))),
                         Container(
                             alignment: Alignment.center,
                             margin: EdgeInsets.only(bottom: 10.0, top: 5.0),
@@ -200,12 +150,10 @@ class _HomeState extends State<Home> {
             }),
         InkWell(
             child: Container(
-                width: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockHorizontal * funcSizeWidthPortrait
-                    : SizeConfig.safeBlockHorizontal * funcSizeWidthLandscape,
-                height: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockVertical * funcSizeHeightPortrait
-                    : SizeConfig.safeBlockVertical * funcSizeHeightLandscape,
+                width: horSize(funcSizeWidthPortrait.toDouble(),
+                    funcSizeWidthLandscape.toDouble()),
+                height: verSize(funcSizeHeightPortrait.toDouble(),
+                    funcSizeHeightLandscape.toDouble()),
                 margin: EdgeInsets.only(
                     right: 16.0, top: 16.0, bottom: 16, left: 5),
                 decoration: BoxDecoration(
@@ -230,16 +178,10 @@ class _HomeState extends State<Home> {
                                 EdgeInsets.only(right: 5.0, left: 5.0, top: 10),
                             child: Image.asset(
                                 'assets/images/Group_2265@3x.png',
-                                width: SizeConfig.orientationDevice ==
-                                        Orientation.portrait
-                                    ? SizeConfig.safeBlockHorizontal * 35
-                                    : SizeConfig.safeBlockHorizontal *
-                                        imageSizeWidthLandscape,
-                                height: SizeConfig.orientationDevice ==
-                                        Orientation.portrait
-                                    ? SizeConfig.safeBlockVertical * 17
-                                    : SizeConfig.safeBlockVertical *
-                                        imageSizeHeightLandscape)),
+                                width: horSize(
+                                    35, imageSizeWidthLandscape.toDouble()),
+                                height: verSize(
+                                    17, imageSizeHeightLandscape.toDouble()))),
                         Container(
                             alignment: Alignment.center,
                             margin: EdgeInsets.only(bottom: 10.0, top: 5.0),
@@ -269,12 +211,10 @@ class _HomeState extends State<Home> {
       children: <Widget>[
         InkWell(
             child: Container(
-                width: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockHorizontal * funcSizeWidthPortrait
-                    : SizeConfig.safeBlockHorizontal * funcSizeWidthLandscape,
-                height: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockVertical * funcSizeHeightPortrait
-                    : SizeConfig.safeBlockVertical * funcSizeHeightLandscape,
+                width: horSize(funcSizeWidthPortrait.toDouble(),
+                    funcSizeWidthLandscape.toDouble()),
+                height: verSize(funcSizeHeightPortrait.toDouble(),
+                    funcSizeHeightLandscape.toDouble()),
                 margin: EdgeInsets.only(left: 16.0, bottom: 16, right: 5),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -322,12 +262,10 @@ class _HomeState extends State<Home> {
             }),
         InkWell(
             child: Container(
-                width: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockHorizontal * funcSizeWidthPortrait
-                    : SizeConfig.safeBlockHorizontal * funcSizeWidthLandscape,
-                height: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockVertical * funcSizeHeightPortrait
-                    : SizeConfig.safeBlockVertical * funcSizeHeightLandscape,
+                width: horSize(funcSizeWidthPortrait.toDouble(),
+                    funcSizeWidthLandscape.toDouble()),
+                height: verSize(funcSizeHeightPortrait.toDouble(),
+                    funcSizeHeightLandscape.toDouble()),
                 margin: EdgeInsets.only(right: 16.0, bottom: 16, left: 5),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -351,16 +289,10 @@ class _HomeState extends State<Home> {
                                 EdgeInsets.only(right: 5.0, left: 5.0, top: 10),
                             child: Image.asset(
                                 'assets/images/undraw_new_ideas_jdea@3x.png',
-                                width: SizeConfig.orientationDevice ==
-                                        Orientation.portrait
-                                    ? SizeConfig.safeBlockHorizontal * 35
-                                    : SizeConfig.safeBlockHorizontal *
-                                        imageSizeWidthLandscape,
-                                height: SizeConfig.orientationDevice ==
-                                        Orientation.portrait
-                                    ? SizeConfig.safeBlockVertical * 15
-                                    : SizeConfig.safeBlockVertical *
-                                        imageSizeHeightLandscape)),
+                                width: horSize(
+                                    35, imageSizeWidthLandscape.toDouble()),
+                                height: verSize(
+                                    15, imageSizeHeightLandscape.toDouble()))),
                         Container(
                             alignment: Alignment.center,
                             margin: EdgeInsets.only(
@@ -390,100 +322,111 @@ class _HomeState extends State<Home> {
   }
 
   Widget _homePage() {
-    return ListView(
-      children: <Widget>[
-        _topInfo(),
-        _bottomInfo(),
-      ],
-    );
+    return MuseumTabs.single(
+        Container(
+          height: verSize(30, 45),
+          child: Center(
+            child: Container(
+                margin: EdgeInsets.only(right: 5.0, left: 5.0),
+                child: Image.asset(
+                  'assets/images/HomePage.png',
+                  width: horSize(80, 50),
+                  height: verSize(25, 50),
+                )),
+          ),
+        ),
+        Container(
+          //height: SizeConfig.safeBlockVertical * 100,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.white, width: 2),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0)),
+          ),
+          child: Container(
+              child: Stack(children: [
+            Column(children: [
+              _firstRow(),
+              _secondRow(),
+            ] //next row should be here
+                ),
+          ])),
+        ));
   }
 
   Widget _usage() {
     return MuseumTabs.single(
-        Stack(children: [
-          Container(
-            height: verSize(30, 45),
-            child: Center(
-              child: Container(
-                  margin: EdgeInsets.only(right: 5.0, left: 5.0),
-                  child: Image.asset('assets/images/HomePage.png',
-                      width:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 80
-                              : SizeConfig.safeBlockHorizontal * 50,
-                      height:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockVertical * 25
-                              : SizeConfig.safeBlockVertical * 50)),
-            ),
+      Stack(children: [
+        Container(
+          height: verSize(30, 45),
+          child: Center(
+            child: Container(
+                margin: EdgeInsets.only(right: 5.0, left: 5.0),
+                child: Image.asset('assets/images/HomePage.png',
+                    width: horSize(80, 50), height: verSize(25, 50))),
           ),
-          Positioned(
-              left: horSize(2, 2, left: true),
-              top: verSize(1, 1),
-              child: Container(
-                width: horSize(25, 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        Positioned(
+            left: horSize(2, 2, left: true),
+            top: verSize(1, 1),
+            child: Container(
+              width: horSize(25, 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    onPressed: () => setState(() => _type = InfoType.HOME),
+                    icon: Icon(Icons.arrow_back),
+                    iconSize: 30,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            )),
+      ]),
+      Column(
+        children: <Widget>[
+          _usageRow1(),
+          _usageRow2(),
+          _usageRow3(),
+          _usageRow4(),
+          border(
+              GestureDetector(
+                onTap: () => print("Video Erklär Tour"),
+                child: Row(
+                  //mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(
-                      onPressed: () => setState(() => _type = InfoType.HOME),
-                      icon: Icon(Icons.arrow_back),
-                      iconSize: 30,
-                      color: Colors.white,
+                    Container(
+                      width: horSize(23, 23),
+                      child: Icon(Icons.video_library,
+                          color: Colors.red, size: size(60, 74)),
                     ),
+                    Container(
+                      width: horSize(57, 60),
+                      child: Text(
+                        "Noch Fragen?\nSchau Dir ein Erklärvideo zur App-Bedienung an!",
+                        style: TextStyle(
+                          fontSize: horSize(5, 2),
+                          fontFamily: "Nunito",
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    )
                   ],
                 ),
-              )),
-        ]),
-        Column(
-          children: <Widget>[
-            _usageRow1(),
-            _usageRow2(),
-            _usageRow3(),
-            _usageRow4(),
-            border(
-                GestureDetector(
-                  onTap: () => print("Video Erklär Tour"),
-                  child: Row(
-                    //mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: horSize(23, 23),
-                        child: Icon(Icons.video_library,
-                            color: Colors.red, size: size(60, 74)),
-                      ),
-                      Container(
-                        width: horSize(57, 60),
-                        child: Text(
-                          "Noch Fragen?\nSchau Dir ein Erklärvideo zur App-Bedienung an!",
-                          style: TextStyle(
-                            fontSize: SizeConfig.orientationDevice ==
-                                    Orientation.portrait
-                                ? SizeConfig.safeBlockHorizontal * 5
-                                : SizeConfig.safeBlockHorizontal * 2,
-                            fontFamily: "Nunito",
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                margin: EdgeInsets.only(left: 16.0, right: 16),
-                padding: EdgeInsets.all(15))
-          ],
-        ),
-        showSetting: false);
+              ),
+              margin: EdgeInsets.only(left: 16.0, right: 16),
+              padding: EdgeInsets.all(15))
+        ],
+      ),
+    );
   }
 
   Widget _usageRow1() {
     return Container(
-        width: SizeConfig.orientationDevice == Orientation.portrait
-            ? SizeConfig.safeBlockHorizontal * 100
-            : SizeConfig.safeBlockHorizontal * 15,
-        height: SizeConfig.orientationDevice == Orientation.portrait
-            ? SizeConfig.safeBlockVertical * 26
-            : SizeConfig.safeBlockVertical * 13,
+        width: horSize(100, 15),
+        height: verSize(26, 13),
         margin: EdgeInsets.only(left: 16.0, right: 16),
         alignment: Alignment.center,
         child: SafeArea(
@@ -510,10 +453,7 @@ class _HomeState extends State<Home> {
                           "Im Home-Bereich gibt es Informationen zur App-Bedienung, dem Museum und dem Projekt \"Geschichte vernetzt\". Methoden und Tutorials für den Museumsbesuch stehen auch bereit.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: SizeConfig.orientationDevice ==
-                                      Orientation.portrait
-                                  ? SizeConfig.safeBlockHorizontal * 4
-                                  : SizeConfig.safeBlockHorizontal * 2,
+                              fontSize: horSize(4, 2),
                               fontFamily: "Nunito",
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF1A1A1A)),
@@ -536,12 +476,8 @@ class _HomeState extends State<Home> {
 
   Widget _usageRow2() {
     return Container(
-        width: SizeConfig.orientationDevice == Orientation.portrait
-            ? SizeConfig.safeBlockHorizontal * 100
-            : SizeConfig.safeBlockHorizontal * 15,
-        height: SizeConfig.orientationDevice == Orientation.portrait
-            ? SizeConfig.safeBlockVertical * 26
-            : SizeConfig.safeBlockVertical * 13,
+        width: horSize(100, 15),
+        height: verSize(26, 13),
         margin: EdgeInsets.only(left: 16.0, right: 16),
         alignment: Alignment.center,
         child: SafeArea(
@@ -568,10 +504,7 @@ class _HomeState extends State<Home> {
                           "Unter Tour gehen kannst Du viele verschiedene Touren durch das Museum abrufen und herunterladen.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: SizeConfig.orientationDevice ==
-                                      Orientation.portrait
-                                  ? SizeConfig.safeBlockHorizontal * 4
-                                  : SizeConfig.safeBlockHorizontal * 2,
+                              fontSize: horSize(4, 2),
                               fontFamily: "Nunito",
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF1A1A1A)),
@@ -594,12 +527,8 @@ class _HomeState extends State<Home> {
 
   Widget _usageRow3() {
     return Container(
-        width: SizeConfig.orientationDevice == Orientation.portrait
-            ? SizeConfig.safeBlockHorizontal * 100
-            : SizeConfig.safeBlockHorizontal * 15,
-        height: SizeConfig.orientationDevice == Orientation.portrait
-            ? SizeConfig.safeBlockVertical * 26
-            : SizeConfig.safeBlockVertical * 13,
+        width: horSize(100, 15),
+        height: verSize(26, 13),
         margin: EdgeInsets.only(left: 16.0, right: 16),
         alignment: Alignment.center,
         child: SafeArea(
@@ -626,10 +555,7 @@ class _HomeState extends State<Home> {
                           "Unter Neues Projekt kannst Du eigene Touren erstellen und auf gespeicherte Museumsobjekte zugreifen.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: SizeConfig.orientationDevice ==
-                                      Orientation.portrait
-                                  ? SizeConfig.safeBlockHorizontal * 4
-                                  : SizeConfig.safeBlockHorizontal * 2,
+                              fontSize: horSize(4, 2),
                               fontFamily: "Nunito",
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF1A1A1A)),
@@ -652,12 +578,8 @@ class _HomeState extends State<Home> {
 
   Widget _usageRow4() {
     return Container(
-        width: SizeConfig.orientationDevice == Orientation.portrait
-            ? SizeConfig.safeBlockHorizontal * 100
-            : SizeConfig.safeBlockHorizontal * 15,
-        height: SizeConfig.orientationDevice == Orientation.portrait
-            ? SizeConfig.safeBlockVertical * 26
-            : SizeConfig.safeBlockVertical * 13,
+        width: horSize(100, 15),
+        height: verSize(26, 13),
         margin: EdgeInsets.only(left: 16.0, right: 16),
         alignment: Alignment.center,
         child: SafeArea(
@@ -684,10 +606,7 @@ class _HomeState extends State<Home> {
                           "Unter Deinem Profil kannst Du Favoriten speichern, Statistiken abrufen und Erfolge einsehen.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: SizeConfig.orientationDevice ==
-                                      Orientation.portrait
-                                  ? SizeConfig.safeBlockHorizontal * 4
-                                  : SizeConfig.safeBlockHorizontal * 2,
+                              fontSize: horSize(4, 2),
                               fontFamily: "Nunito",
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF1A1A1A)),
@@ -718,9 +637,7 @@ class _HomeState extends State<Home> {
             child: Text(
               "Methoden",
               style: TextStyle(
-                fontSize: SizeConfig.orientationDevice == Orientation.portrait
-                    ? SizeConfig.safeBlockHorizontal * 8
-                    : SizeConfig.safeBlockHorizontal * 2,
+                fontSize: horSize(8, 2),
                 fontFamily: "Nunito",
                 fontWeight: FontWeight.w700,
               ),
@@ -743,10 +660,7 @@ class _HomeState extends State<Home> {
                   child: Text(
                     "Liste kreativer Schreibaufgaben",
                     style: TextStyle(
-                      fontSize:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 4
-                              : SizeConfig.safeBlockHorizontal * 2,
+                      fontSize: horSize(4, 2),
                       fontFamily: "Nunito",
                       fontWeight: FontWeight.w700,
                     ),
@@ -772,10 +686,7 @@ class _HomeState extends State<Home> {
                   child: Text(
                     "Fragenkatalog an kulturgeschichtliche Ausstellungen",
                     style: TextStyle(
-                      fontSize:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 4
-                              : SizeConfig.safeBlockHorizontal * 2,
+                      fontSize: horSize(4, 2),
                       fontFamily: "Nunito",
                       fontWeight: FontWeight.w700,
                     ),
@@ -801,10 +712,7 @@ class _HomeState extends State<Home> {
                   child: Text(
                     "Exemplarische Herangehensweise an ein Ausstellungsobjekt",
                     style: TextStyle(
-                      fontSize:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 4
-                              : SizeConfig.safeBlockHorizontal * 2,
+                      fontSize: horSize(4, 2),
                       fontFamily: "Nunito",
                       fontWeight: FontWeight.w700,
                     ),
@@ -821,123 +729,111 @@ class _HomeState extends State<Home> {
 
   Widget _tutorials() {
     return MuseumTabs.single(
-        Stack(children: [
+      Stack(children: [
+        Container(
+          height: verSize(30, 45),
+          child: Center(
+            child: Container(
+                margin: EdgeInsets.only(right: 5.0, left: 5.0),
+                child: Image.asset(
+                  'assets/images/HomePage.png',
+                  width: horSize(80, 50),
+                  height: verSize(25, 50),
+                )),
+          ),
+        ),
+        Positioned(
+            left: horSize(2, 2, left: true),
+            top: verSize(1, 1),
+            child: Container(
+              width: horSize(25, 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    onPressed: () => setState(() => _type = InfoType.HOME),
+                    icon: Icon(Icons.arrow_back),
+                    iconSize: 30,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            )),
+      ]),
+      Column(
+        children: <Widget>[
+          _methods(),
           Container(
-            height: verSize(30, 45),
-            child: Center(
-              child: Container(
-                  margin: EdgeInsets.only(right: 5.0, left: 5.0),
-                  child: Image.asset('assets/images/HomePage.png',
-                      width:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 80
-                              : SizeConfig.safeBlockHorizontal * 50,
-                      height:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockVertical * 25
-                              : SizeConfig.safeBlockVertical * 50)),
+            width: horSize(100, 60),
+            margin: EdgeInsets.only(top: 6, bottom: 6, left: 32, right: 32),
+            child: Text(
+              "Videotutorials",
+              style: TextStyle(
+                fontSize: horSize(8, 2),
+                fontFamily: "Nunito",
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-          Positioned(
-              left: horSize(2, 2, left: true),
-              top: verSize(1, 1),
-              child: Container(
-                width: horSize(25, 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IconButton(
-                      onPressed: () => setState(() => _type = InfoType.HOME),
-                      icon: Icon(Icons.arrow_back),
-                      iconSize: 30,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-              )),
-        ]),
-        Column(
-          children: <Widget>[
-            _methods(),
-            Container(
-              width: horSize(100, 60),
-              margin: EdgeInsets.only(top: 6, bottom: 6, left: 32, right: 32),
-              child: Text(
-                "Videotutorials",
-                style: TextStyle(
-                  fontSize: SizeConfig.orientationDevice == Orientation.portrait
-                      ? SizeConfig.safeBlockHorizontal * 8
-                      : SizeConfig.safeBlockHorizontal * 2,
-                  fontFamily: "Nunito",
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            Container(
-              child: GestureDetector(
-                onTap: () => _launchURL(
-                    'https://www.youtube.com/watch?v=JE8jIzSoWH4&list=PLaZEE9an0D5K3h8ayP-PMW2RgPdWJCQhR&index=8'),
-                child: Row(
-                  //mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: horSize(23, 23),
-                      child: Icon(Icons.video_library,
-                          color: Colors.red, size: size(45, 60)),
-                    ),
-                    Container(
-                      width: horSize(57, 60),
-                      child: Text(
-                        "Die Zeit in der Kunst - Video der Schirn Kunsthalle!",
-                        style: TextStyle(
-                          fontSize: SizeConfig.orientationDevice ==
-                                  Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 4
-                              : SizeConfig.safeBlockHorizontal * 2,
-                          fontFamily: "Nunito",
-                          fontWeight: FontWeight.w700,
-                        ),
+          Container(
+            child: GestureDetector(
+              onTap: () => _launchURL(
+                  'https://www.youtube.com/watch?v=JE8jIzSoWH4&list=PLaZEE9an0D5K3h8ayP-PMW2RgPdWJCQhR&index=8'),
+              child: Row(
+                //mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: horSize(23, 23),
+                    child: Icon(Icons.video_library,
+                        color: Colors.red, size: size(45, 60)),
+                  ),
+                  Container(
+                    width: horSize(57, 60),
+                    child: Text(
+                      "Die Zeit in der Kunst - Video der Schirn Kunsthalle!",
+                      style: TextStyle(
+                        fontSize: horSize(4, 2),
+                        fontFamily: "Nunito",
+                        fontWeight: FontWeight.w700,
                       ),
-                    )
-                  ],
-                ),
-              ),
-              margin: EdgeInsets.only(left: 16.0, right: 16, top: 6, bottom: 6),
-            ),
-            Container(
-              child: GestureDetector(
-                onTap: () => _launchURL(
-                    'https://www.youtube.com/watch?v=vUdxGbWSKzA&list=PLaZEE9an0D5K3h8ayP-PMW2RgPdWJCQhR&index=3'),
-                child: Row(
-                  //mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: horSize(23, 23),
-                      child: Icon(Icons.video_library,
-                          color: Colors.red, size: size(45, 60)),
                     ),
-                    Container(
-                      width: horSize(57, 60),
-                      child: Text(
-                        "Kunst und Wissenschaft - Video der Schirn Kunsthalle",
-                        style: TextStyle(
-                          fontSize: SizeConfig.orientationDevice ==
-                                  Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 4
-                              : SizeConfig.safeBlockHorizontal * 2,
-                          fontFamily: "Nunito",
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
-              margin: EdgeInsets.only(left: 16.0, right: 16, top: 6, bottom: 6),
             ),
-          ],
-        ),
-        showSetting: false);
+            margin: EdgeInsets.only(left: 16.0, right: 16, top: 6, bottom: 6),
+          ),
+          Container(
+            child: GestureDetector(
+              onTap: () => _launchURL(
+                  'https://www.youtube.com/watch?v=vUdxGbWSKzA&list=PLaZEE9an0D5K3h8ayP-PMW2RgPdWJCQhR&index=3'),
+              child: Row(
+                //mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: horSize(23, 23),
+                    child: Icon(Icons.video_library,
+                        color: Colors.red, size: size(45, 60)),
+                  ),
+                  Container(
+                    width: horSize(57, 60),
+                    child: Text(
+                      "Kunst und Wissenschaft - Video der Schirn Kunsthalle",
+                      style: TextStyle(
+                        fontSize: horSize(4, 2),
+                        fontFamily: "Nunito",
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            margin: EdgeInsets.only(left: 16.0, right: 16, top: 6, bottom: 6),
+          ),
+        ],
+      ),
+    );
   }
 
   _launchURL(String url) async {
@@ -987,10 +883,7 @@ class _HomeState extends State<Home> {
                 child: Text(
                   "Über das Projekt",
                   style: TextStyle(
-                    fontSize:
-                        SizeConfig.orientationDevice == Orientation.portrait
-                            ? SizeConfig.safeBlockHorizontal * 7
-                            : SizeConfig.safeBlockHorizontal * 2,
+                    fontSize: horSize(7, 2),
                     fontFamily: "Nunito",
                     fontWeight: FontWeight.w700,
                   ),
@@ -998,15 +891,11 @@ class _HomeState extends State<Home> {
               ),
               Container(
                   margin: EdgeInsets.only(right: 5.0, left: 5.0),
-                  child: Image.asset('assets/images/Group_2336@3x.png',
-                      width:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 30
-                              : SizeConfig.safeBlockHorizontal * 50,
-                      height:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockVertical * 10
-                              : SizeConfig.safeBlockVertical * 50)),
+                  child: Image.asset(
+                    'assets/images/Group_2336@3x.png',
+                    width: horSize(30, 50),
+                    height: verSize(10, 50),
+                  )),
             ],
           ),
         ),
@@ -1017,9 +906,7 @@ class _HomeState extends State<Home> {
             "Teil des Projekts „MINTplus²: Systematischer und vernetzter Kompetenzaufbau in der Lehrerbildung im Umgang mit Digitalisierung und Heterogenität",
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: SizeConfig.orientationDevice == Orientation.portrait
-                  ? SizeConfig.safeBlockHorizontal * 3
-                  : SizeConfig.safeBlockHorizontal * 2,
+              fontSize: horSize(3, 2),
               fontFamily: "Nunito",
               fontWeight: FontWeight.w700,
             ),
@@ -1032,9 +919,7 @@ class _HomeState extends State<Home> {
             "Geschichte vernetzt – Vergangenes interdisziplinär erforschen und vermitteln“ ist ein Modul der TU Darmstadt, welche Technik und Naturwissenschaft in ihrer historischen Dimension betrachtet. Es wird in der Zeit von Oktober 2019 bis Juni 2022 eigens für das Lehramtsstudium an der TU Darmstadt entwickelt.",
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: SizeConfig.orientationDevice == Orientation.portrait
-                  ? SizeConfig.safeBlockHorizontal * 5
-                  : SizeConfig.safeBlockHorizontal * 2,
+              fontSize: horSize(5, 2),
               fontFamily: "Nunito",
               fontWeight: FontWeight.w700,
             ),
@@ -1048,45 +933,33 @@ class _HomeState extends State<Home> {
                 alignment: Alignment.center,
                 child: SafeArea(
                   bottom: false,
-                  child: Image.asset('assets/images/photo_2020-01-19.jpeg',
-                      width:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 22
-                              : SizeConfig.safeBlockHorizontal * 30,
-                      height:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockVertical * 10
-                              : SizeConfig.safeBlockVertical * 10),
+                  child: Image.asset(
+                    'assets/images/photo_2020-01-19.jpeg',
+                    width: horSize(22, 30),
+                    height: verSize(10, 10),
+                  ),
                 )),
             Container(
                 margin: EdgeInsets.only(left: 16.0, right: 16.0),
                 alignment: Alignment.center,
                 child: SafeArea(
                   bottom: false,
-                  child: Image.asset('assets/images/Logo_MINTplus_182x0.jpg',
-                      width:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 22
-                              : SizeConfig.safeBlockHorizontal * 30,
-                      height:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockVertical * 10
-                              : SizeConfig.safeBlockVertical * 20),
+                  child: Image.asset(
+                    'assets/images/Logo_MINTplus_182x0.jpg',
+                    width: horSize(22, 30),
+                    height: verSize(10, 20),
+                  ),
                 )),
             Container(
                 margin: EdgeInsets.only(left: 16.0, right: 16.0),
                 alignment: Alignment.center,
                 child: SafeArea(
                   bottom: false,
-                  child: Image.asset('assets/images/serveimage.png',
-                      width:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 22
-                              : SizeConfig.safeBlockHorizontal * 30,
-                      height:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockVertical * 10
-                              : SizeConfig.safeBlockVertical * 20),
+                  child: Image.asset(
+                    'assets/images/serveimage.png',
+                    width: horSize(22, 30),
+                    height: verSize(10, 20),
+                  ),
                 )),
           ],
         ),
@@ -1097,9 +970,7 @@ class _HomeState extends State<Home> {
             "In Kooperation mit dem Hessischen Landesmuseum Darmstadt werden historische Objekte Ausgangspunkt forschenden Lernens, für deren Analyse sowohl natur- als auch geisteswissenschaftliche Kompetenzen benötigt werden. Ziel der Studierenden ist es, interdisziplinäre Rundgangkonzepte zu entwickeln und diese mithilfe der App auch einem breiteren Publikum zur Verfügung zu stellen. Damit soll dazu angeregt werden, fächerübergreifenden Unterricht in Schule und Universität zu etablieren.",
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: SizeConfig.orientationDevice == Orientation.portrait
-                  ? SizeConfig.safeBlockHorizontal * 5
-                  : SizeConfig.safeBlockHorizontal * 2,
+              fontSize: horSize(5, 2),
               fontFamily: "Nunito",
               fontWeight: FontWeight.w700,
             ),
@@ -1111,107 +982,111 @@ class _HomeState extends State<Home> {
 
   Widget _aboutProject() {
     return MuseumTabs.single(
-        Stack(children: [
-          Container(
-            height: verSize(30, 45),
-            child: Center(
-              child: Container(
-                  margin: EdgeInsets.only(right: 5.0, left: 5.0),
-                  child: Image.asset('assets/images/HomePage.png',
-                      width:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockHorizontal * 80
-                              : SizeConfig.safeBlockHorizontal * 50,
-                      height:
-                          SizeConfig.orientationDevice == Orientation.portrait
-                              ? SizeConfig.safeBlockVertical * 25
-                              : SizeConfig.safeBlockVertical * 50)),
+      Stack(children: [
+        Container(
+          height: verSize(30, 45),
+          child: Center(
+            child: Container(
+              margin: EdgeInsets.only(right: 5.0, left: 5.0),
+              child: Image.asset(
+                'assets/images/HomePage.png',
+                width: horSize(80, 50),
+                height: verSize(25, 50),
+              ),
             ),
           ),
-          Positioned(
-              left: horSize(2, 2, left: true),
-              top: verSize(1, 1),
-              child: Container(
-                width: horSize(25, 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IconButton(
-                      onPressed: () => setState(() => _type = InfoType.HOME),
-                      icon: Icon(Icons.arrow_back),
-                      iconSize: 30,
-                      color: Colors.white,
+        ),
+        Positioned(
+            left: horSize(2, 2, left: true),
+            top: verSize(1, 1),
+            child: Container(
+              width: horSize(25, 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    onPressed: () => setState(() => _type = InfoType.HOME),
+                    icon: Icon(Icons.arrow_back),
+                    iconSize: 30,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            )),
+      ]),
+      Column(
+        children: <Widget>[
+          _aboutProjectText(),
+          border(
+              GestureDetector(
+                onTap: () => _launchURL(
+                    "mailto:mrahimmasoumi@gmail.com?subject=Museum App"),
+                child: Row(
+                  //mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      width: horSize(80, 60),
+                      child: Text(
+                        "Allen an der App-Entwicklung beteiligten Studierenden sei ein herzlicher Dank ausgesprochen: Mohammadrahim Masoumi, Robert Cieslinski, Shayan Davari Fard, Patrick Dzubba",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: horSize(5, 2),
+                          fontFamily: "Nunito",
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              )),
-        ]),
-        Column(
-          children: <Widget>[
-            _aboutProjectText(),
-            border(
-                GestureDetector(
-                  onTap: () => _launchURL(
-                      "mailto:mrahimmasoumi@gmail.com?subject=Museum App"),
-                  child: Row(
-                    //mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: horSize(80, 60),
-                        child: Text(
-                          "Allen an der App-Entwicklung beteiligten Studierenden sei ein herzlicher Dank ausgesprochen: Mohammadrahim Masoumi, Robert Cieslinski, Shayan Davari Fard, Patrick Dzubba",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: SizeConfig.orientationDevice ==
-                                    Orientation.portrait
-                                ? SizeConfig.safeBlockHorizontal * 5
-                                : SizeConfig.safeBlockHorizontal * 2,
-                            fontFamily: "Nunito",
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                margin: EdgeInsets.only(left: 16.0, right: 16),
-                padding: EdgeInsets.all(15)),
-            Container(
-              width: horSize(100, 60),
-              margin: EdgeInsets.only(left: 16, right: 16, top: 15, bottom: 15),
-              child: Text(
-                "Used Flutter Packages in this Project:\ncupertino_icons, gradient_text, flutter_circular_chart, flutter_rating_bar, photo_view, carousel_slider, graphql_flutter, expandable, intl, expandable_bottom_bar, keyboard_visibility, moor, moor_ffi, path_provider, path, provider, reorderables, rxdart, md2_tab_indicator, font_awesome_flutter, popup_menu, open_file, url_launcher, carousel_pro, flutter_keyboard_visibility",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: SizeConfig.orientationDevice == Orientation.portrait
-                      ? SizeConfig.safeBlockHorizontal * 4
-                      : SizeConfig.safeBlockHorizontal * 2,
-                  fontFamily: "Nunito",
-                  fontWeight: FontWeight.w700,
-                ),
+              ),
+              margin: EdgeInsets.only(left: 16.0, right: 16),
+              padding: EdgeInsets.all(15)),
+          Container(
+            width: horSize(100, 60),
+            margin: EdgeInsets.only(left: 16, right: 16, top: 15, bottom: 15),
+            child: Text(
+              "Used Flutter Packages in this Project:\ncupertino_icons, gradient_text, flutter_circular_chart, flutter_rating_bar, photo_view, carousel_slider, graphql_flutter, expandable, intl, expandable_bottom_bar, keyboard_visibility, moor, moor_ffi, path_provider, path, provider, reorderables, rxdart, md2_tab_indicator, font_awesome_flutter, popup_menu, open_file, url_launcher, carousel_pro, flutter_keyboard_visibility",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: horSize(4, 2),
+                fontFamily: "Nunito",
+                fontWeight: FontWeight.w700,
               ),
             ),
-          ],
-        ),
-        showSetting: false);
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    var content;
     switch (_type) {
       case InfoType.USAGE:
-        return _usage();
+        content = _usage();
+        break;
       case InfoType.TUTORIALS:
-        return _tutorials();
+        content = _tutorials();
+        break;
       case InfoType.ABOUT_MUSEUM:
         return HomeMuseum(goBack: goBack);
       case InfoType.ABOUT_PROJECT:
-        return _aboutProject();
+        content = _aboutProject();
+        break;
       default:
         debugPrint("init from home");
-        return _homePage();
+        content = _homePage();
     }
+    return WillPopScope(
+      onWillPop: () {
+        if (_type != InfoType.ABOUT_MUSEUM)
+          setState(() => _type = InfoType.HOME);
+        return Future.value(false);
+      },
+      child: content,
+    );
   }
 }
 

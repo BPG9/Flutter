@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
+import 'package:museum_app/constants.dart';
 
 import '../SizeConfig.dart';
 import 'moor_db.dart';
@@ -67,7 +68,7 @@ class TourWithStops {
       );
 
   Widget buildTime(
-      {Color color = Colors.pink, Color color2 = Colors.black, scale = 1.0}) {
+      {Color color = COLOR_TOUR, Color color2 = Colors.black, scale = 1.0}) {
     if (creationTime == null) return Container();
     String s = DateFormat('dd.MM.yyyy').format(creationTime);
     return Row(

@@ -100,7 +100,7 @@ class _HomeMuseumState extends State<HomeMuseum> {
             _homePageMuseum(),
           ],
         ),
-        showSetting: false);
+        );
   }
 
   Widget _firstRow() {
@@ -575,7 +575,7 @@ class _HomeMuseumState extends State<HomeMuseum> {
           ),
           margin: EdgeInsets.only(left: 16.0, right: 16, top: 6, bottom: 15),
         ),
-        showSetting: false);
+        );
   }
 
   Future<File> listeKreative() async {
@@ -937,7 +937,7 @@ class _HomeMuseumState extends State<HomeMuseum> {
           ),
           margin: EdgeInsets.only(left: 16.0, right: 16, top: 6, bottom: 15),
         ),
-        showSetting: false);
+        );
   }
 
   Widget _events() {
@@ -1464,7 +1464,7 @@ class _HomeMuseumState extends State<HomeMuseum> {
           ),
           margin: EdgeInsets.only(left: 16.0, right: 16, top: 6, bottom: 15),
         ),
-        showSetting: false);
+        );
   }
 
   Widget _museumHistoryPage() {
@@ -1786,7 +1786,7 @@ class _HomeMuseumState extends State<HomeMuseum> {
                 padding: EdgeInsets.all(15))
           ],
         ),
-        showSetting: false);
+        );
   }
 
   Widget _firstText() {
@@ -1989,19 +1989,33 @@ class _HomeMuseumState extends State<HomeMuseum> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    var content;
     switch (_type) {
       case PageType.HISTORY:
-        return _museumHistoryPage();
+        content = _museumHistoryPage();
+        break;
       case PageType.OPENING_PRICE:
-        return _openingNprice();
+        content = _openingNprice();
+        break;
       case PageType.EVENTS:
-        return _events();
+        content = _events();
+        break;
       case PageType.DIRECTION:
-        return _directions();
+        content = _directions();
+        break;
       default:
-        debugPrint("init Museum");
-        return _aboutMuseum();
+        debugPrint("AAAAAA");
+        content = _aboutMuseum();
     }
+    return WillPopScope(
+      onWillPop: () {
+        if (_type == PageType.HOME_MUSEUM)
+          widget.goBack();
+        setState(() => _type = PageType.HOME_MUSEUM);
+        return Future.value(false);
+      },
+      child: content,
+    );
   }
 }
 

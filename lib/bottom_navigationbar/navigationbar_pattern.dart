@@ -22,17 +22,17 @@ class BottomBarNavigationPatternExample extends StatefulWidget {
       color: COLOR_HOME,
     ),
     BarItem(
-      text: "Tours",
+      text: "Tour",
       iconData: Icons.assistant_photo,
       color: COLOR_TOUR,
     ),
     BarItem(
-      text: "Add",
+      text: "Erstellen",
       iconData: Icons.add,
       color: COLOR_ADD,
     ),
     BarItem(
-      text: "Profile",
+      text: "Profil",
       iconData: Icons.person_outline,
       color: COLOR_PROFILE,
     ),
