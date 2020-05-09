@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:museum_app/constants.dart';
-import 'package:museum_app/database/database.dart';
 import 'package:museum_app/database/modelling.dart';
+import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/museum_tabs.dart';
 import 'package:reorderables/reorderables.dart';
 

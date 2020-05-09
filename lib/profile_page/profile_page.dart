@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
-import 'package:museum_app/database/database.dart';
+import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/graphql/query.dart';
 import 'package:museum_app/login_page/login_page.dart';
 import 'package:museum_app/museum_tabs.dart';

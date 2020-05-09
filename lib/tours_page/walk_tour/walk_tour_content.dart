@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
-import 'package:museum_app/database/database.dart';
 import 'package:museum_app/database/modelling.dart';
+import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/image_carousel.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_extras.dart';
 

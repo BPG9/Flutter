@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:museum_app/SizeConfig.dart';
-import 'package:museum_app/database/database.dart';
 import 'package:museum_app/database/modelling.dart';
+import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/museum_tabs.dart';
 
 import '../constants.dart';

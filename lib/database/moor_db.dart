@@ -17,7 +17,7 @@ import 'package:rxdart/rxdart.dart';
 
 import 'modelling.dart';
 
-part 'database.g.dart';
+part 'moor_db.g.dart';
 
 String customName = "Individuell";
 
@@ -53,7 +53,7 @@ class Users extends Table {
 }
 
 class Badges extends Table {
-  TextColumn get name => text().withLength(min: 3, max: 15)();
+  TextColumn get name => text()();
 
   RealColumn get current => real().withDefault(const Constant(0.0))();
 
@@ -332,20 +332,20 @@ class MuseumDatabase extends _$MuseumDatabase {
       for (var object in list) {
         List<String> images = List<String>();
         for (var e in object["picture"]) images.add(e["id"]);
-        var comp = Stop(
+        var comp = StopsCompanion.insert(
           id: object['objectId'],
           images: images,
           name: object['title'],
           descr: object['description'],
-          time: object['year'],
-          creator: object['creator'],
-          division: object['subCategory'],
-          artType: object['artType'],
-          material: object['material'],
-          size: object['size_'],
-          location: object['location'],
-          interContext: object['interdisciplinaryContext'], //.join("\n"),
-        ).createCompanion(true);
+          time: Value(object['year']),
+          creator: Value(object['creator']),
+          division: Value(object['subCategory']),
+          artType: Value(object['artType']),
+          material: Value(object['material']),
+          size: Value(object['size_']),
+          location: Value(object['location']),
+          interContext: Value(object['interdisciplinaryContext']), //.join("\n"),
+        );//.createCompanion(true);
         listStops.add(comp);
       }
       batch((batch) =>
@@ -374,12 +374,12 @@ class MuseumDatabase extends _$MuseumDatabase {
       List list = d.data["availableBadges"];
       for (var object in list) {
         print(object);
-        var comp = Badge(
+        var comp = BadgesCompanion.insert(
           name: object["name"],
-          color: Color(0xFFFF0000),
+          color: Value(Color(0xFFFF0000)),
           toGet: object["cost"].toDouble(),
           imgPath: object["id"],
-        ).createCompanion(true);
+        );//.createCompanion(true);
         listBadges.add(comp);
       }
       batch((batch) => batch.insertAll(badges, listBadges,
@@ -719,14 +719,14 @@ class MuseumDatabase extends _$MuseumDatabase {
       {images, text, details}) {
     if (stop_id != customID)
       update(stopFeatures).replace(
-        StopFeature(
+        StopFeaturesCompanion.insert(
           id_stop: stop_id,
           id_tour: tour_id,
           showImages: images,
           showText: text,
           showDetails: details,
-          id: null,
-        ).createCompanion(true),
+          //id: null,
+        ),//.createCompanion(true),
       );
   }
 
@@ -1222,7 +1222,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     return transaction(() async {
       final tour = entry.createToursCompanion(true);
 
-      var id = await into(tours).insert(tour, orReplace: true);
+      var id = await into(tours).insert(tour, mode: InsertMode.insertOrReplace);
 
       await (delete(tourStops)..where((e) => e.id_tour.equals(id))).go();
 
@@ -1243,7 +1243,7 @@ class MuseumDatabase extends _$MuseumDatabase {
                 .where((s) => s.features != null)
                 .map((s) => s.features
                     .copyWith(id: entry.stops.indexOf(s), id_tour: id)
-                    .createCompanion(true))
+            )//.createCompanion(true))
                 .toList(),
             mode: InsertMode.insertOrReplace);
       });

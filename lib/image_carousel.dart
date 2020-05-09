@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:museum_app/database/database.dart';
+import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/graphql/graphqlConf.dart';
 import 'package:museum_app/graphql/query.dart';
 import 'package:photo_view/photo_view.dart';
@@ -70,11 +70,13 @@ class _ImageCarouselState extends State<ImageCaroussel> {
 
     return Column(children: [
       CarouselSlider(
-        //enlargeCenterPage: true,
-        onPageChanged: (index) => setState(() => _currentImage = index),
-        viewportFraction: 1.0,
-        height: verSize(52, 68.5),
-        enableInfiniteScroll: false,
+        options: CarouselOptions(
+          //enlargeCenterPage: true,
+          onPageChanged: (index, reason) => setState(() => _currentImage = index),
+          viewportFraction: 1.0,
+          height: verSize(52, 68.5),
+          enableInfiniteScroll: false,
+        ),
         items: _images
             .map(
               (img) => GestureDetector(

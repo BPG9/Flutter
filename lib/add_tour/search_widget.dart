@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:museum_app/database/database.dart';
+import 'package:museum_app/database/moor_db.dart';
 
 class MuseumSearch extends StatefulWidget {
   final Function funct;

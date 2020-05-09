@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_text/gradient_text.dart';
 import 'package:museum_app/SizeConfig.dart';
-import 'package:museum_app/database/database.dart';
+import 'package:museum_app/database/moor_db.dart';
 
 import 'onboarding_data.dart';
 import 'page_indicator.dart';

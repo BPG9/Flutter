@@ -5,7 +5,7 @@ import 'package:museum_app/graphql/mutations.dart';
 
 import 'SizeConfig.dart';
 import 'constants.dart';
-import 'database/database.dart';
+import 'database/moor_db.dart';
 import 'graphql/graphqlConf.dart';
 import 'image_dialog.dart';
 

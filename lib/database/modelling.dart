@@ -4,9 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:moor/moor.dart';
 
 import '../SizeConfig.dart';
-import 'database.dart';
+import 'moor_db.dart';
 
 class TourWithStops {
   final TextEditingController name = TextEditingController();
@@ -19,7 +20,10 @@ class TourWithStops {
   final String searchId;
   final List<ActualStop> stops;
 
-  TourWithStops(Tour t, this.stops, {this.searchId}) : id = t.id, author = t.author, onlineId = t.onlineId {
+  TourWithStops(Tour t, this.stops, {this.searchId})
+      : id = t.id,
+        author = t.author,
+        onlineId = t.onlineId {
     this.name.text = t.name;
     this.descr.text = t.desc;
     difficulty = t.difficulty;
@@ -28,26 +32,30 @@ class TourWithStops {
 
   TourWithStops.empty(String author)
       : this(
-      Tour(
-          id: null,
-          name: "Neue Tour",
-          onlineId: null,
-          author: author,
-          difficulty: 0,
-          creationTime: null,
-          desc: ""),
-      <ActualStop>[]);
+            Tour(
+                id: null,
+                name: "Neue Tour",
+                onlineId: null,
+                author: author,
+                difficulty: 0,
+                creationTime: null,
+                desc: ""),
+            <ActualStop>[]);
 
   ToursCompanion createToursCompanion(bool nullToAbsent) {
-    return Tour(name: name.text,
-        author: author,
-        difficulty: difficulty,
-        creationTime: creationTime,
-        onlineId: onlineId ?? "",
-        desc: descr.text, id: null).createCompanion(nullToAbsent);
+    return ToursCompanion(
+      name: Value(name.text),
+      author: Value(author),
+      difficulty: Value(difficulty),
+      creationTime: Value(creationTime),
+      onlineId: Value(onlineId ?? ""),
+      desc: Value(descr.text),
+      id: Value.absent(),
+    );//.createCompanion(nullToAbsent);
   }
 
-  Widget getRating({color = Colors.black, color2 = Colors.white, size = 40.0}) =>
+  Widget getRating(
+          {color = Colors.black, color2 = Colors.white, size = 40.0}) =>
       RatingBarIndicator(
         rating: min(max(difficulty, 0), 5),
         itemSize: size,
@@ -58,7 +66,8 @@ class TourWithStops {
         unratedColor: color2.withOpacity(.5),
       );
 
-  Widget buildTime({Color color = Colors.pink, Color color2 = Colors.black, scale = 1.0}) {
+  Widget buildTime(
+      {Color color = Colors.pink, Color color2 = Colors.black, scale = 1.0}) {
     if (creationTime == null) return Container();
     String s = DateFormat('dd.MM.yyyy').format(creationTime);
     return Row(
@@ -95,18 +104,18 @@ class ActualStop {
 
   ActualStop.custom()
       : this(
-      Stop(
-          id: MuseumDatabase.customID,
-          images: <String>[],
-          name: customName,
-          descr: ""),
-      StopFeature(
-          id_tour: null,
-          id_stop: MuseumDatabase.customID,
-          showImages: false,
-          showText: true,
-          showDetails: false),
-      <ActualExtra>[]);
+            Stop(
+                id: MuseumDatabase.customID,
+                images: <String>[],
+                name: customName,
+                descr: ""),
+            StopFeature(
+                id_tour: null,
+                id_stop: MuseumDatabase.customID,
+                showImages: false,
+                showText: true,
+                showDetails: false),
+            <ActualExtra>[]);
 }
 
 enum ExtraType { TASK_TEXT, TASK_SINGLE, TASK_MULTI, IMAGE, TEXT }
@@ -116,7 +125,8 @@ class ActualExtra {
   final ActualTask task;
   final ExtraType type;
 
-  ActualExtra(this.type, {text = "", sel = const [""], correct}) : task = ActualTask(type, answerNames: sel, correct: correct) {
+  ActualExtra(this.type, {text = "", sel = const [""], correct})
+      : task = ActualTask(type, answerNames: sel, correct: correct) {
     textInfo.text = text;
   }
 }
@@ -136,21 +146,22 @@ class ActualTask {
   factory ActualTask(type, {answerNames = const [""], correct}) {
     correct ??= <int>{};
     switch (type) {
-      case ExtraType.TASK_TEXT: return ActualTask.text(answerNames, correct: correct);
+      case ExtraType.TASK_TEXT:
+        return ActualTask.text(answerNames, correct: correct);
       case ExtraType.TASK_MULTI:
-      case ExtraType.TASK_SINGLE: return ActualTask.bool(answerNames, correct: correct);
-      default: return null;
+      case ExtraType.TASK_SINGLE:
+        return ActualTask.bool(answerNames, correct: correct);
+      default:
+        return null;
     }
   }
 
   ActualTask.text(names, {this.correct = const <int>{}}) : entries = <Tuple>[] {
-    for (String s in names)
-      addLabel(s, TextEditingController());
+    for (String s in names) addLabel(s, TextEditingController());
   }
 
   ActualTask.bool(names, {this.correct = const <int>{}}) : entries = <Tuple>[] {
-    for (String s in names)
-      addLabel(s, false);
+    for (String s in names) addLabel(s, false);
   }
 
   addLabel(String label, value) {
@@ -170,10 +181,12 @@ class ActualTask {
 
     // SINGLE task
     if (selected != null)
-      return (correct.contains(id) && selected == id) || (!correct.contains(id) && selected != id);
+      return (correct.contains(id) && selected == id) ||
+          (!correct.contains(id) && selected != id);
 
     // MULTI task
-    return (correct.contains(id) && t.valB == true) || (!correct.contains(id) && t.valB != true);
+    return (correct.contains(id) && t.valB == true) ||
+        (!correct.contains(id) && t.valB != true);
   }
 
   reset() {
@@ -181,9 +194,7 @@ class ActualTask {
     for (var e in entries) {
       if (e.valB == true)
         e.valB = false;
-      else if (e.valB is TextEditingController)
-        e.valB.text = "";
+      else if (e.valB is TextEditingController) e.valB.text = "";
     }
   }
-
 }

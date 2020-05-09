@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:museum_app/database/database.dart';
+import 'package:museum_app/database/moor_db.dart';
 
 import '../constants.dart';
 import 'graphqlConf.dart';
