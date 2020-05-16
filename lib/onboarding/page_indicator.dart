@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class PageIndicator extends StatelessWidget {
   final int currentIndex;
   final int pageCount;
-  PageIndicator(this.currentIndex, this.pageCount);
+  final Color color;
+  PageIndicator(this.currentIndex, this.pageCount, this.color);
 
   _indicator(bool isActive) {
     return Expanded(
@@ -12,7 +13,7 @@ class PageIndicator extends StatelessWidget {
         child: Container(
           height: 20.0,
           decoration: BoxDecoration(
-              color: isActive ? Colors.indigo : Colors.indigo[100],
+              color: isActive ? color : Colors.grey,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(

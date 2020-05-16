@@ -69,7 +69,8 @@ class _LogInState extends State<LogIn> {
     ]);
     if (widget.skippable) {
       Navigator.pop(context);
-      Navigator.popAndPushNamed(context, "/");
+      Navigator.pop(context);
+      Navigator.popAndPushNamed(context, "/home");
     }
 
   }

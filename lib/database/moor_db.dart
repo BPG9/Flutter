@@ -344,8 +344,9 @@ class MuseumDatabase extends _$MuseumDatabase {
           material: Value(object['material']),
           size: Value(object['size_']),
           location: Value(object['location']),
-          interContext: Value(object['interdisciplinaryContext']), //.join("\n"),
-        );//.createCompanion(true);
+          interContext:
+              Value(object['interdisciplinaryContext']), //.join("\n"),
+        ); //.createCompanion(true);
         listStops.add(comp);
       }
       batch((batch) =>
@@ -379,7 +380,7 @@ class MuseumDatabase extends _$MuseumDatabase {
           color: Value(Color(0xFFFF0000)),
           toGet: object["cost"].toDouble(),
           imgPath: object["id"],
-        );//.createCompanion(true);
+        ); //.createCompanion(true);
         listBadges.add(comp);
       }
       batch((batch) => batch.insertAll(badges, listBadges,
@@ -407,11 +408,14 @@ class MuseumDatabase extends _$MuseumDatabase {
     await setDivisions();
     User u = await select(users).getSingle();
 
-    if (await GraphQLConfiguration.isConnected(
-        u.accessToken)) if (await refreshAccess() != "") {
-      await downloadStops();
-      await downloadBadges();
+    /* Caused issues: Logged in although skipped, tried download, ...
+    if (await GraphQLConfiguration.isConnected(u.accessToken)) {
+      if (await refreshAccess() != "") {
+        await downloadStops();
+        await downloadBadges();
+      }
     }
+    */
   }
 
   Future initUser() async {
@@ -637,8 +641,9 @@ class MuseumDatabase extends _$MuseumDatabase {
             } catch (e) {
               continue;
             }
-            String answer =
-                extra.task.entries.map((e) => e.valA.text + ": " + e.valB.text).join("; ");
+            String answer = extra.task.entries
+                .map((e) => e.valA.text + ": " + e.valB.text)
+                .join("; ");
 
             result = await _client.mutate(MutationOptions(
               documentNode:
@@ -672,8 +677,8 @@ class MuseumDatabase extends _$MuseumDatabase {
                   answer.add(i);
                 }
               }
-            }
-            else if (extra.task.selected != null) answer.add(extra.task.selected);
+            } else if (extra.task.selected != null)
+              answer.add(extra.task.selected);
             print(answer.toString());
 
             result = await _client.mutate(MutationOptions(
@@ -682,8 +687,7 @@ class MuseumDatabase extends _$MuseumDatabase {
               onError: (e) =>
                   print("ERROR_uplAnsw_MC: " + e.clientException.toString()),
             ));
-            if (result.hasException)
-              continue;
+            if (result.hasException) continue;
             print(questionId);
             print(result.data.data);
 
@@ -726,7 +730,7 @@ class MuseumDatabase extends _$MuseumDatabase {
           showText: text,
           showDetails: details,
           //id: null,
-        ),//.createCompanion(true),
+        ), //.createCompanion(true),
       );
   }
 
@@ -1079,7 +1083,8 @@ class MuseumDatabase extends _$MuseumDatabase {
   Future<bool> joinAndDownloadTour(String id, {bool searchId = true}) async {
     String token = await accessToken();
 
-    if (!await GraphQLConfiguration.isConnected(token)) if (await refreshAccess() == "") return Future.value(false);
+    if (!await GraphQLConfiguration.isConnected(
+        token)) if (await refreshAccess() == "") return Future.value(false);
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
 
@@ -1241,9 +1246,9 @@ class MuseumDatabase extends _$MuseumDatabase {
             stopFeatures,
             entry.stops
                 .where((s) => s.features != null)
-                .map((s) => s.features
-                    .copyWith(id: entry.stops.indexOf(s), id_tour: id)
-            )//.createCompanion(true))
+                .map((s) => s.features.copyWith(
+                    id: entry.stops.indexOf(s),
+                    id_tour: id)) //.createCompanion(true))
                 .toList(),
             mode: InsertMode.insertOrReplace);
       });

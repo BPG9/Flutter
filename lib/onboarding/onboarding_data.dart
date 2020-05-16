@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:museum_app/constants.dart';
 
 var pageList = [
   PageModel(
-      imageUrl: "assets/images/art_museum.png",
-      title: "Herzlich Wilkommen!",
+      imageUrl: "assets/images/onboard_1.png",
+      title: "Herzlich Willkommen!",
       body: "Geschichte vernetzt im Hessichen Landesmuseum Darmstadt",
+      extra: "Teil des Projekts MINTplus²: "
+          "Systematischer und vernetzter Kompetenzaufbau in der "
+          "Lehrerbildung im Umgang mit Digitalisierung und Heterogenität",
       number: 1,
-      titleGradient: gradients[0]),
+      color: COLOR_HOME,
+  ),
   PageModel(
-      imageUrl: "assets/images/Mobile_app_p3ts.png",
+      imageUrl: "assets/images/onboard_2.png",
       title: "App ins Museum!",
       body: "Mobil unterwegs im Landesmuseum:",
+      extra: "Landesmuseum kennenlernen;Rundgänge anlegen und gehen;Museumsobjekte untersuchen",
       number: 2,
-      titleGradient: gradients[1]),
+      color: COLOR_TOUR,
+  ),
   PageModel(
-      imageUrl: "assets/images/authentication.png",
+      imageUrl: "assets/images/onboard_3.png",
       title: "Erstelle Dein Profil!",
       body: "Dein eigenes Profil im Landesmuseum:",
-      number: "3",
-      titleGradient: gradients[2]),
+      extra: "Account verwalten;Favoriten sammeln;Statistiken abrufen",
+      number: 3,
+      color: COLOR_PROFILE,
+  ),
 ];
 
 List<List<Color>> gradients = [
@@ -32,6 +41,7 @@ class PageModel {
   var title;
   var body;
   var number;
-  List<Color> titleGradient = [];
-  PageModel({this.imageUrl, this.title, this.body, this.number, this.titleGradient});
+  String extra;
+  Color color;
+  PageModel({this.imageUrl, this.title, this.body, this.number, this.color, this.extra});
 }

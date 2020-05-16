@@ -1081,6 +1081,8 @@ class _HomeState extends State<Home> {
     }
     return WillPopScope(
       onWillPop: () {
+        if (_type == InfoType.HOME)
+          return Future.value(true);
         if (_type != InfoType.ABOUT_MUSEUM)
           setState(() => _type = InfoType.HOME);
         return Future.value(false);

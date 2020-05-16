@@ -8,13 +8,13 @@ import 'package:museum_app/route_generator.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MuseumDatabase().init();
-  final User user = await MuseumDatabase().getUser();
-  final bool onboardEnd = user.onboardEnd;
+  //final User user = await MuseumDatabase().getUser();
+  //final bool onboardEnd = user.onboardEnd;
 
   runApp(GraphQLProvider(
     client: GraphQLConfiguration().client,
     child: CacheProvider(
-      child: MyApp(onboardEnd ? "/" : "/onboard"),
+      child: MyApp("/"),//onboardEnd ? "/" : "/onboard"),
     ),
   ));
 }
