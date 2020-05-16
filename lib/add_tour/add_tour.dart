@@ -81,6 +81,7 @@ class _AddTourState extends State<AddTour> {
                           style: TextStyle(fontSize: 17),
                         ),
                       ),
+                showMap: this._type == AddType.CHOOSE,
               );
           }
         });

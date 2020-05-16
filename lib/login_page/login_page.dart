@@ -83,9 +83,9 @@ class _LogInState extends State<LogIn> {
     return FlatButton(
       //color: Colors.grey[300],
       textColor: Colors.black54,
-      disabledColor: Colors.blue,
+      disabledColor: Color(0xFF4AD285),
       disabledTextColor: Colors.white,
-      splashColor: Colors.blueAccent,
+      splashColor: Color(0xFF4AD285).withOpacity(.6),
       child: Text(function == null ? text.toUpperCase() : text),
       onPressed: function,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
@@ -143,6 +143,7 @@ class _LogInState extends State<LogIn> {
         maxLength: pwField ? null : MAX_USERNAME,
         validator: pwField ? null : _userVal,
         decoration: InputDecoration(
+          hoverColor: Colors.red,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0)),
           prefixIcon: Icon(icon),
           labelText: text,
@@ -153,7 +154,8 @@ class _LogInState extends State<LogIn> {
 
   /// The username's validator.
   String _userVal(String s) {
-    if (1 <= s.length) return null;
+    if (s.length == 0) return "";
+    if (3 <= s.length) return null;
     return "Username zu kurz";
   }
 
@@ -314,10 +316,10 @@ class _LogInState extends State<LogIn> {
                 child: RaisedButton(
                   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                   textColor: Colors.white,
-                  color: Colors.blue,
+                  color: Color(0xFFFCBF49),
                   disabledTextColor: Colors.white.withOpacity(.6),
-                  disabledColor: Colors.blue.withOpacity(.6),
-                  splashColor: Colors.blue[200].withOpacity(.4),
+                  disabledColor: Color(0xFFFCBF49).withOpacity(.6),
+                  splashColor: Colors.black.withOpacity(.1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
                   ),
@@ -334,8 +336,8 @@ class _LogInState extends State<LogIn> {
       floatingActionButton: widget.skippable
           ? FlatButton(
               textColor: Colors.white,
-              color: Colors.blue,
-              splashColor: Colors.blueAccent,
+              color: COLOR_PROFILE,
+              splashColor: Colors.black.withOpacity(.1),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [Text("Skip"), Icon(Icons.skip_next)],

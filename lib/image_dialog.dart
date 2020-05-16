@@ -18,7 +18,7 @@ class ImageDialog extends StatefulWidget {
 
 class _ImageDialogState extends State<ImageDialog> {
   List<String> list = [
-    "assets/images/profile_test.png",
+    /*"assets/images/profile_test.png",
     "assets/images/profile_test2.png",
     'assets/images/haupthalle_hlm_blue.png',
     "assets/images/profile_test.png",
@@ -29,7 +29,7 @@ class _ImageDialogState extends State<ImageDialog> {
     'assets/images/haupthalle_hlm_blue.png',
     "assets/images/profile_test.png",
     "assets/images/profile_test2.png",
-    'assets/images/haupthalle_hlm_blue.png',
+    'assets/images/haupthalle_hlm_blue.png',*/
   ];
   List<String> _list = List<String>();
 

@@ -6,11 +6,8 @@ import 'package:museum_app/add_tour/add_tour.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/graphql/query.dart';
-import 'package:museum_app/map/map_page.dart';
 import 'package:museum_app/museum_tabs.dart';
 import 'package:museum_app/tours_page/tours_widgets.dart';
-
-import '../SizeConfig.dart';
 
 class Tours extends StatefulWidget {
   Tours({Key key}) : super(key: key);
@@ -34,7 +31,7 @@ class _ToursState extends State<Tours> {
                   image: AssetImage('assets/images/product_tour_text.png')),
             ),
           ),
-          Positioned(
+          /*Positioned(
             left: SizeConfig.blockSizeHorizontal * 2,
             top: SizeConfig.blockSizeVertical * 2,
             child: FlatButton(
@@ -50,7 +47,7 @@ class _ToursState extends State<Tours> {
                     MaterialPageRoute(builder: (context) => MapPage()));
               },
             ),
-          ),
+          ),*/
         ],
       ),
     );
@@ -146,6 +143,7 @@ class _ToursState extends State<Tours> {
                 style: TextStyle(fontSize: 17),
               ),
             ),
+            showMap: true,
           );
         return MuseumTabs(
           _topInfo(),

@@ -177,7 +177,7 @@ class _HomeState extends State<Home> {
                             margin:
                                 EdgeInsets.only(right: 5.0, left: 5.0, top: 10),
                             child: Image.asset(
-                                'assets/images/Group_2265@3x.png',
+                                'assets/images/methods_tutor.png',
                                 width: horSize(
                                     35, imageSizeWidthLandscape.toDouble()),
                                 height: verSize(
@@ -352,7 +352,9 @@ class _HomeState extends State<Home> {
             ] //next row should be here
                 ),
           ])),
-        ));
+        ),
+      showMap: this._type == InfoType.HOME,
+    );
   }
 
   Widget _usage() {
@@ -446,12 +448,12 @@ class _HomeState extends State<Home> {
                     alignment: Alignment.center,
                     height: verSize(28, 4),
                     width: horSize(50, 4),
-                    margin: EdgeInsets.only(left: 5, right: 5),
+                    margin: EdgeInsets.only(left: 5, right: 5, top: 5),
                     child: SafeArea(
                         bottom: false,
                         child: Text(
                           "Im Home-Bereich gibt es Informationen zur App-Bedienung, dem Museum und dem Projekt \"Geschichte vernetzt\". Methoden und Tutorials für den Museumsbesuch stehen auch bereit.",
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.left,
                           style: TextStyle(
                               fontSize: horSize(4, 2),
                               fontFamily: "Nunito",
@@ -502,7 +504,7 @@ class _HomeState extends State<Home> {
                         bottom: false,
                         child: Text(
                           "Unter Tour gehen kannst Du viele verschiedene Touren durch das Museum abrufen und herunterladen.",
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.left,
                           style: TextStyle(
                               fontSize: horSize(4, 2),
                               fontFamily: "Nunito",
@@ -553,7 +555,7 @@ class _HomeState extends State<Home> {
                         bottom: false,
                         child: Text(
                           "Unter Neues Projekt kannst Du eigene Touren erstellen und auf gespeicherte Museumsobjekte zugreifen.",
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.left,
                           style: TextStyle(
                               fontSize: horSize(4, 2),
                               fontFamily: "Nunito",
@@ -604,7 +606,7 @@ class _HomeState extends State<Home> {
                         bottom: false,
                         child: Text(
                           "Unter Deinem Profil kannst Du Favoriten speichern, Statistiken abrufen und Erfolge einsehen.",
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.left,
                           style: TextStyle(
                               fontSize: horSize(4, 2),
                               fontFamily: "Nunito",
@@ -1039,21 +1041,8 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              margin: EdgeInsets.only(left: 16.0, right: 16),
+              margin: EdgeInsets.only(left: 16.0, right: 16, bottom: 4),
               padding: EdgeInsets.all(15)),
-          Container(
-            width: horSize(100, 60),
-            margin: EdgeInsets.only(left: 16, right: 16, top: 15, bottom: 15),
-            child: Text(
-              "Used Flutter Packages in this Project:\ncupertino_icons, gradient_text, flutter_circular_chart, flutter_rating_bar, photo_view, carousel_slider, graphql_flutter, expandable, intl, expandable_bottom_bar, keyboard_visibility, moor, moor_ffi, path_provider, path, provider, reorderables, rxdart, md2_tab_indicator, font_awesome_flutter, popup_menu, open_file, url_launcher, carousel_pro, flutter_keyboard_visibility",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: horSize(4, 2),
-                fontFamily: "Nunito",
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
         ],
       ),
     );

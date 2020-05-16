@@ -8,19 +8,27 @@ import 'constants.dart';
 import 'database/moor_db.dart';
 import 'graphql/graphqlConf.dart';
 import 'image_dialog.dart';
+import 'map/map_page.dart';
 
 class MuseumTabs extends StatefulWidget {
   final Widget top;
   final Color color;
   final Map<String, Widget> tabs;
   final bool showSetting;
+  final bool showMap;
 
   MuseumTabs(this.top, this.tabs,
-      {this.color = Colors.black, this.showSetting = true, Key key})
+      {this.color = Colors.black,
+      this.showSetting = true,
+      this.showMap = false,
+      Key key})
       : super(key: key);
 
   MuseumTabs.single(this.top, widget,
-      {this.color = Colors.black, this.showSetting = true, Key key})
+      {this.color = Colors.black,
+      this.showSetting = true,
+      this.showMap = false,
+      Key key})
       : tabs = {"Single": widget},
         super(key: key);
 
@@ -100,6 +108,25 @@ class _MuseumTabsState extends State<MuseumTabs> with TickerProviderStateMixin {
                   child: MuseumSettings(),
                 )
               : Container(),
+          widget.showMap
+              ? Positioned(
+                  left: horSize(2, 2, left: true),
+                  top: verSize(1, 1),
+                  child: FlatButton(
+                    padding: EdgeInsets.all(3),
+                    shape: CircleBorder(),
+                    child: Icon(
+                      Icons.map,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MapPage()));
+                    },
+                  ),
+                )
+              : Container(),
         ]),
         _bottomInfo(),
       ],
@@ -169,8 +196,10 @@ class MuseumSettings extends StatelessWidget {
                     if (result.hasException || result.data == null) return;
 
                     print(result.data);
-                    if (result.data['changeUsername']["ok"]["boolean"] == true) {
-                      MuseumDatabase().updateUsername(ctrl.text.trim(), result.data["changeUsername"]["refreshToken"]);
+                    if (result.data['changeUsername']["ok"]["boolean"] ==
+                        true) {
+                      MuseumDatabase().updateUsername(ctrl.text.trim(),
+                          result.data["changeUsername"]["refreshToken"]);
                       //MuseumDatabase().refreshToken();
                       Navigator.pop(context);
                     }
@@ -287,39 +316,51 @@ class MuseumSettings extends StatelessWidget {
   Widget _about(context) {
     return AlertDialog(
       title: Text("Geschichte Vernetzt"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "Teil des Projekts MINTplus²: Systematischer und vernetzter Kompetenzaufbau in der Lehrerbildung im Umgang mit Digitalisierung und Heterogenität",
-            textAlign: TextAlign.center,
-            style: TextStyle(
+      content: Container(
+        height: verSize(40, 30),
+        child: ListView(
+          //mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Teil des Projekts MINTplus²: Systematischer und vernetzter Kompetenzaufbau in der Lehrerbildung im Umgang mit Digitalisierung und Heterogenität",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: horSize(4, 2),
+                  fontFamily: "Nunito",
+                  fontWeight: FontWeight.w300,
+                  fontStyle: FontStyle.italic,
+                  color: Color(0xFF1A1A1A)),
+            ),
+            Image.asset('assets/images/photo_2020-01-19.jpeg',
+                width: horSize(35, 30), height: verSize(9, 10)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 7, right: 7),
+                  alignment: Alignment.center,
+                  child: Image.asset('assets/images/Logo_MINTplus_182x0.jpg',
+                      width: horSize(28, 30), height: verSize(10, 20)),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 7, right: 7),
+                  alignment: Alignment.center,
+                  child: Image.asset('assets/images/serveimage.png',
+                      width: horSize(28, 30), height: verSize(10, 20)),
+                ),
+              ],
+            ),
+            Text(
+              "Used Flutter Packages in this Project:\ncupertino_icons, gradient_text, flutter_circular_chart, flutter_rating_bar, photo_view, carousel_slider, graphql_flutter, expandable, intl, expandable_bottom_bar, keyboard_visibility, moor, moor_ffi, path_provider, path, provider, reorderables, rxdart, md2_tab_indicator, font_awesome_flutter, popup_menu, open_file, url_launcher, carousel_pro, flutter_keyboard_visibility",
+              textAlign: TextAlign.center,
+              style: TextStyle(
                 fontSize: horSize(4, 2),
                 fontFamily: "Nunito",
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.italic,
-                color: Color(0xFF1A1A1A)),
-          ),
-          Image.asset('assets/images/photo_2020-01-19.jpeg',
-              width: horSize(35, 30), height: verSize(15, 10)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: EdgeInsets.only(left: 7, right: 7),
-                alignment: Alignment.center,
-                child: Image.asset('assets/images/Logo_MINTplus_182x0.jpg',
-                    width: horSize(28, 30), height: verSize(10, 20)),
+                fontWeight: FontWeight.w700,
               ),
-              Container(
-                margin: EdgeInsets.only(left: 7, right: 7),
-                alignment: Alignment.center,
-                child: Image.asset('assets/images/serveimage.png',
-                    width: horSize(28, 30), height: verSize(10, 20)),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: 16),
       actions: [

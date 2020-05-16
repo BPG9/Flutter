@@ -420,7 +420,7 @@ class MuseumDatabase extends _$MuseumDatabase {
 
   Future initUser() async {
     await customStatement(
-        "INSERT INTO users (username, imgPath, onboardEnd, producer) SELECT '', 'assets/images/profile_test.png', false, false WHERE NOT EXISTS (SELECT * FROM users)");
+        "INSERT INTO users (username, imgPath, onboardEnd, producer) SELECT '', 'assets/images/empty_profile.png', false, false WHERE NOT EXISTS (SELECT * FROM users)");
   }
 
   Future addFavStop(String id) async {
