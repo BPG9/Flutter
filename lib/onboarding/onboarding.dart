@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:museum_app/SizeConfig.dart';
-import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
 
 import 'onboarding_data.dart';
@@ -65,11 +64,12 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
                   currentPage = index;
                   if (currentPage == pageList.length - 1) {
                     lastPage = true;
-                    animationController.forward();
+
                   } else {
                     lastPage = false;
-                    animationController.reset();
+                    //animationController.reset();
                   }
+                  //animationController.forward();
                   print(lastPage);
                 });
               },
@@ -136,7 +136,7 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
                                     fontSize: horSize(5.1, 3),
                                     fontFamily: "Nunito",
                                     fontWeight: FontWeight.w300,
-                                    fontStyle: FontStyle.italic,
+                                    //fontStyle: FontStyle.italic,
                                     color: Color(0xFF1A1A1A)),
                               )),
                         ),
@@ -161,25 +161,41 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
                       pageList[currentPage].color)),
             ),
             Positioned(
-              right: 30.0,
-              bottom: 30.0,
+              right: 25.0,
+              bottom: 25.0,
               child: ScaleTransition(
                 scale: _scaleAnimation,
-                child: lastPage
-                    ? FloatingActionButton(
-                        backgroundColor: COLOR_PROFILE,
-                        child: Icon(Icons.arrow_forward, color: Colors.black, size: 30,),
-                        onPressed: () {
-                          Navigator.pushNamed(context, "/login");
-                          MuseumDatabase().updateOnboard(true);
-                        },
-                      )
-                    : Container(),
+                child: getButton(),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget getButton() {
+    if (lastPage)
+      return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, "/login");
+          MuseumDatabase().updateOnboard(true);
+        },
+        child: textWithArrow("Zum Login ", size: 22),
+      );
+    return GestureDetector(
+      onTap: () => _controller.animateToPage(currentPage + 1,
+          duration: Duration(milliseconds: 700), curve: Curves.linear),
+      child: textWithArrow("Weiter ", size: 22),
+    );
+  }
+
+  Widget textWithArrow(String s, {double size = 20.0}) {
+    return Row(
+      children: [
+        Text(s, style: TextStyle(fontSize: size),),
+        Icon(Icons.arrow_forward, size: size + 7.0,),
+      ],
     );
   }
 
@@ -197,7 +213,7 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
               fontSize: horSize(4, 2),
               fontFamily: "Nunito",
               fontWeight: FontWeight.w300,
-              fontStyle: FontStyle.italic,
+              //fontStyle: FontStyle.italic,
               color: Color(0xFF1A1A1A)),
         ),
       );
@@ -211,12 +227,12 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-                margin: EdgeInsets.only(left: 5, right: 7),
-                alignment: Alignment.center,
-                child: SafeArea(
-                  bottom: false,
-                  child: Icon(Icons.check_box, color: page.color, size: 27),
-                ),
+              margin: EdgeInsets.only(left: 5, right: 7),
+              alignment: Alignment.center,
+              child: SafeArea(
+                bottom: false,
+                child: Icon(Icons.check_box, color: page.color, size: 27),
+              ),
             ),
             Container(
               //margin: EdgeInsets.only(right: .0),
@@ -230,7 +246,7 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
                       fontSize: horSize(5.5, 2),
                       fontFamily: "Nunito",
                       fontWeight: FontWeight.w300,
-                      fontStyle: FontStyle.italic,
+                      //fontStyle: FontStyle.italic,
                       color: Color(0xFF1A1A1A)),
                 ),
               ),

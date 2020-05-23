@@ -5,7 +5,7 @@ var pageList = [
   PageModel(
       imageUrl: "assets/images/onboard_1.png",
       title: "Herzlich Willkommen!",
-      body: "Geschichte vernetzt im Hessichen Landesmuseum Darmstadt",
+      body: "Geschichte vernetzt im Hessischen Landesmuseum Darmstadt",
       extra: "Teil des Projekts MINTplus²: "
           "Systematischer und vernetzter Kompetenzaufbau in der "
           "Lehrerbildung im Umgang mit Digitalisierung und Heterogenität",
