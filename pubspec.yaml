@@ -44,9 +44,10 @@ dependencies:
   font_awesome_flutter: ^8.8.1 #8.7.0
   popup_menu: ^1.0.5
   open_file: ^3.0.1
-  url_launcher: ^5.4.5 #5.3.0
+  url_launcher: ^5.4.10 #5.3.0
   carousel_pro: ^1.0.0
   flutter_keyboard_visibility: ^2.0.0 #0.7.0
+  flutter_linkify: ^3.1.3
 
 dev_dependencies:
   #flutter_test:

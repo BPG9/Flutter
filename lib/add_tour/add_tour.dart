@@ -40,7 +40,7 @@ class _AddTourState extends State<AddTour> {
               return StreamBuilder(
                 stream: MuseumDatabase().watchCustomStop(),
                 builder: (context, snap) {
-                  var stop = snap.data ?? ActualStop.custom();
+                  ActualStop stop = snap.data ?? ActualStop.custom();
                   if (_tour == null || _tour.author != name) {
                     _tour = TourWithStops.empty(name);
                     _tour.stops.add(stop);

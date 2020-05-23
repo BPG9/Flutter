@@ -243,7 +243,7 @@ class QueryBackend {
           future: GraphQLConfiguration.isConnected(token),
           builder: (context, snap) {
             bool connected = snap.hasData && snap.data;
-            if (!connected)
+            if (!connected || url.endsWith("&id="))
               return Container(
                 width: width.toDouble(),
                 height: height.toDouble(),

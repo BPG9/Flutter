@@ -270,7 +270,7 @@ LazyDatabase _openConnection() {
 ])
 class MuseumDatabase extends _$MuseumDatabase {
   static MuseumDatabase _db;
-  static String customID = "Custom";
+  //static String customID = "Custom";
 
   factory MuseumDatabase() {
     _db ??= MuseumDatabase._create();
@@ -312,8 +312,9 @@ class MuseumDatabase extends _$MuseumDatabase {
     return update(users).write(UsersCompanion(imgPath: Value(imgPath)));
   }
 
-  Future<bool> downloadStops() async {
+  Future<bool> downloadStops({access = ""}) async {
     String accessToken = await this.accessToken();
+    if (accessToken == "") accessToken = access;
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.query(QueryOptions(
@@ -356,8 +357,9 @@ class MuseumDatabase extends _$MuseumDatabase {
     return Future.value(true);
   }
 
-  Future<bool> downloadBadges() async {
+  Future<bool> downloadBadges({access = ""}) async {
     String token = await accessToken();
+    if (token == "") token = access;
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.query(QueryOptions(
@@ -408,14 +410,15 @@ class MuseumDatabase extends _$MuseumDatabase {
     await setDivisions();
     User u = await select(users).getSingle();
 
-    /* Caused issues: Logged in although skipped, tried download, ...
+    //print(u);
+    /* Caused issues: Logged in although skipped, tried download, ...*/
     if (await GraphQLConfiguration.isConnected(u.accessToken)) {
       if (await refreshAccess() != "") {
         await downloadStops();
         await downloadBadges();
       }
     }
-    */
+
   }
 
   Future initUser() async {
@@ -540,6 +543,9 @@ class MuseumDatabase extends _$MuseumDatabase {
       print("LOGIN");
       String access = map['accessToken'];
       String refresh = map['refreshToken'];
+
+      downloadStops(access: access);
+      downloadBadges(access: access);
 
       result = await _client.query(QueryOptions(
         documentNode: gql(QueryBackend.userInfo(access)),
@@ -721,7 +727,7 @@ class MuseumDatabase extends _$MuseumDatabase {
 
   Future<void> updateStopFeatures(String stop_id, int tour_id,
       {images, text, details}) {
-    if (stop_id != customID)
+    if (stop_id != customName)
       update(stopFeatures).replace(
         StopFeaturesCompanion.insert(
           id_stop: stop_id,
@@ -1061,6 +1067,7 @@ class MuseumDatabase extends _$MuseumDatabase {
   Future<String> refreshAccess() async {
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     String refresh = await select(users).map((u) => u.refreshToken).getSingle();
+    if (refresh == "") return Future.value("");
 
     QueryResult result = await _client.mutate(MutationOptions(
       documentNode: gql(MutationBackend.refresh(refresh)),

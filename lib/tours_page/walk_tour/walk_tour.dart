@@ -155,7 +155,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                   child: QueryBackend.netWorkImage(QueryBackend.imageURLPicture(
                       stops[index].stop.images.isNotEmpty
                           ? stops[index].stop.images[0]
-                          : "")),
+                          : ""),),
                 ),
                 Container(
                   //color: Colors.yellow,

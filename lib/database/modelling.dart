@@ -106,13 +106,13 @@ class ActualStop {
   ActualStop.custom()
       : this(
             Stop(
-                id: MuseumDatabase.customID,
+                id: customName,
                 images: <String>[],
                 name: customName,
                 descr: ""),
             StopFeature(
                 id_tour: null,
-                id_stop: MuseumDatabase.customID,
+                id_stop: customName,
                 showImages: false,
                 showText: true,
                 showDetails: false),

@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/database/modelling.dart';
 import 'package:museum_app/image_carousel.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants.dart';
 
@@ -22,7 +24,6 @@ class TourExtra extends StatefulWidget {
 }
 
 class _TourExtraState extends State<TourExtra> {
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -83,10 +84,21 @@ class _TourExtraState extends State<TourExtra> {
               maxLength: TextField.noMaxLength,
               style: TextStyle(fontSize: 18),
             )
-          : SelectableText(
-              widget.extra.textInfo.text,
+          : SelectableLinkify(
+              text: widget.extra.textInfo.text,
               textAlign: TextAlign.justify,
               style: TextStyle(fontSize: 18),
+              options: LinkifyOptions(
+                removeWww: true,
+                defaultToHttps: true,
+              ),
+              onOpen: (elem) async {
+                print("AAAAD");
+                if (await canLaunch(elem.url))
+                  await launch(elem.url);
+                else
+                  print("Link ${elem.url} not launchable");
+              },
             ),
     );
   }

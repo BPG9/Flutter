@@ -267,7 +267,7 @@ class MuseumSettings extends StatelessWidget {
     return AlertDialog(
       title: Text("Warnung"),
       content: Text("Möchten Sie sich wirklich ausloggen?\n"
-          "Alle heruntergeladenen Touren werden gelöscht. Wenn Sie eine Tour favorisieren, können Sie sie"
+          "Alle heruntergeladenen Touren werden gelöscht. Wenn Sie eine Tour favorisieren, können Sie sie "
           "beim nächsten Anmelden leichter wiederfinden."),
       actions: [
         FlatButton(
