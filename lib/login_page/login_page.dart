@@ -154,7 +154,7 @@ class _LogInState extends State<LogIn> {
 
   /// The username's validator.
   String _userVal(String s) {
-    if (s.length == 0) return "";
+    if (s.length == 0) return null;
     if (3 <= s.length) return null;
     return "Username zu kurz";
   }
@@ -324,7 +324,7 @@ class _LogInState extends State<LogIn> {
                     borderRadius: BorderRadius.circular(18.0),
                   ),
                   child: Text("Bestätigen", textScaleFactor: 1.3),
-                  onPressed: _userVal(_usCtrl.text) != null
+                  onPressed: _userVal(_usCtrl.text) != null || _usCtrl.text.isEmpty
                       ? null
                       : (_type == LogInType.SIGNUP ? _signUpDialog : _login),
                 ),

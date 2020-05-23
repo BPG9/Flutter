@@ -95,112 +95,12 @@ class _HomeState extends State<Home> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        InkWell(
-            child: Container(
-                width: horSize(funcSizeWidthPortrait.toDouble(),
-                    funcSizeWidthLandscape.toDouble()),
-                height: verSize(funcSizeHeightPortrait.toDouble(),
-                    funcSizeHeightLandscape.toDouble()),
-                margin: EdgeInsets.only(
-                    left: 16.0, top: 16.0, bottom: 16, right: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(17.0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.8),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: Offset.fromDirection(pi / 2),
-                    )
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: SafeArea(
-                    bottom: false,
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                            margin:
-                                EdgeInsets.only(right: 5.0, left: 5.0, top: 10),
-                            child: Image.asset(
-                                'assets/images/Group_2304@3x.png',
-                                width: horSize(
-                                    35, imageSizeWidthLandscape.toDouble()),
-                                height: verSize(
-                                    17, imageSizeHeightLandscape.toDouble()))),
-                        Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(bottom: 10.0, top: 5.0),
-                            child: SafeArea(
-                                bottom: false,
-                                child: Text(
-                                  "Einführung zur App-Nutzung",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: horSize(4.5, 2),
-                                      fontFamily: "Nunito",
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF1A1A1A)),
-                                )))
-                      ],
-                    ))),
-            onTap: () {
-              setState(() => _type = InfoType.USAGE);
-            }),
-        InkWell(
-            child: Container(
-                width: horSize(funcSizeWidthPortrait.toDouble(),
-                    funcSizeWidthLandscape.toDouble()),
-                height: verSize(funcSizeHeightPortrait.toDouble(),
-                    funcSizeHeightLandscape.toDouble()),
-                margin: EdgeInsets.only(
-                    right: 16.0, top: 16.0, bottom: 16, left: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(17.0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.8),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: Offset.fromDirection(pi / 2),
-                    )
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: SafeArea(
-                    bottom: false,
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                            margin:
-                                EdgeInsets.only(right: 5.0, left: 5.0, top: 10),
-                            child: Image.asset(
-                                'assets/images/methods_tutor.png',
-                                width: horSize(
-                                    35, imageSizeWidthLandscape.toDouble()),
-                                height: verSize(
-                                    17, imageSizeHeightLandscape.toDouble()))),
-                        Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(bottom: 10.0, top: 5.0),
-                            child: SafeArea(
-                                bottom: false,
-                                child: Text(
-                                  "Methoden und Tutorials",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: horSize(4.5, 2),
-                                      fontFamily: "Nunito",
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF1A1A1A)),
-                                )))
-                      ],
-                    ))),
-            onTap: () {
-              setState(() => _type = InfoType.TUTORIALS);
-            }),
+        oneHomeCell(
+            "Einführung zur App-Nutzung",
+            "assets/images/Group_2304@3x.png",
+            () => setState(() => this._type = InfoType.USAGE)),
+        oneHomeCell("Methoden und Tutorials", 'assets/images/methods_tutor.png',
+            () => setState(() => _type = InfoType.TUTORIALS)),
       ],
     );
   }
@@ -304,7 +204,7 @@ class _HomeState extends State<Home> {
                             child: SafeArea(
                                 bottom: false,
                                 child: Text(
-                                  "Über das Projekt geschichte vernetzt",
+                                  "Über das Projekt Geschichte vernetzt",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: horSize(4.5, 2),
@@ -323,36 +223,62 @@ class _HomeState extends State<Home> {
 
   Widget _homePage() {
     return MuseumTabs.single(
-        Container(
-          height: verSize(30, 45),
-          child: Center(
-            child: Container(
-                margin: EdgeInsets.only(right: 5.0, left: 5.0),
-                child: Image.asset(
-                  'assets/images/HomePage.png',
-                  width: horSize(80, 50),
-                  height: verSize(25, 50),
-                )),
-          ),
-        ),
-        Container(
-          //height: SizeConfig.safeBlockVertical * 100,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.white, width: 2),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0)),
-          ),
+      Container(
+        height: verSize(30, 45),
+        child: Center(
           child: Container(
-              child: Stack(children: [
-            Column(children: [
-              _firstRow(),
-              _secondRow(),
-            ] //next row should be here
-                ),
-          ])),
+              margin: EdgeInsets.only(right: 5.0, left: 5.0),
+              child: Image.asset(
+                'assets/images/HomePage.png',
+                width: horSize(80, 50),
+                height: verSize(25, 50),
+              )),
         ),
+      ),
+      Container(
+        //height: SizeConfig.safeBlockVertical * 100,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.white, width: 2),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+        ),
+        child: Container(
+          padding: EdgeInsets.only(top: 10),
+          child: Stack(
+            children: [
+              Wrap(
+                direction: Axis.horizontal,
+                spacing: 15,
+                runSpacing: 15,
+                children: [
+                  oneHomeCell(
+                    "Einführung zur App-Nutzung",
+                    "assets/images/Group_2304@3x.png",
+                    () => setState(() => this._type = InfoType.USAGE),
+                  ),
+                  oneHomeCell(
+                    "Methoden und Tutorials",
+                    'assets/images/methods_tutor.png',
+                    () => setState(() => _type = InfoType.TUTORIALS),
+                  ),
+                  oneHomeCell(
+                    "Über das Landesmuseum",
+                    "assets/images/Group_2304@3x.png",
+                    () => setState(() => _type = InfoType.ABOUT_MUSEUM),
+                  ),
+                  oneHomeCell(
+                    "Über das Projekt Geschichte vernetzt",
+                    'assets/images/undraw_new_ideas_jdea@3x.png',
+                    () => setState(() => _type = InfoType.ABOUT_PROJECT),
+                    textSize: 4.2,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
       showMap: this._type == InfoType.HOME,
     );
   }
@@ -389,10 +315,48 @@ class _HomeState extends State<Home> {
       ]),
       Column(
         children: <Widget>[
-          _usageRow1(),
-          _usageRow2(),
-          _usageRow3(),
-          _usageRow4(),
+          Container(height: verSize(3, 2)),
+          Text(
+            "Einführung zur App-Nutzung",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 23,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Container(height: verSize(1, 2)),
+          usageRow(
+            "assets/images/Group_2363@3x.png",
+            COLOR_HOME,
+            "Im ",
+            "Home",
+            "-Bereich gibt es Informationen zur App-Bedienung, dem Museum und dem Projekt \"Geschichte vernetzt\". Methoden und Tutorials für den Museumsbesuch stehen auch bereit.",
+            Icons.home,
+          ),
+          usageRow(
+            "assets/images/Group_2319@3x.png",
+            COLOR_TOUR,
+            "Unter ",
+            "Tour",
+            " gehen kannst Du viele verschiedene Touren durch das Museum abrufen und herunterladen.",
+            Icons.flag,
+          ),
+          usageRow(
+            "assets/images/Group_2366@3x.png",
+            COLOR_ADD,
+            "Unter ",
+            "Neues Projekt",
+            " kannst Du eigene Touren erstellen und auf gespeicherte Museumsobjekte zugreifen.",
+            Icons.add,
+          ),
+          usageRow(
+            "assets/images/Group_2317@3x.png",
+            COLOR_PROFILE,
+            "Unter Deinem ",
+            "Profil",
+            " kannst Du Favoriten speichern, Statistiken abrufen und Erfolge einsehen.",
+            Icons.person_outline,
+          ),
           border(
               GestureDetector(
                 onTap: () => print("Video Erklär Tour"),
@@ -406,12 +370,25 @@ class _HomeState extends State<Home> {
                     ),
                     Container(
                       width: horSize(57, 60),
-                      child: Text(
-                        "Noch Fragen?\nSchau Dir ein Erklärvideo zur App-Bedienung an!",
-                        style: TextStyle(
-                          fontSize: horSize(5, 2),
-                          fontFamily: "Nunito",
-                          fontWeight: FontWeight.w700,
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: horSize(5, 2),
+                            fontFamily: "Nunito",
+                            fontWeight: FontWeight.w700,
+                          ),
+                          children: [
+                            TextSpan(text: "Noch Fragen?\nSchau Dir ein "),
+                            TextSpan(
+                              text: "Erklärvideo",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(text: " zur App-Bedienung an!")
+                          ],
                         ),
                       ),
                     )
@@ -423,210 +400,6 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
-  }
-
-  Widget _usageRow1() {
-    return Container(
-        width: horSize(100, 15),
-        height: verSize(26, 13),
-        margin: EdgeInsets.only(left: 16.0, right: 16),
-        alignment: Alignment.center,
-        child: SafeArea(
-            bottom: false,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  height: verSize(20, 4),
-                  width: horSize(25, 4),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/Group_2363@3x.png"),
-                    ),
-                  ),
-                ),
-                Container(
-                    alignment: Alignment.center,
-                    height: verSize(28, 4),
-                    width: horSize(50, 4),
-                    margin: EdgeInsets.only(left: 5, right: 5, top: 5),
-                    child: SafeArea(
-                        bottom: false,
-                        child: Text(
-                          "Im Home-Bereich gibt es Informationen zur App-Bedienung, dem Museum und dem Projekt \"Geschichte vernetzt\". Methoden und Tutorials für den Museumsbesuch stehen auch bereit.",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: horSize(4, 2),
-                              fontFamily: "Nunito",
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF1A1A1A)),
-                        ))),
-                Container(
-                    alignment: Alignment.center,
-                    height: verSize(10, 4),
-                    width: horSize(10, 4),
-                    margin: EdgeInsets.only(left: 5),
-                    child: SafeArea(
-                        bottom: false,
-                        child: Icon(
-                          Icons.home,
-                          color: COLOR_HOME,
-                          size: 30,
-                        ))),
-              ],
-            )));
-  }
-
-  Widget _usageRow2() {
-    return Container(
-        width: horSize(100, 15),
-        height: verSize(26, 13),
-        margin: EdgeInsets.only(left: 16.0, right: 16),
-        alignment: Alignment.center,
-        child: SafeArea(
-            bottom: false,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  height: verSize(20, 4),
-                  width: horSize(25, 4),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/Group_2319@3x.png"),
-                    ),
-                  ),
-                ),
-                Container(
-                    alignment: Alignment.center,
-                    height: verSize(28, 4),
-                    width: horSize(50, 4),
-                    margin: EdgeInsets.only(left: 5, right: 5),
-                    child: SafeArea(
-                        bottom: false,
-                        child: Text(
-                          "Unter Tour gehen kannst Du viele verschiedene Touren durch das Museum abrufen und herunterladen.",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: horSize(4, 2),
-                              fontFamily: "Nunito",
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF1A1A1A)),
-                        ))),
-                Container(
-                    alignment: Alignment.center,
-                    height: verSize(10, 4),
-                    width: horSize(10, 4),
-                    margin: EdgeInsets.only(left: 5),
-                    child: SafeArea(
-                        bottom: false,
-                        child: Icon(
-                          Icons.flag,
-                          color: COLOR_TOUR,
-                          size: 30,
-                        ))),
-              ],
-            )));
-  }
-
-  Widget _usageRow3() {
-    return Container(
-        width: horSize(100, 15),
-        height: verSize(26, 13),
-        margin: EdgeInsets.only(left: 16.0, right: 16),
-        alignment: Alignment.center,
-        child: SafeArea(
-            bottom: false,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  height: verSize(20, 4),
-                  width: horSize(25, 4),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/Group_2366@3x.png"),
-                    ),
-                  ),
-                ),
-                Container(
-                    alignment: Alignment.center,
-                    height: verSize(28, 4),
-                    width: horSize(50, 4),
-                    margin: EdgeInsets.only(left: 5, right: 5),
-                    child: SafeArea(
-                        bottom: false,
-                        child: Text(
-                          "Unter Neues Projekt kannst Du eigene Touren erstellen und auf gespeicherte Museumsobjekte zugreifen.",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: horSize(4, 2),
-                              fontFamily: "Nunito",
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF1A1A1A)),
-                        ))),
-                Container(
-                    alignment: Alignment.center,
-                    height: verSize(10, 4),
-                    width: horSize(10, 4),
-                    margin: EdgeInsets.only(left: 5),
-                    child: SafeArea(
-                        bottom: false,
-                        child: Icon(
-                          Icons.add,
-                          color: COLOR_ADD,
-                          size: 30,
-                        ))),
-              ],
-            )));
-  }
-
-  Widget _usageRow4() {
-    return Container(
-        width: horSize(100, 15),
-        height: verSize(26, 13),
-        margin: EdgeInsets.only(left: 16.0, right: 16),
-        alignment: Alignment.center,
-        child: SafeArea(
-            bottom: false,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  height: verSize(20, 4),
-                  width: horSize(25, 4),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/Group_2317@3x.png"),
-                    ),
-                  ),
-                ),
-                Container(
-                    alignment: Alignment.center,
-                    height: verSize(28, 4),
-                    width: horSize(50, 4),
-                    margin: EdgeInsets.only(left: 5, right: 5),
-                    child: SafeArea(
-                        bottom: false,
-                        child: Text(
-                          "Unter Deinem Profil kannst Du Favoriten speichern, Statistiken abrufen und Erfolge einsehen.",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: horSize(4, 2),
-                              fontFamily: "Nunito",
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF1A1A1A)),
-                        ))),
-                Container(
-                    alignment: Alignment.center,
-                    height: verSize(10, 4),
-                    width: horSize(10, 4),
-                    margin: EdgeInsets.only(left: 5),
-                    child: SafeArea(
-                        bottom: false,
-                        child: Icon(
-                          Icons.person_outline,
-                          color: COLOR_PROFILE,
-                          size: 30,
-                        ))),
-              ],
-            )));
   }
 
   Widget _methods() {
@@ -646,9 +419,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           GestureDetector(
-            onTap: () => listeKreative().then((file) {
-              OpenFile.open(file.path);
-            }),
+            onTap: () => listeKreative().then((file) => OpenFile.open(file.path)),
             child: Row(
               //mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -658,7 +429,7 @@ class _HomeState extends State<Home> {
                       color: Colors.red, size: size(45, 60)),
                 ),
                 Container(
-                  width: horSize(57, 60),
+                  //width: horSize(57, 60),
                   child: Text(
                     "Liste kreativer Schreibaufgaben",
                     style: TextStyle(
@@ -671,20 +442,20 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
+          Container(height: verSize(2, 1)),
           GestureDetector(
-            onTap: () => handreichung().then((file) {
-              OpenFile.open(file.path);
-            }),
+            onTap: () => handreichung().then((file) => OpenFile.open(file.path)),
             child: Row(
               //mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
+
                   width: horSize(23, 23),
                   child: Icon(Icons.picture_as_pdf,
                       color: Colors.red, size: size(45, 60)),
                 ),
                 Container(
-                  width: horSize(57, 60),
+                  width: horSize(65, 60),
                   child: Text(
                     "Fragenkatalog an kulturgeschichtliche Ausstellungen",
                     style: TextStyle(
@@ -697,6 +468,7 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
+          Container(height: verSize(2, 1)),
           GestureDetector(
             onTap: () => abExample().then((file) {
               OpenFile.open(file.path);
@@ -710,7 +482,7 @@ class _HomeState extends State<Home> {
                       color: Colors.red, size: size(45, 60)),
                 ),
                 Container(
-                  width: horSize(57, 60),
+                  width: horSize(65, 60),
                   child: Text(
                     "Exemplarische Herangehensweise an ein Ausstellungsobjekt",
                     style: TextStyle(
@@ -792,7 +564,7 @@ class _HomeState extends State<Home> {
                   Container(
                     width: horSize(57, 60),
                     child: Text(
-                      "Die Zeit in der Kunst - Video der Schirn Kunsthalle!",
+                      "Die Zeit in der Kunst - Video der Schirn Kunsthalle",
                       style: TextStyle(
                         fontSize: horSize(4, 2),
                         fontFamily: "Nunito",
@@ -918,7 +690,7 @@ class _HomeState extends State<Home> {
           width: horSize(100, 60),
           margin: EdgeInsets.only(left: 16, right: 16, top: 5),
           child: Text(
-            "Geschichte vernetzt – Vergangenes interdisziplinär erforschen und vermitteln“ ist ein Modul der TU Darmstadt, welche Technik und Naturwissenschaft in ihrer historischen Dimension betrachtet. Es wird in der Zeit von Oktober 2019 bis Juni 2022 eigens für das Lehramtsstudium an der TU Darmstadt entwickelt.",
+            "Geschichte vernetzt – Vergangenes interdisziplinär erforschen und vermitteln“ ist ein Modul der TU Darmstadt, welches Technik und Naturwissenschaft in ihrer historischen Dimension betrachtet. Es wird in der Zeit von Oktober 2019 bis Juni 2022 eigens für das Lehramtsstudium an der TU Darmstadt entwickelt.",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: horSize(5, 2),
@@ -1029,7 +801,7 @@ class _HomeState extends State<Home> {
                     Container(
                       width: horSize(80, 60),
                       child: Text(
-                        "Allen an der App-Entwicklung beteiligten Studierenden sei ein herzlicher Dank ausgesprochen: Mohammadrahim Masoumi, Robert Cieslinski, Shayan Davari Fard, Patrick Dzubba",
+                        "Allen an der App-Entwicklung beteiligten Studierenden sei ein herzlicher Dank ausgesprochen: Mohammadrahim Masoumi, Robert Cieslinski, Shayan Davari Fard, Patrick Dzubba, Madline Fischer, Christina Heiser, Alexander Schilling, Simeon T. Schmitt.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: horSize(5, 2),
@@ -1041,8 +813,10 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              margin: EdgeInsets.only(left: 16.0, right: 16, bottom: 4),
+              margin: EdgeInsets.only(left: 16.0, right: 16, bottom: 7),
               padding: EdgeInsets.all(15)),
+          Text("Projektleitung: Miriam Grabarits"),
+          Container(height: verSize(1, 1)),
         ],
       ),
     );
@@ -1070,8 +844,7 @@ class _HomeState extends State<Home> {
     }
     return WillPopScope(
       onWillPop: () {
-        if (_type == InfoType.HOME)
-          return Future.value(true);
+        if (_type == InfoType.HOME) return Future.value(true);
         if (_type != InfoType.ABOUT_MUSEUM)
           setState(() => _type = InfoType.HOME);
         return Future.value(false);
@@ -1106,4 +879,124 @@ Widget border(Widget w,
         ]),
     child: w,
   );
+}
+
+Widget oneHomeCell(String text, String image, funct, {double textSize = 4.5}) {
+  return InkWell(
+    child: Container(
+        width: horSize(funcSizeWidthPortrait.toDouble(),
+            funcSizeWidthLandscape.toDouble()),
+        height: verSize(funcSizeHeightPortrait.toDouble(),
+            funcSizeHeightLandscape.toDouble()),
+        //margin: EdgeInsets.only(left: 16.0, top: 16.0, bottom: 16, right: 5),
+        padding: EdgeInsets.only(right: 5.0, left: 5.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(17.0)),
+          border: Border.all(color: COLOR_HOME),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.8),
+              spreadRadius: 1,
+              blurRadius: 2,
+              offset: Offset.fromDirection(pi / 2),
+            )
+          ],
+        ),
+        alignment: Alignment.center,
+        child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Image.asset(
+                    image,
+                    width: horSize(35, imageSizeWidthLandscape.toDouble()),
+                    height: verSize(17, imageSizeHeightLandscape.toDouble()),
+                  ),
+                ),
+                Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(bottom: 10.0, top: 5.0),
+                    child: SafeArea(
+                        bottom: false,
+                        child: Text(
+                          text,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: horSize(textSize, 2),
+                              fontFamily: "Nunito",
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF1A1A1A)),
+                        )))
+              ],
+            ))),
+    onTap: funct,
+  );
+}
+
+Widget usageRow(String image, color, String text1, String text2, String text3,
+    IconData icon) {
+  return Container(
+      width: horSize(100, 15),
+      height: verSize(26, 13),
+      margin: EdgeInsets.only(left: 16.0, right: 16),
+      alignment: Alignment.center,
+      child: SafeArea(
+          bottom: false,
+          child: Row(
+            children: <Widget>[
+              Container(
+                height: verSize(20, 4),
+                width: horSize(25, 4),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(image),
+                  ),
+                ),
+              ),
+              Container(
+                  alignment: Alignment.center,
+                  height: verSize(28, 4),
+                  width: horSize(50, 4),
+                  margin: EdgeInsets.only(left: 5, right: 5),
+                  child: SafeArea(
+                    bottom: false,
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: horSize(4, 2),
+                          fontFamily: "Nunito",
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF1A1A1A),
+                        ),
+                        children: [
+                          TextSpan(text: text1),
+                          TextSpan(
+                            text: text2,
+                            style: TextStyle(
+                              color: color,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(text: text3)
+                        ],
+                      ),
+                    ),
+                  )),
+              Container(
+                  alignment: Alignment.center,
+                  height: verSize(10, 4),
+                  width: horSize(10, 4),
+                  margin: EdgeInsets.only(left: 5),
+                  child: SafeArea(
+                      bottom: false,
+                      child: Icon(
+                        icon,
+                        color: color,
+                        size: 30,
+                      ))),
+            ],
+          )));
 }
