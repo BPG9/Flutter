@@ -108,7 +108,7 @@ class _EditSingleStopState extends State<EditSingleStop> {
               onChanged: (value) async {
                 switch (value) {
                   case 0:
-                    _action();
+                    _searchDialog();
                     break;
                   case 1:
                     _setStop((await MuseumDatabase().getCustomStop()));
@@ -121,7 +121,7 @@ class _EditSingleStopState extends State<EditSingleStop> {
         ));
   }
 
-  _action() {
+  _searchDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -134,6 +134,7 @@ class _EditSingleStopState extends State<EditSingleStop> {
         actions: [
           FlatButton(
             onPressed: () => Navigator.pop(context),
+            splashColor: COLOR_ADD.withOpacity(.25),
             child: Text("Schließen", style: TextStyle(color: COLOR_ADD)),
           )
         ],

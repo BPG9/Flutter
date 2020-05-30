@@ -270,6 +270,7 @@ LazyDatabase _openConnection() {
 ])
 class MuseumDatabase extends _$MuseumDatabase {
   static MuseumDatabase _db;
+
   //static String customID = "Custom";
 
   factory MuseumDatabase() {
@@ -418,7 +419,6 @@ class MuseumDatabase extends _$MuseumDatabase {
         await downloadBadges();
       }
     }
-
   }
 
   Future initUser() async {
@@ -859,41 +859,47 @@ class MuseumDatabase extends _$MuseumDatabase {
   Stream<List<Stop>> stopSearch(String text) {
     if (text.isEmpty) return Stream.value(List<Stop>());
 
-    List<String> input = text.split(RegExp(",|;|&"));
+    List<String> input = text.toLowerCase().split(RegExp(",|;|&"));
 
     var query = select(stops)..where((s) => s.name.equals(customName).not());
 
     for (var part in input) {
       part = part.trim();
-      // search for division
+      // search for name
       if (part.startsWith(RegExp("div:?"))) {
         part = part.replaceAll(RegExp("div:?"), "").trim();
-        query.where((s) => s.division.like("%" + part + "%"));
+        query.where((s) => s.division.lower().like("%" + part + "%"));
+      }
+      // search for division
+      if (part.startsWith(RegExp("nam:?"))) {
+        part = part.replaceAll(RegExp("nam:?"), "").trim();
+        query.where((s) => s.name.lower().like("%" + part + "%"));
       }
       // search for object's creator
       else if (part.startsWith(RegExp("cre:?"))) {
         part = part.replaceAll(RegExp("cre:?"), "").trim();
-        query.where((s) => s.creator.like("%" + part + "%"));
+        query.where((s) => s.creator.lower().like("%" + part + "%"));
       }
       // search for object's art type
       else if (part.startsWith(RegExp("art:?"))) {
         part = part.replaceAll(RegExp("art:?"), "").trim();
-        query.where((s) => s.artType.like("%" + part + "%"));
+        query.where((s) => s.artType.lower().like("%" + part + "%"));
       }
       // search for object's material
       else if (part.startsWith(RegExp("mat:?"))) {
         part = part.replaceAll(RegExp("mat:?"), "").trim();
-        query.where((s) => s.material.like("%" + part + "%"));
+        query.where((s) => s.material.lower().like("%" + part + "%"));
       }
       // search for object's inv number
       else if (part.startsWith(RegExp("inv:?"))) {
         part = part.replaceAll(RegExp("inv:?"), "").trim();
-        query.where((s) => s.id.like(part + "%"));
+        query.where((s) => s.id.lower().like(part + "%"));
       }
       // search in the object's name and division
       else
         query.where((s) =>
-            s.name.like("%" + part + "%") | s.division.like("%" + part + "%"));
+            s.name.lower().like("%" + part + "%") |
+            s.division.lower().like("%" + part + "%"));
     }
 
     return query.watch();
