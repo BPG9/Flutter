@@ -21,10 +21,11 @@ class TourWithStops {
   final String searchId;
   final List<ActualStop> stops;
 
-  TourWithStops(Tour t, this.stops, {this.searchId})
+  TourWithStops(Tour t, this.stops)
       : id = t.id,
         author = t.author,
-        onlineId = t.onlineId {
+        onlineId = t.onlineId,
+  searchId = t.searchId {
     this.name.text = t.name;
     this.descr.text = t.desc;
     difficulty = t.difficulty;
@@ -50,6 +51,10 @@ class TourWithStops {
       difficulty: Value(difficulty),
       creationTime: Value(creationTime),
       onlineId: Value(onlineId ?? ""),
+      searchId: Value(searchId ?? author.substring(0, min(3, author.length)) +
+          name.text.substring(0, min(4, name.text.length)) +
+          (name.text.length + difficulty).toString() +
+          id?.toString() ?? ""),
       desc: Value(descr.text),
       id: Value.absent(),
     );//.createCompanion(nullToAbsent);

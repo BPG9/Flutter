@@ -73,6 +73,8 @@ class Tours extends Table {
 
   TextColumn get onlineId => text()();
 
+  TextColumn get searchId => text()();
+
   TextColumn get name =>
       text().withLength(min: MIN_TOURNAME, max: MAX_TOURNAME)();
 
@@ -994,7 +996,7 @@ class MuseumDatabase extends _$MuseumDatabase {
             (o.name.length + o.difficulty).toString() +
             o.id.toString();
         mutation = MutationBackend.createTour(
-            token, o.name, o.desc, o.difficulty.toInt(), id);
+            token, o.name, o.desc, o.difficulty.toInt(), o.searchId);
       } else if (tourId == null) {
         continue;
       } else if (o is List &&
@@ -1160,6 +1162,7 @@ class MuseumDatabase extends _$MuseumDatabase {
         Tour t = Tour(
             id: -1,
             onlineId: m["id"],
+            searchId: m["searchId"],
             name: m["name"],
             author: author,
             difficulty: m["difficulty"].toDouble(),
@@ -1221,7 +1224,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     print("AAA");
     if (tour == null || tour.stops.isEmpty) return Future.value(false);
 
-    print(tour.id.toString() + tour.name.text + tour.author + tour.descr.text);
+    print("ID: "+tour.id.toString() +" Name: "+ tour.name.text +" Search: "+ tour.searchId);
     for (var s in tour.stops) {
       print(s.stop.name);
       print("EXTRA[" +

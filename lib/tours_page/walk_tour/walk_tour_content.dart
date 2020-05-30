@@ -111,7 +111,7 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
                       Text(
                         stop.descr,
                         maxLines: 5,
-                        textAlign: TextAlign.justify,
+                        textAlign: TextAlign.left,
                         style: TextStyle(fontSize: 18),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -123,7 +123,7 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
                     children: [
                       SelectableText(
                         stop.descr,
-                        textAlign: TextAlign.justify,
+                        textAlign: TextAlign.left,
                         style: TextStyle(fontSize: 18),
                       ),
                       _expButton("Weniger anzeigen"),

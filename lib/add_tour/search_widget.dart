@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:museum_app/database/moor_db.dart';
 import 'package:popup_menu/popup_menu.dart';
-import 'package:speech_bubble/speech_bubble.dart';
 
 import '../SizeConfig.dart';
 import '../constants.dart';

@@ -106,19 +106,7 @@ class _TourListState extends State<TourList> {
 
   Widget _toursFromList(List<TourWithStops> list) {
     return Column(
-      children: list
-          .map((t) => border(
-                Row(
-                  children: [
-                    _pictureLeft(t.stops[0], Size(30, size(26, 57)),
-                        margin: EdgeInsets.only(right: 10)),
-                    _infoRight(t),
-                  ],
-                ),
-                margin: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                borderColor: COLOR_TOUR,
-              ))
-          .toList(),
+      children: list.map((t) => _TourPanel(t, COLOR_TOUR)).toList(),
     );
   }
 
@@ -179,6 +167,182 @@ Widget _pictureLeft(ActualStop stop, Size s, {margin = EdgeInsets.zero}) {
           : Container(),
     ),
   );
+}
+
+enum PanelType { DOWNLOAD, SHOW }
+
+class _TourPanel extends StatelessWidget {
+  final TourWithStops _tour;
+  final Color _color;
+  final PanelType type;
+  final bool delete;
+
+  const _TourPanel(this._tour, this._color,
+      {this.type = PanelType.SHOW, this.delete = false, Key key})
+      : super(key: key);
+
+  Widget _textBox(String text, Size s,
+      {fontStyle = FontStyle.normal,
+      fontWeight = FontWeight.normal,
+      textAlign = TextAlign.left,
+      textColor = Colors.black,
+      int maxLines = 2,
+      Alignment alignment = Alignment.bottomLeft,
+      margin = const EdgeInsets.all(0),
+      double fontSize = 15.0}) {
+    return Container(
+      margin: margin,
+      width: SizeConfig.safeBlockHorizontal * s.width,
+      height: SizeConfig.safeBlockVertical * s.height,
+      alignment: alignment,
+      child: Text(
+        text,
+        textAlign: textAlign,
+        style: TextStyle(
+          color: textColor,
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+          fontStyle: fontStyle,
+        ),
+        maxLines: maxLines,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  void _showTour(context) {
+    showGeneralDialog(
+      barrierColor: Colors.grey.withOpacity(0.7),
+      barrierDismissible: true,
+      barrierLabel: '',
+      transitionDuration: Duration(milliseconds: 270),
+      context: context,
+      transitionBuilder: (context, a1, a2, widget) => Transform.scale(
+        scale: a1.value,
+        child: Opacity(
+          opacity: a1.value,
+          child: _TourPopUp(_tour),
+        ),
+      ),
+      pageBuilder: (context, animation1, animation2) {},
+    );
+  }
+
+  void _download(context) async {
+    String s;
+    if (await MuseumDatabase()
+        .joinAndDownloadTour(_tour.onlineId, searchId: false))
+      s = "Tour heruntergeladen!";
+    else
+      s = "Tour konnte nicht heruntergeladen werden...";
+    Scaffold.of(context).showSnackBar(SnackBar(content: Text(s)));
+  }
+
+  Widget _infoRight(context) {
+    return Expanded(
+      //width: horSize(50, 55),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _textBox(
+            _tour.name.text,
+            Size(size(90, 80), size(7.5, 11)),
+            margin: EdgeInsets.only(bottom: 3),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            maxLines: 2,
+          ),
+          //_tourName(t),
+          Text(
+            "von " + _tour.author,
+            maxLines: 1,
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontSize: size(14, 15),
+            ),
+          ),
+          //_tourAuthor(t),
+          Container(
+            height: verSize(4, 5),
+            child: Row(
+              children: [
+                _tour.getRating(
+                    color: _color, color2: Colors.grey, size: horSize(5, 3.5)),
+                //Container(width: horSize(1, 3)),
+                _tour.buildTime(color: _color),
+              ],
+            ),
+          ),
+          _textBox(_tour.descr.text, Size(size(50, 80), size(7, 18)),
+              textAlign: TextAlign.justify,
+              fontSize: size(13, 15),
+              maxLines: 3,
+              alignment: Alignment.topLeft),
+          (_tour.searchId != null && _tour.searchId != ""
+              ? Text(
+                  "Such-ID: " + _tour.searchId,
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                )
+              : Container()),
+          _buttons(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buttons(context) {
+    var main;
+    switch (this.type) {
+      case PanelType.SHOW:
+        main = FlatButton(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          color: _color,
+          child: Text("Anzeigen",
+              style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
+          onPressed: () => _showTour(context),
+        );
+        break;
+      case PanelType.DOWNLOAD:
+        main = FlatButton(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          color: _color,
+          child: Text("Download",
+              style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
+          onPressed: () => _download(context),
+        );
+    }
+
+    //TODO implement delete
+    var delete = this.delete
+        ? FlatButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            color: COLOR_TOUR,
+            child: Text("Löschen",
+                style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
+            onPressed: () {},
+          )
+        : Container();
+
+    return Row(children: <Widget>[main, Container(width: 5), delete]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return border(
+      Row(
+        children: [
+          _pictureLeft(_tour.stops[0], Size(30, size(29, 57)),
+              margin: EdgeInsets.only(right: 10)),
+          _infoRight(context),
+        ],
+      ),
+      margin: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+      borderColor: _color,
+    );
+  }
 }
 
 class _TourPopUp extends StatefulWidget {
@@ -463,19 +627,22 @@ class _DownloadColumnState extends State<DownloadColumn> {
     for (var m in d[d.keys.first] ?? []) {
       Tour t = Tour(
           onlineId: m["id"],
+          searchId: widget.showSearchId ? m["searchId"] : null,
           name: m["name"],
           author: m["owner"]["username"],
           difficulty: m["difficulty"].toDouble(),
           desc: m["description"],
           creationTime: DateTime.parse(m["creation"]));
-      _list.add(TourWithStops(t, <ActualStop>[],
-          searchId: widget.showSearchId ? m["searchId"] : null));
+      //TODO parse first image
+      _list.add(TourWithStops(t, <ActualStop>[ActualStop.custom()]));
     }
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    for (var t in _list)
+      print(t.name.text);
     List<Widget> children = _list
         .where((t) {
           String srch = widget.search.toLowerCase();
@@ -483,7 +650,7 @@ class _DownloadColumnState extends State<DownloadColumn> {
           //title = title.substring(0, min(title.length, srch.length));
           return title.contains(srch);
         })
-        .map((t) => _DownloadPanel(t, color: widget.color))
+        .map((t) => _TourPanel(t, widget.color, type: PanelType.DOWNLOAD))
         .toList();
     if (_loading) {
       _loading = false;

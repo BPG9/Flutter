@@ -81,35 +81,6 @@ class User extends DataClass implements Insertable<User> {
     return map;
   }
 
-  UsersCompanion toCompanion(bool nullToAbsent) {
-    return UsersCompanion(
-      producer: producer == null && nullToAbsent
-          ? const Value.absent()
-          : Value(producer),
-      accessToken: accessToken == null && nullToAbsent
-          ? const Value.absent()
-          : Value(accessToken),
-      refreshToken: refreshToken == null && nullToAbsent
-          ? const Value.absent()
-          : Value(refreshToken),
-      username: username == null && nullToAbsent
-          ? const Value.absent()
-          : Value(username),
-      imgPath: imgPath == null && nullToAbsent
-          ? const Value.absent()
-          : Value(imgPath),
-      favStops: favStops == null && nullToAbsent
-          ? const Value.absent()
-          : Value(favStops),
-      favTours: favTours == null && nullToAbsent
-          ? const Value.absent()
-          : Value(favTours),
-      onboardEnd: onboardEnd == null && nullToAbsent
-          ? const Value.absent()
-          : Value(onboardEnd),
-    );
-  }
-
   factory User.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -530,22 +501,6 @@ class Badge extends DataClass implements Insertable<Badge> {
     return map;
   }
 
-  BadgesCompanion toCompanion(bool nullToAbsent) {
-    return BadgesCompanion(
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      current: current == null && nullToAbsent
-          ? const Value.absent()
-          : Value(current),
-      toGet:
-          toGet == null && nullToAbsent ? const Value.absent() : Value(toGet),
-      color:
-          color == null && nullToAbsent ? const Value.absent() : Value(color),
-      imgPath: imgPath == null && nullToAbsent
-          ? const Value.absent()
-          : Value(imgPath),
-    );
-  }
-
   factory Badge.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -893,37 +848,6 @@ class Stop extends DataClass implements Insertable<Stop> {
       map['inter_context'] = Variable<String>(interContext);
     }
     return map;
-  }
-
-  StopsCompanion toCompanion(bool nullToAbsent) {
-    return StopsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      images:
-          images == null && nullToAbsent ? const Value.absent() : Value(images),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      descr:
-          descr == null && nullToAbsent ? const Value.absent() : Value(descr),
-      time: time == null && nullToAbsent ? const Value.absent() : Value(time),
-      creator: creator == null && nullToAbsent
-          ? const Value.absent()
-          : Value(creator),
-      division: division == null && nullToAbsent
-          ? const Value.absent()
-          : Value(division),
-      artType: artType == null && nullToAbsent
-          ? const Value.absent()
-          : Value(artType),
-      material: material == null && nullToAbsent
-          ? const Value.absent()
-          : Value(material),
-      size: size == null && nullToAbsent ? const Value.absent() : Value(size),
-      location: location == null && nullToAbsent
-          ? const Value.absent()
-          : Value(location),
-      interContext: interContext == null && nullToAbsent
-          ? const Value.absent()
-          : Value(interContext),
-    );
   }
 
   factory Stop.fromJson(Map<String, dynamic> json,
@@ -1470,14 +1394,6 @@ class Division extends DataClass implements Insertable<Division> {
     return map;
   }
 
-  DivisionsCompanion toCompanion(bool nullToAbsent) {
-    return DivisionsCompanion(
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      color:
-          color == null && nullToAbsent ? const Value.absent() : Value(color),
-    );
-  }
-
   factory Division.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -1628,7 +1544,6 @@ class $DivisionsTable extends Divisions
 class Tour extends DataClass implements Insertable<Tour> {
   final int id;
   final String onlineId;
-  final String searchId;
   final String name;
   final String author;
   final double difficulty;
@@ -1637,7 +1552,6 @@ class Tour extends DataClass implements Insertable<Tour> {
   Tour(
       {@required this.id,
       @required this.onlineId,
-      @required this.searchId,
       @required this.name,
       @required this.author,
       @required this.difficulty,
@@ -1654,8 +1568,6 @@ class Tour extends DataClass implements Insertable<Tour> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       onlineId: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}online_id']),
-      searchId: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}search_id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
       author:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}author']),
@@ -1675,9 +1587,6 @@ class Tour extends DataClass implements Insertable<Tour> {
     if (!nullToAbsent || onlineId != null) {
       map['online_id'] = Variable<String>(onlineId);
     }
-    if (!nullToAbsent || searchId != null) {
-      map['search_id'] = Variable<String>(searchId);
-    }
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
@@ -1696,35 +1605,12 @@ class Tour extends DataClass implements Insertable<Tour> {
     return map;
   }
 
-  ToursCompanion toCompanion(bool nullToAbsent) {
-    return ToursCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      onlineId: onlineId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(onlineId),
-      searchId: searchId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(searchId),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      author:
-          author == null && nullToAbsent ? const Value.absent() : Value(author),
-      difficulty: difficulty == null && nullToAbsent
-          ? const Value.absent()
-          : Value(difficulty),
-      creationTime: creationTime == null && nullToAbsent
-          ? const Value.absent()
-          : Value(creationTime),
-      desc: desc == null && nullToAbsent ? const Value.absent() : Value(desc),
-    );
-  }
-
   factory Tour.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Tour(
       id: serializer.fromJson<int>(json['id']),
       onlineId: serializer.fromJson<String>(json['onlineId']),
-      searchId: serializer.fromJson<String>(json['searchId']),
       name: serializer.fromJson<String>(json['name']),
       author: serializer.fromJson<String>(json['author']),
       difficulty: serializer.fromJson<double>(json['difficulty']),
@@ -1738,7 +1624,6 @@ class Tour extends DataClass implements Insertable<Tour> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'onlineId': serializer.toJson<String>(onlineId),
-      'searchId': serializer.toJson<String>(searchId),
       'name': serializer.toJson<String>(name),
       'author': serializer.toJson<String>(author),
       'difficulty': serializer.toJson<double>(difficulty),
@@ -1750,7 +1635,6 @@ class Tour extends DataClass implements Insertable<Tour> {
   Tour copyWith(
           {int id,
           String onlineId,
-          String searchId,
           String name,
           String author,
           double difficulty,
@@ -1759,7 +1643,6 @@ class Tour extends DataClass implements Insertable<Tour> {
       Tour(
         id: id ?? this.id,
         onlineId: onlineId ?? this.onlineId,
-        searchId: searchId ?? this.searchId,
         name: name ?? this.name,
         author: author ?? this.author,
         difficulty: difficulty ?? this.difficulty,
@@ -1771,7 +1654,6 @@ class Tour extends DataClass implements Insertable<Tour> {
     return (StringBuffer('Tour(')
           ..write('id: $id, ')
           ..write('onlineId: $onlineId, ')
-          ..write('searchId: $searchId, ')
           ..write('name: $name, ')
           ..write('author: $author, ')
           ..write('difficulty: $difficulty, ')
@@ -1787,20 +1669,17 @@ class Tour extends DataClass implements Insertable<Tour> {
       $mrjc(
           onlineId.hashCode,
           $mrjc(
-              searchId.hashCode,
+              name.hashCode,
               $mrjc(
-                  name.hashCode,
-                  $mrjc(
-                      author.hashCode,
-                      $mrjc(difficulty.hashCode,
-                          $mrjc(creationTime.hashCode, desc.hashCode))))))));
+                  author.hashCode,
+                  $mrjc(difficulty.hashCode,
+                      $mrjc(creationTime.hashCode, desc.hashCode)))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Tour &&
           other.id == this.id &&
           other.onlineId == this.onlineId &&
-          other.searchId == this.searchId &&
           other.name == this.name &&
           other.author == this.author &&
           other.difficulty == this.difficulty &&
@@ -1811,7 +1690,6 @@ class Tour extends DataClass implements Insertable<Tour> {
 class ToursCompanion extends UpdateCompanion<Tour> {
   final Value<int> id;
   final Value<String> onlineId;
-  final Value<String> searchId;
   final Value<String> name;
   final Value<String> author;
   final Value<double> difficulty;
@@ -1820,7 +1698,6 @@ class ToursCompanion extends UpdateCompanion<Tour> {
   const ToursCompanion({
     this.id = const Value.absent(),
     this.onlineId = const Value.absent(),
-    this.searchId = const Value.absent(),
     this.name = const Value.absent(),
     this.author = const Value.absent(),
     this.difficulty = const Value.absent(),
@@ -1830,14 +1707,12 @@ class ToursCompanion extends UpdateCompanion<Tour> {
   ToursCompanion.insert({
     this.id = const Value.absent(),
     @required String onlineId,
-    @required String searchId,
     @required String name,
     @required String author,
     @required double difficulty,
     @required DateTime creationTime,
     @required String desc,
   })  : onlineId = Value(onlineId),
-        searchId = Value(searchId),
         name = Value(name),
         author = Value(author),
         difficulty = Value(difficulty),
@@ -1846,7 +1721,6 @@ class ToursCompanion extends UpdateCompanion<Tour> {
   static Insertable<Tour> custom({
     Expression<int> id,
     Expression<String> onlineId,
-    Expression<String> searchId,
     Expression<String> name,
     Expression<String> author,
     Expression<double> difficulty,
@@ -1856,7 +1730,6 @@ class ToursCompanion extends UpdateCompanion<Tour> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (onlineId != null) 'online_id': onlineId,
-      if (searchId != null) 'search_id': searchId,
       if (name != null) 'name': name,
       if (author != null) 'author': author,
       if (difficulty != null) 'difficulty': difficulty,
@@ -1868,7 +1741,6 @@ class ToursCompanion extends UpdateCompanion<Tour> {
   ToursCompanion copyWith(
       {Value<int> id,
       Value<String> onlineId,
-      Value<String> searchId,
       Value<String> name,
       Value<String> author,
       Value<double> difficulty,
@@ -1877,7 +1749,6 @@ class ToursCompanion extends UpdateCompanion<Tour> {
     return ToursCompanion(
       id: id ?? this.id,
       onlineId: onlineId ?? this.onlineId,
-      searchId: searchId ?? this.searchId,
       name: name ?? this.name,
       author: author ?? this.author,
       difficulty: difficulty ?? this.difficulty,
@@ -1894,9 +1765,6 @@ class ToursCompanion extends UpdateCompanion<Tour> {
     }
     if (onlineId.present) {
       map['online_id'] = Variable<String>(onlineId.value);
-    }
-    if (searchId.present) {
-      map['search_id'] = Variable<String>(searchId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -1937,18 +1805,6 @@ class $ToursTable extends Tours with TableInfo<$ToursTable, Tour> {
   GeneratedTextColumn _constructOnlineId() {
     return GeneratedTextColumn(
       'online_id',
-      $tableName,
-      false,
-    );
-  }
-
-  final VerificationMeta _searchIdMeta = const VerificationMeta('searchId');
-  GeneratedTextColumn _searchId;
-  @override
-  GeneratedTextColumn get searchId => _searchId ??= _constructSearchId();
-  GeneratedTextColumn _constructSearchId() {
-    return GeneratedTextColumn(
-      'search_id',
       $tableName,
       false,
     );
@@ -2018,7 +1874,7 @@ class $ToursTable extends Tours with TableInfo<$ToursTable, Tour> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, onlineId, searchId, name, author, difficulty, creationTime, desc];
+      [id, onlineId, name, author, difficulty, creationTime, desc];
   @override
   $ToursTable get asDslTable => this;
   @override
@@ -2038,12 +1894,6 @@ class $ToursTable extends Tours with TableInfo<$ToursTable, Tour> {
           onlineId.isAcceptableOrUnknown(data['online_id'], _onlineIdMeta));
     } else if (isInserting) {
       context.missing(_onlineIdMeta);
-    }
-    if (data.containsKey('search_id')) {
-      context.handle(_searchIdMeta,
-          searchId.isAcceptableOrUnknown(data['search_id'], _searchIdMeta));
-    } else if (isInserting) {
-      context.missing(_searchIdMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -2127,18 +1977,6 @@ class TourStop extends DataClass implements Insertable<TourStop> {
       map['id_stop'] = Variable<String>(id_stop);
     }
     return map;
-  }
-
-  TourStopsCompanion toCompanion(bool nullToAbsent) {
-    return TourStopsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      id_tour: id_tour == null && nullToAbsent
-          ? const Value.absent()
-          : Value(id_tour),
-      id_stop: id_stop == null && nullToAbsent
-          ? const Value.absent()
-          : Value(id_stop),
-    );
   }
 
   factory TourStop.fromJson(Map<String, dynamic> json,
@@ -2395,33 +2233,6 @@ class Extra extends DataClass implements Insertable<Extra> {
       map['answer_cor'] = Variable<String>(converter.mapToSql(answerCor));
     }
     return map;
-  }
-
-  ExtrasCompanion toCompanion(bool nullToAbsent) {
-    return ExtrasCompanion(
-      pos_extra: pos_extra == null && nullToAbsent
-          ? const Value.absent()
-          : Value(pos_extra),
-      pos_stop: pos_stop == null && nullToAbsent
-          ? const Value.absent()
-          : Value(pos_stop),
-      id_tour: id_tour == null && nullToAbsent
-          ? const Value.absent()
-          : Value(id_tour),
-      id_stop: id_stop == null && nullToAbsent
-          ? const Value.absent()
-          : Value(id_stop),
-      textInfo: textInfo == null && nullToAbsent
-          ? const Value.absent()
-          : Value(textInfo),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
-      answerOpt: answerOpt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(answerOpt),
-      answerCor: answerCor == null && nullToAbsent
-          ? const Value.absent()
-          : Value(answerCor),
-    );
   }
 
   factory Extra.fromJson(Map<String, dynamic> json,
@@ -2852,27 +2663,6 @@ class StopFeature extends DataClass implements Insertable<StopFeature> {
       map['show_details'] = Variable<bool>(showDetails);
     }
     return map;
-  }
-
-  StopFeaturesCompanion toCompanion(bool nullToAbsent) {
-    return StopFeaturesCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      id_tour: id_tour == null && nullToAbsent
-          ? const Value.absent()
-          : Value(id_tour),
-      id_stop: id_stop == null && nullToAbsent
-          ? const Value.absent()
-          : Value(id_stop),
-      showImages: showImages == null && nullToAbsent
-          ? const Value.absent()
-          : Value(showImages),
-      showText: showText == null && nullToAbsent
-          ? const Value.absent()
-          : Value(showText),
-      showDetails: showDetails == null && nullToAbsent
-          ? const Value.absent()
-          : Value(showDetails),
-    );
   }
 
   factory StopFeature.fromJson(Map<String, dynamic> json,
