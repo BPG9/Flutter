@@ -133,10 +133,16 @@ class _EditSingleStopState extends State<EditSingleStop> {
         ),
         actions: [
           FlatButton(
+            onPressed: () => MuseumSearch.showHintScreen(context),
+            splashColor: COLOR_ADD.withOpacity(.25),
+            child: Text("Hilfe?!", style: TextStyle(color: COLOR_ADD)),
+          ),
+          Container(width: horSize(25, 50)),
+          FlatButton(
             onPressed: () => Navigator.pop(context),
             splashColor: COLOR_ADD.withOpacity(.25),
             child: Text("Schließen", style: TextStyle(color: COLOR_ADD)),
-          )
+          ),
         ],
       ),
     );

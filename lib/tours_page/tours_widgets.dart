@@ -650,7 +650,7 @@ class _DownloadColumnState extends State<DownloadColumn> {
           //title = title.substring(0, min(title.length, srch.length));
           return title.contains(srch);
         })
-        .map((t) => _TourPanel(t, widget.color, type: PanelType.DOWNLOAD))
+        .map((t) => _TourPanel(t, widget.color, type: PanelType.DOWNLOAD, delete: true))
         .toList();
     if (_loading) {
       _loading = false;
