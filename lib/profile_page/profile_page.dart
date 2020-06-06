@@ -102,6 +102,7 @@ class _ProfileState extends State<Profile> {
               QueryBackend.created,
               notFoundText: "\n\nSie haben noch keine Touren erstellt.",
               showSearchId: true,
+              deleteTour: true,
             ),
             "Erfolge": BadgeWidget(),
           },

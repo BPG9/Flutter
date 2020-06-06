@@ -56,7 +56,7 @@ class _ToursState extends State<Tours> {
   Widget _allTours() {
     return Column(children: <Widget>[
       Container(
-        margin: EdgeInsets.only(left: 16, right: 16),
+        margin: EdgeInsets.only(left: 16, right: 16, bottom: 16),
         padding: EdgeInsets.symmetric(horizontal: 15),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black),

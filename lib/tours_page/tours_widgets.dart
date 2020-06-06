@@ -12,137 +12,6 @@ import 'package:museum_app/graphql/graphqlConf.dart';
 import 'package:museum_app/graphql/query.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour.dart';
 
-class TourList extends StatefulWidget {
-  final List<TourWithStops> tours;
-
-  TourList.fromList(this.tours, {Key key}) : super(key: key);
-
-  TourList.downloaded() : tours = null;
-
-  @override
-  _TourListState createState() => _TourListState();
-}
-
-class _TourListState extends State<TourList> {
-  Widget _infoRight(TourWithStops t) => Expanded(
-        //width: horSize(50, 55),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _textBox(
-              t.name.text,
-              Size(size(50, 80), size(6, 11)),
-              margin: EdgeInsets.only(bottom: 3),
-              fontSize: 22.0,
-              fontWeight: FontWeight.bold,
-            ),
-            //_tourName(t),
-            Text(
-              "von " + t.author,
-              maxLines: 1,
-              style: TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: size(14, 15),
-              ),
-            ),
-            //_tourAuthor(t),
-            Container(
-              height: verSize(4, 5),
-              child: Row(
-                children: [
-                  t.getRating(
-                      color: COLOR_TOUR,
-                      color2: Colors.grey,
-                      size: horSize(5, 3.5)),
-                  //Container(width: horSize(1, 3)),
-                  t.buildTime(),
-                ],
-              ),
-            ),
-            _textBox(
-              t.descr.text,
-              Size(size(50, 80), size(7, 18)),
-              textAlign: TextAlign.justify,
-              fontSize: size(13, 15),
-            ),
-            //_tourDescr(t),
-            //width: verSize(30, 30),
-            FlatButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-              color: COLOR_TOUR,
-              child: Text("Anzeigen ",
-                  style:
-                      TextStyle(fontSize: size(14, 17), color: Colors.white)),
-              onPressed: () => _showTour(t),
-            ),
-          ],
-        ),
-      );
-
-  Widget _textBox(String text, Size s,
-          {fontStyle = FontStyle.normal,
-          fontWeight = FontWeight.normal,
-          textAlign = TextAlign.left,
-          textColor = Colors.black,
-          margin = const EdgeInsets.all(0),
-          fontSize = 15.0}) =>
-      Container(
-        margin: margin,
-        width: SizeConfig.safeBlockHorizontal * s.width,
-        height: SizeConfig.safeBlockVertical * s.height,
-        child: Text(
-          text,
-          textAlign: textAlign,
-          style: TextStyle(
-            color: textColor,
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-            fontStyle: fontStyle,
-          ),
-          overflow: TextOverflow.fade,
-        ),
-      );
-
-  Widget _toursFromList(List<TourWithStops> list) {
-    return Column(
-      children: list.map((t) => _TourPanel(t, COLOR_TOUR)).toList(),
-    );
-  }
-
-  void _showTour(TourWithStops t) {
-    showGeneralDialog(
-      barrierColor: Colors.grey.withOpacity(0.7),
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: Duration(milliseconds: 270),
-      context: context,
-      transitionBuilder: (context, a1, a2, widget) => Transform.scale(
-        scale: a1.value,
-        child: Opacity(
-          opacity: a1.value,
-          child: _TourPopUp(t),
-        ),
-      ),
-      pageBuilder: (context, animation1, animation2) {},
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    if (widget.tours != null) return _toursFromList(widget.tours);
-
-    return StreamBuilder(
-      stream: MuseumDatabase().getTourStops(),
-      builder: (context, snap) {
-        List<TourWithStops> tours = snap.data ?? List<TourWithStops>();
-        return _toursFromList(tours);
-      },
-    );
-  }
-}
-
 Widget _pictureLeft(ActualStop stop, Size s, {margin = EdgeInsets.zero}) {
   String path = stop.stop != null && stop.stop.images.isNotEmpty
       ? stop.stop.images[0]
@@ -171,14 +40,21 @@ Widget _pictureLeft(ActualStop stop, Size s, {margin = EdgeInsets.zero}) {
 
 enum PanelType { DOWNLOAD, SHOW }
 
+/// A single Panel containing infos about a tour
 class _TourPanel extends StatelessWidget {
   final TourWithStops _tour;
   final Color _color;
   final PanelType type;
   final bool delete;
+  final bool showAuthor;
+  final bool showID;
 
   const _TourPanel(this._tour, this._color,
-      {this.type = PanelType.SHOW, this.delete = false, Key key})
+      {this.type = PanelType.SHOW,
+      this.delete = false,
+      Key key,
+      this.showAuthor = true,
+      this.showID = true})
       : super(key: key);
 
   Widget _textBox(String text, Size s,
@@ -252,16 +128,16 @@ class _TourPanel extends StatelessWidget {
             fontWeight: FontWeight.bold,
             maxLines: 2,
           ),
-          //_tourName(t),
-          Text(
-            "von " + _tour.author,
-            maxLines: 1,
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              fontSize: size(14, 15),
-            ),
-          ),
-          //_tourAuthor(t),
+          showAuthor
+              ? Text(
+                  "von " + _tour.author,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: size(14, 15),
+                  ),
+                )
+              : Container(),
           Container(
             height: verSize(4, 5),
             child: Row(
@@ -278,8 +154,8 @@ class _TourPanel extends StatelessWidget {
               fontSize: size(13, 15),
               maxLines: 3,
               alignment: Alignment.topLeft),
-          (_tour.searchId != null && _tour.searchId != ""
-              ? Text(
+          (showID && _tour.searchId != null && _tour.searchId != ""
+              ? SelectableText(
                   "Such-ID: " + _tour.searchId,
                   style: TextStyle(fontStyle: FontStyle.italic),
                 )
@@ -319,7 +195,7 @@ class _TourPanel extends StatelessWidget {
         ? FlatButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
-            color: COLOR_TOUR,
+            color: _color,
             child: Text("Löschen",
                 style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
             onPressed: () {},
@@ -345,6 +221,7 @@ class _TourPanel extends StatelessWidget {
   }
 }
 
+/// The Popup after clicking "Anzeigen"
 class _TourPopUp extends StatefulWidget {
   final TourWithStops tour;
 
@@ -509,72 +386,36 @@ class _TourPopUpState extends State<_TourPopUp> {
   }
 }
 
-class _DownloadPanel extends StatelessWidget {
-  final Color color;
-  final TourWithStops tour;
+class TourList extends StatefulWidget {
+  final List<TourWithStops> tours;
 
-  const _DownloadPanel(this.tour, {Key key, this.color}) : super(key: key);
+  TourList.fromList(this.tours, {Key key}) : super(key: key);
+
+  TourList.downloaded() : tours = null;
+
+  @override
+  _TourListState createState() => _TourListState();
+}
+
+class _TourListState extends State<TourList> {
+
+  Widget _toursFromList(List<TourWithStops> list) {
+    return Column(
+      children: list.map((t) => _TourPanel(t, COLOR_TOUR)).toList(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 15),
-      child: border(
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              width: horSize(100, 100),
-              child: Text(
-                tour.name.text,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: tour.getRating(
-                    color2: Colors.black.withOpacity(.5),
-                    size: horSize(7.5, 4),
-                  ),
-                ),
-                tour.buildTime(color: Colors.black, scale: 1.2)
-              ],
-            ),
-            Text(
-              tour.descr.text,
-              maxLines: 3,
-            ),
-            (tour.searchId != null
-                ? Text(
-                    "Such-ID: " + tour.searchId,
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  )
-                : Container()),
-            FlatButton(
-              color: color,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(9)),
-              onPressed: () async {
-                String s;
-                if (await MuseumDatabase()
-                    .joinAndDownloadTour(tour.onlineId, searchId: false))
-                  s = "Tour heruntergeladen!";
-                else
-                  s = "Tour konnte nicht heruntergeladen werden...";
-                Scaffold.of(context).showSnackBar(SnackBar(content: Text(s)));
-              },
-              child: Text("Download", style: TextStyle(color: Colors.white)),
-            )
-          ],
-        ),
-        width: horSize(100, 100),
-        //height: verSize(19, 10),
-        padding: EdgeInsets.only(left: 16, right: 16, top: 8),
-        margin: EdgeInsets.only(bottom: 19),
-        borderColor: color,
-      ),
+    SizeConfig().init(context);
+    if (widget.tours != null) return _toursFromList(widget.tours);
+
+    return StreamBuilder(
+      stream: MuseumDatabase().getTourStops(),
+      builder: (context, snap) {
+        List<TourWithStops> tours = snap.data ?? List<TourWithStops>();
+        return _toursFromList(tours);
+      },
     );
   }
 }
@@ -585,13 +426,15 @@ class DownloadColumn extends StatefulWidget {
   final String search;
   final String notFoundText;
   final bool showSearchId;
+  final bool deleteTour;
 
   DownloadColumn(this.query,
       {Key key,
       this.showSearchId = false,
       this.color = COLOR_PROFILE,
       this.search = "",
-      this.notFoundText = "\n\nEs konnten keine Touren gefunden werden."})
+      this.notFoundText = "\n\nEs konnten keine Touren gefunden werden.",
+      this.deleteTour = false})
       : super(key: key);
 
   @override
@@ -624,6 +467,9 @@ class _DownloadColumnState extends State<DownloadColumn> {
     _loading = result.loading;
     _list.clear();
     var d = result.data;
+
+    List<Stop> allStops = await MuseumDatabase().getStops();
+
     for (var m in d[d.keys.first] ?? []) {
       Tour t = Tour(
           onlineId: m["id"],
@@ -633,16 +479,32 @@ class _DownloadColumnState extends State<DownloadColumn> {
           difficulty: m["difficulty"].toDouble(),
           desc: m["description"],
           creationTime: DateTime.parse(m["creation"]));
-      //TODO parse first image
-      _list.add(TourWithStops(t, <ActualStop>[ActualStop.custom()]));
+
+      // Add the first used Stop (for its image)
+      QueryResult stopResult = await _client.query(QueryOptions(
+        documentNode: gql(QueryBackend.checkpointTour(token, m["id"])),
+      ));
+      if (result.hasException)
+        print("EXC_downColumnStop: ${result.exception.toString()}");
+
+      List<dynamic> checkpoints = stopResult.data["checkpointsTour"];
+      if (checkpoints.isEmpty) continue;
+      var firstStop = checkpoints.where((s) => s["index"] == 1).toList()[0];
+
+      Stop s = allStops.firstWhere((e) =>
+          e.id ==
+          firstStop["museumObject"][
+              "objectId"]); //await MuseumDatabase().getStop(firstStop["museumObject"]["objectId"]);
+
+      _list.add(
+          TourWithStops(t, <ActualStop>[ActualStop(s, StopFeature(), [])]));
     }
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    for (var t in _list)
-      print(t.name.text);
+    //for (var t in _list) print(t.name.text);
     List<Widget> children = _list
         .where((t) {
           String srch = widget.search.toLowerCase();
@@ -650,7 +512,13 @@ class _DownloadColumnState extends State<DownloadColumn> {
           //title = title.substring(0, min(title.length, srch.length));
           return title.contains(srch);
         })
-        .map((t) => _TourPanel(t, widget.color, type: PanelType.DOWNLOAD, delete: true))
+        .map((t) => _TourPanel(
+              t,
+              widget.color,
+              type: PanelType.DOWNLOAD,
+              delete: widget.deleteTour,
+              showID: widget.showSearchId,
+            ))
         .toList();
     if (_loading) {
       _loading = false;

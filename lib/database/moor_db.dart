@@ -858,6 +858,8 @@ class MuseumDatabase extends _$MuseumDatabase {
 
   Future<List<Stop>> getStops() => select(stops).get();
 
+  Future<Stop> getStop(String id) => (select(stops)..where((s) => s.id.equals(id))).getSingle();
+
   Stream<List<Stop>> stopSearch(String text) {
     if (text.isEmpty) return Stream.value(List<Stop>());
 
