@@ -22,6 +22,7 @@ class _ProfileState extends State<Profile> {
   /// Uses the information provided by [user].
   Widget _topInfo(User user) {
     Widget label = Container();
+    //TODO label sometimes a bit to low -> why?
     if (user.producer)
       label = Positioned(
         top: verSize(16.5, 20, top: true),
@@ -57,7 +58,7 @@ class _ProfileState extends State<Profile> {
                         height: verSize(20, 19),
                         width: verSize(20, 19),
                       )
-                    : QueryBackend.netWorkImage(
+                    : QueryBackend.networkImageWidget(
                         QueryBackend.imageURLProfile(user.imgPath),
                         height: verSize(20, 19),
                         width: verSize(20, 19),

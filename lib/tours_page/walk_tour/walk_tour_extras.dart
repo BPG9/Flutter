@@ -189,8 +189,9 @@ class _TourExtraState extends State<TourExtra> {
                   secondary: widget.result
                       ? Padding(
                           padding: EdgeInsets.only(left: 5),
-                          child:
-                              Icon(t.isCorrect(id) ? Icons.check : Icons.stop))
+                          child: t.isCorrect(id) ?
+                              Icon(Icons.check, color: Colors.green) :
+                              Icon(Icons.stop, color: Colors.red))
                       : null,
                 );
               }).toList() +
@@ -217,8 +218,9 @@ class _TourExtraState extends State<TourExtra> {
                     secondary: widget.result
                         ? Padding(
                             padding: EdgeInsets.only(left: 5),
-                            child: Icon(
-                                t.isCorrect(id) ? Icons.check : Icons.stop))
+                            child: t.isCorrect(id)
+                                ? Icon(Icons.check, color: Colors.green)
+                                : Icon(Icons.stop, color: Colors.red))
                         : null);
               }).toList() +
               [widget.edit ? _addLine(t, false) : Container()],

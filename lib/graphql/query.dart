@@ -5,7 +5,6 @@ import '../constants.dart';
 import 'graphqlConf.dart';
 
 class QueryBackend {
-
   static String allObjects(String token) {
     return """query{
       allObjects(token: "$token"){
@@ -233,7 +232,46 @@ class QueryBackend {
     return "$SERVER_ADDRESS/file/download?type=$type&id=$id";
   }
 
-  static Widget netWorkImage(String url,
+  static Future<ImageProvider> networkImage(String url) async {
+    String token = await MuseumDatabase().accessToken();
+    if (!await GraphQLConfiguration.isConnected(token))
+      token = await MuseumDatabase().refreshAccess();
+
+    if (token == null || token == "") {
+      print("Token Error");
+      return Future.value(Image.asset("assets/images/empty_profile.png").image);
+    }
+
+    return Image.network(
+      url,
+      headers: {"Authorization": "Bearer $token"},
+    ).image;
+  }
+
+  static Widget networkImageWidget(String url,
+      {width = 50, height = 50, fit = BoxFit.cover}) {
+    return FutureBuilder(
+      future: networkImage(url),
+      builder: (context, snap) {
+        ImageProvider image = snap.data;
+
+        if (image == null)
+          return Container(
+            width: width.toDouble(),
+            height: height.toDouble(),
+          );
+
+        return Image(
+          image: image,
+          width: width.toDouble(),
+          height: height.toDouble(),
+          fit: fit,
+        );
+      },
+    );
+  }
+
+  static Widget networkImageWidget2(String url,
       {width = 50, height = 50, fit = BoxFit.cover}) {
     return FutureBuilder(
       future: MuseumDatabase().accessToken(),
@@ -243,11 +281,13 @@ class QueryBackend {
           future: GraphQLConfiguration.isConnected(token),
           builder: (context, snap) {
             bool connected = snap.hasData && snap.data;
-            if (!connected || url.endsWith("&id="))
+            if (!connected || url.endsWith("&id=")) {
+              print("Connection error");
               return Container(
                 width: width.toDouble(),
                 height: height.toDouble(),
               );
+            }
             return Image.network(
               url,
               /*loadingBuilder: (context, b, c) => Image.asset(

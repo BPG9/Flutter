@@ -5,6 +5,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
 import 'package:moor_ffi/moor_ffi.dart';
 import 'package:museum_app/constants.dart';
@@ -1090,7 +1091,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     else {
       String newToken = result.data['refresh'].data["newToken"];
       update(users).write(UsersCompanion(accessToken: Value(newToken)));
-      print("NEW TOKEN");
+      print("NEW TOKEN ${DateFormat("hh:mm:ss").format(DateTime.now())}");
       downloadStops();
       return Future.value(newToken);
     }
@@ -1099,9 +1100,9 @@ class MuseumDatabase extends _$MuseumDatabase {
 
   Future<bool> joinAndDownloadTour(String id, {bool searchId = true}) async {
     String token = await accessToken();
-
-    if (!await GraphQLConfiguration.isConnected(
-        token)) if (await refreshAccess() == "") return Future.value(false);
+    if (!await GraphQLConfiguration.isConnected(token))
+      token = await refreshAccess();
+    if (token == null || token == "") return Future.value(false);
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
 

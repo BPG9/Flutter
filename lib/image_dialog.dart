@@ -80,7 +80,7 @@ class _ImageDialogState extends State<ImageDialog> {
                         Navigator.pop(context);
                       }
                     },
-                    child: QueryBackend.netWorkImage(
+                    child: QueryBackend.networkImageWidget(
                       QueryBackend.imageURLProfile(img),
                       height: verSize(13, 27),
                       width: horSize(23, 16),

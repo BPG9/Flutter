@@ -247,8 +247,8 @@ class _EditSingleStopState extends State<EditSingleStop> {
   void _onTapTask() {
     PopupMenu m = PopupMenu(
       context: context,
-      backgroundColor: COLOR_ADD.shade300,
-      highlightColor: COLOR_ADD.shade400,
+      backgroundColor: COLOR_ADD.withOpacity(.8),
+      highlightColor: COLOR_ADD.withOpacity(.3),
       items: [
         MenuItem(
             title: "Text",

@@ -30,7 +30,7 @@ Widget _pictureLeft(ActualStop stop, Size s, {margin = EdgeInsets.zero}) {
     child: ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(10.0)),
       child: path != ""
-          ? QueryBackend.netWorkImage(
+          ? QueryBackend.networkImageWidget(
               QueryBackend.imageURLPicture(path),
             )
           : Container(),
@@ -455,7 +455,7 @@ class _DownloadColumnState extends State<DownloadColumn> {
     String token = await MuseumDatabase().accessToken();
     if (token == null || token == "") return;
     if (!await GraphQLConfiguration.isConnected(token))
-      await MuseumDatabase().refreshAccess();
+      token = await MuseumDatabase().refreshAccess();
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.query(QueryOptions(
       documentNode: gql(widget.query(token)),

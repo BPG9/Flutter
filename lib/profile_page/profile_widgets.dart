@@ -47,45 +47,57 @@ class _FavWidgetState extends State<FavWidget> {
               itemCount: stops.length,
               // One "bubble"
               itemBuilder: (context, index) {
-                ImageProvider image;
-                try {
-                  image = Image.network(QueryBackend.imageURLPicture(
-                          stops[index].images.first))
-                      .image;
-                } catch (e) {
-                  image = Image.asset("assets/images/empty_profile.png").image;
-                }
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  height: horSize(27, 16),
-                  width: horSize(25.5, 16),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: division.color, width: 3),
-                      shape: BoxShape.circle,
-                      //image: DecorationImage(
-                      //image: AssetImage(image),
-                      //fit: BoxFit.cover,
-                      //),
-                      image: DecorationImage(image: image, fit: BoxFit.cover)),
-                  child: ClipOval(
-                    child: FlatButton(
-                      onPressed: () => _showStop(stops[index]),
-                      splashColor: division.color.withOpacity(.4),
-                      highlightColor: division.color.withOpacity(.2),
-                      /*child: QueryBackend.netWorkImage(
-                        QueryBackend.imageURLPicture(image),
-                        height: bubbleWidth,
-                        width: bubbleWidth,
-                      fit: BoxFit.cover,
-                      ),*/
-                      child: Container(),
-                    ),
-                  ),
+
+                //TODO possible multiple new token creation
+                return FutureBuilder(
+                  future: QueryBackend.networkImage(QueryBackend.imageURLPicture(
+                      stops[index].images.first)),
+                  builder: (context, snap) {
+                    ImageProvider image;
+                    image = snap?.data;
+                    image ??= Image.asset("assets/images/empty_profile.png").image;
+
+                    return avatarWithBorder(
+                      image,
+                      horSize(13.5, 8),
+                      borderWidth: 3,
+                      borderColor: division.color,
+                      padding: EdgeInsets.only(left: 13.0),
+                      child: FlatButton(
+                        onPressed: () => _showStop(stops[index]),
+                        splashColor: division.color.withOpacity(.4),
+                        highlightColor: division.color.withOpacity(.2),
+                        child: Container(),
+                      ),
+                    );
+                  },
                 );
+
+
               }),
         ),
       ],
+    );
+  }
+
+  Widget avatarWithBorder(
+      ImageProvider image, double radius, {double borderWidth = 0,
+      Color borderColor = Colors.black,
+      Widget child,
+      EdgeInsetsGeometry padding = EdgeInsets.zero}) {
+    return Padding(
+      padding: padding,
+      child: CircleAvatar(
+        radius: radius,
+        backgroundColor: borderColor,
+        child: CircleAvatar(
+          radius: radius - borderWidth,
+          backgroundImage: image,
+          child: ClipOval(
+            child: child,
+          ),
+        ),
+      ),
     );
   }
 
@@ -264,7 +276,7 @@ class _BadgeWidgetState extends State<BadgeWidget> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(80.0),
             ),
-            child: QueryBackend.netWorkImage(
+            child: QueryBackend.networkImageWidget(
               QueryBackend.imageURLBadge(b.imgPath),
               fit: BoxFit.fill,
               width: horSize(63, 50) * (popUp ? 1.3 : 1) / _perLine,

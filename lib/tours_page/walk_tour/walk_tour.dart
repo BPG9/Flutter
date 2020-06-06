@@ -152,10 +152,12 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                         fit: BoxFit.cover),*/
                     border: Border(right: BorderSide(color: Colors.black)),
                   ),
-                  child: QueryBackend.netWorkImage(QueryBackend.imageURLPicture(
-                      stops[index].stop.images.isNotEmpty
-                          ? stops[index].stop.images[0]
-                          : ""),),
+                  child: QueryBackend.networkImageWidget(
+                    QueryBackend.imageURLPicture(
+                        stops[index].stop.images.isNotEmpty
+                            ? stops[index].stop.images[0]
+                            : ""),
+                  ),
                 ),
                 Container(
                   //color: Colors.yellow,
@@ -245,7 +247,6 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
 
     var bottomOff = MediaQuery.of(context).viewInsets.bottom;
     var stops = widget.tour.stops ?? <ActualStop>[];
-    int length = stops.length;
     return WillPopScope(
       onWillPop: () {
         if (_currentItem == 0)
@@ -314,31 +315,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                     ]),
                   ),
                   Spacer(flex: 2),
-                  FlatButton(
-                    onPressed: () async {
-                      if (_currentItem == length - 1)
-                        _toResults();
-                      else if (_currentItem == length) {
-                        // UPLOAD ANSWERS
-                        await MuseumDatabase().uploadAnswers(widget.tour);
-
-                        finishTour();
-                      } else
-                        setState(() => _currentItem++);
-                    },
-                    child: Row(children: [
-                      Text(
-                          _currentItem == length - 1
-                              ? "Ergebnis"
-                              : (_currentItem == length ? "" : "Weiter"),
-                          style: TextStyle(color: Colors.white)),
-                      Icon(
-                          _currentItem == length
-                              ? Icons.check
-                              : Icons.arrow_forward,
-                          color: Colors.white)
-                    ]),
-                  ),
+                  _continueButton(stops.length),
                 ],
               ),
             ),
@@ -371,6 +348,64 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _continueButton(int length) {
+    bool hasTasks = false, hasTextTask = false;
+    for (ActualStop s in widget.tour.stops) {
+      for (ActualExtra t in s.extras) {
+        hasTasks |= (t.task != null && t.type != ExtraType.TASK_TEXT);
+        hasTextTask |= (t.type == ExtraType.TASK_TEXT);
+      }
+    }
+
+    Function onPressed;
+    Widget child;
+    // last page, no tasks to check
+    if (_currentItem == length - 1 && !hasTasks) {
+      // no information to upload / results to show in TXT
+      if (!hasTextTask)
+        onPressed = _exitTour;
+      else
+        onPressed = () async {
+          await MuseumDatabase().uploadAnswers(widget.tour);
+          finishTour();
+        };
+      child = Icon(Icons.check, color: Colors.white);
+    }
+    // last page
+    else if (_currentItem == length - 1) {
+      onPressed = _toResults;
+      child = Row(
+        children: [
+          Text("Ergebnis", style: TextStyle(color: Colors.white)),
+          Icon(Icons.arrow_forward, color: Colors.white),
+        ],
+      );
+    }
+    // on review page
+    else if (_currentItem == length) {
+      onPressed = () async {
+        await MuseumDatabase().uploadAnswers(widget.tour);
+        finishTour();
+      };
+      child = Icon(Icons.check, color: Colors.white);
+    }
+    // normal page
+    else {
+      onPressed = () => setState(() => _currentItem++);
+      child = Row(
+        children: [
+          Text("Weiter", style: TextStyle(color: Colors.white)),
+          Icon(Icons.arrow_forward, color: Colors.white),
+        ],
+      );
+    }
+
+    return FlatButton(
+      onPressed: onPressed,
+      child: child,
     );
   }
 

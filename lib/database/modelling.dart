@@ -54,7 +54,7 @@ class TourWithStops {
       searchId: Value(searchId ?? author.substring(0, min(3, author.length)) +
           name.text.substring(0, min(4, name.text.length)) +
           (name.text.length + difficulty).toString() +
-          id?.toString() ?? ""),
+          (id?.toString() ?? "")),
       desc: Value(descr.text),
       id: Value.absent(),
     );//.createCompanion(nullToAbsent);
