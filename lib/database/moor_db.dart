@@ -12,6 +12,7 @@ import 'package:museum_app/constants.dart';
 import 'package:museum_app/graphql/graphqlConf.dart';
 import 'package:museum_app/graphql/mutations.dart';
 import 'package:museum_app/graphql/query.dart';
+import 'package:mutex/mutex.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -274,6 +275,8 @@ LazyDatabase _openConnection() {
 class MuseumDatabase extends _$MuseumDatabase {
   static MuseumDatabase _db;
 
+  final Mutex _mutex;
+
   //static String customID = "Custom";
 
   factory MuseumDatabase() {
@@ -281,7 +284,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     return _db;
   }
 
-  MuseumDatabase._create() : super(_openConnection());
+  MuseumDatabase._create() : _mutex = Mutex(), super(_openConnection());
 
   @override
   int get schemaVersion => 5;
@@ -433,13 +436,14 @@ class MuseumDatabase extends _$MuseumDatabase {
     var stopIds = await select(users).map((u) => u.favStops).getSingle();
     stopIds.add(id);
 
-    String accessToken = await this.accessToken();
-    if (!await GraphQLConfiguration.isConnected(accessToken))
-      accessToken = await refreshAccess();
+    //String accessToken = await this.accessToken();
+    //if (!await GraphQLConfiguration.isConnected(accessToken))
+    //  accessToken = await refreshAccess();
+    String token = await MuseumDatabase().checkRefresh();
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.addFavStop(accessToken, id)),
+      documentNode: gql(MutationBackend.addFavStop(token, id)),
       onError: (e) => print("ERROR_addFavStop: " + e.toString()),
     ));
 
@@ -451,13 +455,14 @@ class MuseumDatabase extends _$MuseumDatabase {
     var stopIds = await select(users).map((u) => u.favStops).getSingle();
     stopIds.remove(id);
 
-    String accessToken = await this.accessToken();
-    if (!await GraphQLConfiguration.isConnected(accessToken))
-      accessToken = await refreshAccess();
+//    String accessToken = await this.accessToken();
+//    if (!await GraphQLConfiguration.isConnected(accessToken))
+//      accessToken = await refreshAccess();
+    String token = await MuseumDatabase().checkRefresh();
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.removeFavStop(accessToken, id)),
+      documentNode: gql(MutationBackend.removeFavStop(token, id)),
       onError: (e) => print("ERROR_removeFavStop: " + e.toString()),
     ));
 
@@ -482,13 +487,14 @@ class MuseumDatabase extends _$MuseumDatabase {
     var tourIds = await select(users).map((u) => u.favTours).getSingle();
     tourIds.add(id);
 
-    String accessToken = await this.accessToken();
-    if (!await GraphQLConfiguration.isConnected(accessToken))
-      accessToken = await refreshAccess();
+//    String accessToken = await this.accessToken();
+//    if (!await GraphQLConfiguration.isConnected(accessToken))
+//      accessToken = await refreshAccess();
+    String token = await MuseumDatabase().checkRefresh();
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.addFavTour(accessToken, id)),
+      documentNode: gql(MutationBackend.addFavTour(token, id)),
       onError: (e) => print("ERROR_addFavTour: " + e.toString()),
     ));
 
@@ -500,13 +506,14 @@ class MuseumDatabase extends _$MuseumDatabase {
     var tourIds = await select(users).map((u) => u.favTours).getSingle();
     tourIds.remove(id);
 
-    String accessToken = await this.accessToken();
-    if (!await GraphQLConfiguration.isConnected(accessToken))
-      accessToken = await refreshAccess();
+//    String accessToken = await this.accessToken();
+//    if (!await GraphQLConfiguration.isConnected(accessToken))
+//      accessToken = await refreshAccess();
+    String token = await MuseumDatabase().checkRefresh();
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.removeFavTour(accessToken, id)),
+      documentNode: gql(MutationBackend.removeFavTour(token, id)),
       onError: (e) => print("ERROR_addFavTour: " + e.toString()),
     ));
 
@@ -621,11 +628,12 @@ class MuseumDatabase extends _$MuseumDatabase {
 
   Future uploadAnswers(TourWithStops tour) async {
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-    String token = await accessToken();
-    if (!await GraphQLConfiguration.isConnected(token))
-      token = await refreshAccess();
+//    String token = await accessToken();
+//    if (!await GraphQLConfiguration.isConnected(token))
+//      token = await refreshAccess();
+    String token = await MuseumDatabase().checkRefresh();
     if (token == "") {
-      print("EXIT AAA");
+      print("ERROR_TOKEN uploadAnswers");
       return;
     }
 
@@ -984,9 +992,10 @@ class MuseumDatabase extends _$MuseumDatabase {
   }
 
   Future<bool> _listToServer(List<Object> lst) async {
-    String token = await accessToken();
-    if (!await GraphQLConfiguration.isConnected(token))
-      token = await refreshAccess();
+    //String token = await accessToken();
+    //if (!await GraphQLConfiguration.isConnected(token))
+    //  token = await refreshAccess();
+    String token = await MuseumDatabase().checkRefresh();
     if (token == "") return Future.value(false);
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
@@ -1075,6 +1084,20 @@ class MuseumDatabase extends _$MuseumDatabase {
     return Future.value(true);
   }
 
+  Future<String> checkRefresh() async {
+    String token = "";
+    await _mutex.acquire();
+    try{
+      token = await accessToken();
+      if (!await GraphQLConfiguration.isConnected(token))
+        token = await refreshAccess();
+    }
+    finally {
+      _mutex.release();
+    }
+    return Future.value(token);
+  }
+
   Future<String> refreshAccess() async {
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     String refresh = await select(users).map((u) => u.refreshToken).getSingle();
@@ -1099,9 +1122,10 @@ class MuseumDatabase extends _$MuseumDatabase {
   }
 
   Future<bool> joinAndDownloadTour(String id, {bool searchId = true}) async {
-    String token = await accessToken();
-    if (!await GraphQLConfiguration.isConnected(token))
-      token = await refreshAccess();
+//    String token = await accessToken();
+//    if (!await GraphQLConfiguration.isConnected(token))
+//      token = await refreshAccess();
+    String token = await MuseumDatabase().checkRefresh();
     if (token == null || token == "") return Future.value(false);
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();

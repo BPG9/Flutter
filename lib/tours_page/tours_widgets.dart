@@ -452,10 +452,13 @@ class _DownloadColumnState extends State<DownloadColumn> {
   }
 
   initList() async {
-    String token = await MuseumDatabase().accessToken();
+    //String token = await MuseumDatabase().accessToken();
+    //if (!await GraphQLConfiguration.isConnected(token))
+    //  token = await MuseumDatabase().refreshAccess();
+    String token = await MuseumDatabase().checkRefresh();
+
     if (token == null || token == "") return;
-    if (!await GraphQLConfiguration.isConnected(token))
-      token = await MuseumDatabase().refreshAccess();
+
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.query(QueryOptions(
       documentNode: gql(widget.query(token)),

@@ -233,9 +233,10 @@ class QueryBackend {
   }
 
   static Future<ImageProvider> networkImage(String url) async {
-    String token = await MuseumDatabase().accessToken();
-    if (!await GraphQLConfiguration.isConnected(token))
-      token = await MuseumDatabase().refreshAccess();
+    //String token = await MuseumDatabase().accessToken();
+    //if (!await GraphQLConfiguration.isConnected(token))
+      //token = await MuseumDatabase().refreshAccess();
+    String token = await MuseumDatabase().checkRefresh();
 
     if (token == null || token == "") {
       print("Token Error");
