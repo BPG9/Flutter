@@ -93,6 +93,7 @@ class _FavWidgetState extends State<FavWidget> {
         child: CircleAvatar(
           radius: radius - borderWidth,
           backgroundImage: image,
+          backgroundColor: Colors.white,
           child: ClipOval(
             child: child,
           ),

@@ -58,6 +58,7 @@ class QueryBackend {
     return """query{
       checkpointsTour(token: "$token", tourId: "$tourId"){
         ... on ObjectCheckpoint{
+          id
           index
           museumObject{
             objectId
@@ -67,6 +68,7 @@ class QueryBackend {
           showPicture
         }
         ... on Checkpoint{
+          id
           index
           text
         }
@@ -78,12 +80,14 @@ class QueryBackend {
           }
         }
         ... on Question{
+          id
           index
           text
           question
         }
         ... on MCQuestion{
           index
+          id
           question
           possibleAnswers
           correctAnswers

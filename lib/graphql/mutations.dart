@@ -228,4 +228,12 @@ class MutationBackend {
       }
     }""";
   }
+
+  static String deleteCheckpoint(String token, String id) {
+    return """mutation{
+      deleteCheckpoint(checkpointId: "$id", token: "$token"){
+        ok {... on BooleanField{boolean}}
+      }
+    }""";
+  }
 }

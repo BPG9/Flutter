@@ -37,6 +37,7 @@ class _AddTourState extends State<AddTour> {
 
           switch (_type) {
             case AddType.CREATE:
+              return CreateTour(goBack, _tour);/*
               return StreamBuilder(
                 stream: MuseumDatabase().watchCustomStop(),
                 builder: (context, snap) {
@@ -47,7 +48,7 @@ class _AddTourState extends State<AddTour> {
                   }
                   return CreateTour(goBack, _tour);
                 },
-              );
+              );*/
             case AddType.EDIT:
               return StreamBuilder(
                 stream: MuseumDatabase().getTourStops(),
@@ -99,7 +100,14 @@ class _AddTourState extends State<AddTour> {
                   "Tour erstellen",
                   "Erstelle Deine eigene Tour durch das Landesmuseum.",
                   "Neue Tour erstellen",
-                  () => setState(() => _type = AddType.CREATE)),
+                  () async {
+                    setState(() => _type = AddType.CREATE);
+
+                    var name = (await MuseumDatabase().getUser())?.username;
+
+                    _tour = TourWithStops.empty(name);
+                    _tour.stops.add(ActualStop.custom());
+                  }),
               margin: margin),
           border(
               _content(

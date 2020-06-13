@@ -56,7 +56,7 @@ class TourWithStops {
           (name.text.length + difficulty).toString() +
           (id?.toString() ?? "")),
       desc: Value(descr.text),
-      id: Value.absent(),
+      id: id == null ? Value.absent() : Value(id),
     );//.createCompanion(nullToAbsent);
   }
 
@@ -120,7 +120,7 @@ class ActualStop {
                 id_stop: customName,
                 showImages: false,
                 showText: true,
-                showDetails: false),
+                showDetails: false, id: null),
             <ActualExtra>[]);
 }
 

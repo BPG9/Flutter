@@ -309,12 +309,14 @@ class _CreateTourState extends State<CreateTour> {
                   color: COLOR_ADD,
                   onPressed: () async {
                     widget.tour.creationTime = DateTime.now();
+                    bool edit = widget.tour.onlineId != null;
+                    print("EDIT: $edit");
                     bool ok = await MuseumDatabase()
                         .writeTourStops(widget.tour, upload: true);
                     if (ok) {
                       widget.goBack();
                       Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("Tour hinzugefügt!"),
+                        content: Text(edit ? "Tour bearbeitet!" : "Tour hinzugefügt!"),
                       ));
                     }
                   },

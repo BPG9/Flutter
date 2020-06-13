@@ -264,7 +264,7 @@ class _HomeState extends State<Home> {
                   ),
                   oneHomeCell(
                     "Über das Landesmuseum",
-                    "assets/images/Group_2304@3x.png",
+                    "assets/images/info.png",
                     () => setState(() => _type = InfoType.ABOUT_MUSEUM),
                   ),
                   oneHomeCell(

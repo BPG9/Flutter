@@ -1003,6 +1003,14 @@ class MuseumDatabase extends _$MuseumDatabase {
     for (var o in lst) {
       String mutation;
       if (o is Tour) {
+        if (o.onlineId != null && o.onlineId.trim() != "") {
+          print("EEE EDIT DETECTED");
+          tourId = o.onlineId;
+          // delete all checkpoints
+          await _deleteAllOnlineCheckpoints(token, tourId);
+          //TODO Tour Eigenschaften (Name, Descr, difficulty, date) anpassen
+          continue;
+        }
         var id = o.author.substring(0, min(3, o.author.length)) +
             o.name.substring(0, min(4, o.name.length)) +
             (o.name.length + o.difficulty).toString() +
@@ -1084,12 +1092,42 @@ class MuseumDatabase extends _$MuseumDatabase {
     return Future.value(true);
   }
 
+  Future<bool> _deleteAllOnlineCheckpoints(String token, String id) async {
+    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
+    // liste aller checkpoint (ids)
+
+    QueryResult result = await _client.query(QueryOptions(
+      documentNode: gql(QueryBackend.checkpointTour(token, id)),
+    ));
+
+    if (result.hasException) {
+      print("EXC_deleteAllQuery: " + result.exception.toString());
+      return Future.value(false);
+    }
+
+    print(result.data.data);
+
+    List<Object> checkList = result.data.data['checkpointsTour'];
+
+    for (Object o in checkList) {
+      if (o is Map)
+        await _client.mutate(MutationOptions(
+          documentNode: gql(MutationBackend.deleteCheckpoint(token, id)),
+          onError: (e) => print("EXC_deleteAllMut: " + e.toString())
+        ));
+
+    }
+
+    print("EEE ONLINE CHECKS DELETED");
+    return Future.value(true);
+  }
+
   Future<String> checkRefresh() async {
     String token = "";
     await _mutex.acquire();
     try{
       token = await accessToken();
-      if (!await GraphQLConfiguration.isConnected(token))
+      if (token != null && token != "" && !await GraphQLConfiguration.isConnected(token))
         token = await refreshAccess();
     }
     finally {
@@ -1269,6 +1307,15 @@ class MuseumDatabase extends _$MuseumDatabase {
       {bool upload = false, bool review = false}) {
     return transaction(() async {
       final tour = entry.createToursCompanion(true);
+
+      var oldId = tour.id?.value;
+      if (oldId != null && oldId > 0) {
+        await (delete(tours)..where((t) => t.id.equals(oldId))).go();
+        await (delete(stopFeatures)..where((sf) => sf.id_tour.equals(oldId))).go();
+        await (delete(tourStops)..where((t) => t.id_tour.equals(oldId))).go();
+        await (delete(this.extras)..where((e) => e.id_tour.equals(oldId))).go();
+        print("EEE LOCAL DELETED");
+      }
 
       var id = await into(tours).insert(tour, mode: InsertMode.insertOrReplace);
 
