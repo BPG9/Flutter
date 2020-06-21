@@ -307,19 +307,7 @@ class _CreateTourState extends State<CreateTour> {
                       borderRadius: BorderRadius.circular(10)),
                   textColor: Colors.white,
                   color: COLOR_ADD,
-                  onPressed: () async {
-                    widget.tour.creationTime = DateTime.now();
-                    bool edit = widget.tour.onlineId != null;
-                    print("EDIT: $edit");
-                    bool ok = await MuseumDatabase()
-                        .writeTourStops(widget.tour, upload: true);
-                    if (ok) {
-                      widget.goBack();
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text(edit ? "Tour bearbeitet!" : "Tour hinzugefügt!"),
-                      ));
-                    }
-                  },
+                  onPressed: () => showDialog(context: context, builder: (c) => _confirmCreate()),
                   child: Text("Fertigstellen"),
                 ),
                 FlatButton(
@@ -338,6 +326,38 @@ class _CreateTourState extends State<CreateTour> {
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       ),
       showSetting: false,
+    );
+  }
+
+  Widget _confirmCreate() {
+    return AlertDialog(
+      title: Text("Hinweis"),
+      content: Text("Möchten Du fortfahren?\n"
+          "Das Museum behälts sich vor, die erstellte Tour einer Qualitätssicherung zu unterziehen und sie "
+          "ggf. unter Nennung Deines Nutzernamens zu veröffentlichen."),
+      actions: [
+        FlatButton(
+          child: Text("Zurück", style: TextStyle(color: COLOR_ADD)),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        FlatButton(
+          child: Text("Weiter", style: TextStyle(color: COLOR_ADD)),
+          onPressed: () async {
+            Navigator.of(context).pop();
+            widget.tour.creationTime = DateTime.now();
+            bool edit = widget.tour.onlineId != null;
+            print("EDIT: $edit");
+            bool ok = await MuseumDatabase()
+                .writeTourStops(widget.tour, upload: true);
+            if (ok) {
+              widget.goBack();
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(edit ? "Tour bearbeitet!" : "Tour hinzugefügt!"),
+              ));
+            }
+          },
+        ),
+      ],
     );
   }
 

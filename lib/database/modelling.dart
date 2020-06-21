@@ -3,9 +3,12 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
 import 'package:museum_app/constants.dart';
+import 'package:museum_app/graphql/graphqlConf.dart';
+import 'package:museum_app/graphql/query.dart';
 
 import '../SizeConfig.dart';
 import 'moor_db.dart';
@@ -71,6 +74,63 @@ class TourWithStops {
         ),
         unratedColor: color2.withOpacity(.5),
       );
+
+  void resetTasks() {
+    for (var s in stops)
+      for (var e in s.extras)
+        (e?.task)?.reset();
+  }
+
+  Future<bool> syncTasks() async {
+    User u = await MuseumDatabase().getUser();
+    String token = await MuseumDatabase().checkRefresh();
+
+    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
+    QueryResult result = await _client.query(QueryOptions(
+      documentNode: gql(QueryBackend.answersInTour(token, u.username, onlineId)),
+    ));
+    if (result.hasException) {
+      print(result.exception.toString());
+      return Future.value(false);
+    }
+    if (result.loading) return Future.value(false);
+    var d = result.data;
+    if (d?.data == null) return Future.value(false);
+    if (d is LazyCacheMap) {
+      List<ActualExtra> localList = [];
+      for (ActualStop s in stops) {
+        localList.add(ActualExtra(ExtraType.TEXT));
+        localList.addAll(s.extras);
+      }
+
+      List list = d.data["answersByUser"];
+      print(list);
+      for (var up in list) {
+        int index = up["question"]["index"] - 1;
+        ActualTask task = localList[index].task;
+        ExtraType type = localList[index].type;
+        if (task != null && up["text"] is String) {
+          String text = up["text"];
+          if (type == ExtraType.TASK_TEXT){
+            task.entries[0].valB.text = text;
+          }
+          else if (type == ExtraType.TASK_SINGLE) {
+            int i = int.parse(text.substring(1, text.length-1));
+            task.selected = i;
+            task.entries[i].valB = true;
+          }
+          else if (type == ExtraType.TASK_MULTI) {
+            List<int> l = text.substring(1, text.length-1).split(",").map((e) => int.parse(e)).toList();
+            for (int i in l) {
+              task.entries[i].valB = true;
+            }
+          }
+        }
+      }
+    }
+
+    return Future.value(true);
+  }
 
   Widget buildTime(
       {Color color = COLOR_TOUR, Color color2 = Colors.black, scale = 1.0}) {

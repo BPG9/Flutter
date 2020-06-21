@@ -220,6 +220,29 @@ class QueryBackend {
     }""";
   }
 
+  static String answersInTour(String token, String user, String tourId) {
+    return """query{
+      answersByUser(token: "$token", username: "$user", tourId: "$tourId") {
+        ... on Answer {
+          id
+          question {
+            index
+            question
+          }
+          text: answer
+        }
+        ... on MCAnswer {
+          id
+          question {
+            index
+            question
+          }
+        answer
+        }
+      }
+    }""";
+  }
+
   static String imageURLProfile(String id) {
     return imageURL("ProfilePicture", id);
   }

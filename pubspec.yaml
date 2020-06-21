@@ -62,8 +62,8 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/AppIcon_G_vernetzt.png"
-  image_path_android: "assets/images/AppIcon_G_vernetzt_round.png"
+  image_path: "assets/images/AppIcon_G_vernetzt_NEW.png"
+  image_path_android: "assets/images/AppIcon_G_vernetzt_NEW_round.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

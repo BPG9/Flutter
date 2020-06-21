@@ -38,20 +38,20 @@ Widget _pictureLeft(ActualStop stop, Size s, {margin = EdgeInsets.zero}) {
   );
 }
 
-enum PanelType { DOWNLOAD, SHOW }
+enum PanelType { NONE, DOWNLOAD, SHOW, DELETE }
 
 /// A single Panel containing infos about a tour
 class _TourPanel extends StatelessWidget {
   final TourWithStops _tour;
   final Color _color;
   final PanelType type;
-  final bool delete;
+  final PanelType secondType;
   final bool showAuthor;
   final bool showID;
 
   const _TourPanel(this._tour, this._color,
       {this.type = PanelType.SHOW,
-      this.delete = false,
+        this.secondType = PanelType.NONE,
       Key key,
       this.showAuthor = true,
       this.showID = true})
@@ -160,49 +160,50 @@ class _TourPanel extends StatelessWidget {
                   style: TextStyle(fontStyle: FontStyle.italic),
                 )
               : Container()),
-          _buttons(context),
+          Row(
+            children: <Widget>[
+              _oneButton(type, context),
+              Container(width: 5),
+              _oneButton(secondType, context),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buttons(context) {
-    var main;
-    switch (this.type) {
+  Widget _oneButton(PanelType lType, context) {
+    switch (lType) {
       case PanelType.SHOW:
-        main = FlatButton(
+        return FlatButton(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           color: _color,
           child: Text("Anzeigen",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
           onPressed: () => _showTour(context),
         );
-        break;
       case PanelType.DOWNLOAD:
-        main = FlatButton(
+        return FlatButton(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           color: _color,
           child: Text("Download",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
           onPressed: () => _download(context),
         );
+      case PanelType.DELETE:
+        //TODO implement delete
+        return FlatButton(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0)),
+          color: _color,
+          child: Text("Löschen",
+              style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
+          onPressed: () {},
+        );
+      default: return Container();
     }
-
-    //TODO implement delete
-    var delete = this.delete
-        ? FlatButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
-            color: _color,
-            child: Text("Löschen",
-                style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
-            onPressed: () {},
-          )
-        : Container();
-
-    return Row(children: <Widget>[main, Container(width: 5), delete]);
   }
 
   @override
@@ -307,16 +308,27 @@ class _TourPopUpState extends State<_TourPopUp> {
                     showDialog(context: context, builder: _popUp);
                 }),
             FlatButton(
-              padding: EdgeInsets.all(9),
+              padding: EdgeInsets.all(8),
               splashColor: COLOR_TOUR.shade100,
               color: Colors.white,
               shape: CircleBorder(side: BorderSide(color: Colors.black)),
               child: Icon(
                 Icons.play_arrow,
                 color: Colors.black,
-                size: 44,
+                size: 46,
               ),
-              onPressed: () {
+              onPressed: () async {
+                print("KURZ");
+                await t.syncTasks();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TourWalker(tour: t)));
+              },
+              onLongPress: () {
+                print("LANG");
+                t.resetTasks();
+
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -398,7 +410,6 @@ class TourList extends StatefulWidget {
 }
 
 class _TourListState extends State<TourList> {
-
   Widget _toursFromList(List<TourWithStops> list) {
     return Column(
       children: list.map((t) => _TourPanel(t, COLOR_TOUR)).toList(),
@@ -519,7 +530,7 @@ class _DownloadColumnState extends State<DownloadColumn> {
               t,
               widget.color,
               type: PanelType.DOWNLOAD,
-              delete: widget.deleteTour,
+              secondType: widget.deleteTour ? PanelType.DELETE : PanelType.NONE,
               showID: widget.showSearchId,
             ))
         .toList();
