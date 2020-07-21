@@ -64,7 +64,6 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
                   currentPage = index;
                   if (currentPage == pageList.length - 1) {
                     lastPage = true;
-
                   } else {
                     lastPage = false;
                     //animationController.reset();
@@ -161,11 +160,12 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
                       pageList[currentPage].color)),
             ),
             Positioned(
-              right: 25.0,
+              right: horSize(8, 2),
               bottom: 25.0,
               child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: getButton(),
+                alignment: Alignment.centerRight,
+                  scale: _scaleAnimation,
+                  child: getButton(),
               ),
             ),
           ],
@@ -181,20 +181,20 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
           Navigator.pushNamed(context, "/login");
           MuseumDatabase().updateOnboard(true);
         },
-        child: textWithArrow("Zum Login ", size: 22),
+        child: textWithArrow("Zum Login ", size: horSize(7, 7)),
       );
     return GestureDetector(
       onTap: () => _controller.animateToPage(currentPage + 1,
-          duration: Duration(milliseconds: 700), curve: Curves.linear),
-      child: textWithArrow("Weiter ", size: 22),
+          duration: Duration(milliseconds: 500), curve: Curves.linear),
+      child: textWithArrow("Weiter ", size: horSize(7, 7)),
     );
   }
 
   Widget textWithArrow(String s, {double size = 20.0}) {
     return Row(
       children: [
-        Text(s, style: TextStyle(fontSize: size),),
-        Icon(Icons.arrow_forward, size: size + 7.0,),
+        Text(s, style: TextStyle(fontSize: size)),
+        Icon(Icons.arrow_forward, size: size + 7.0),
       ],
     );
   }

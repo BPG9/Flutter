@@ -74,7 +74,7 @@ class _ImageCarouselState extends State<ImageCaroussel> {
           //enlargeCenterPage: true,
           onPageChanged: (index, reason) => setState(() => _currentImage = index),
           viewportFraction: 1.0,
-          height: verSize(52, 68.5),
+          height: verSize(50, 68.5),
           enableInfiniteScroll: false,
         ),
         items: _images

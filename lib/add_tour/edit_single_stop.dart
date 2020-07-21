@@ -456,7 +456,8 @@ class _EditSingleStopState extends State<EditSingleStop> {
         builder: (context) => AlertDialog(
               title: Text("Warnung"),
               content: Text(
-                  "Möchten Sie das ausgewählte Extra wirklich entfernen?\nDies kann nicht rückgängig gemacht werden."),
+                  "Das ausgewählte Extra wirklich entfernen?\n"
+                      "Dies kann nicht rückgängig gemacht werden."),
               actions: [
                 FlatButton(
                   child: Text("Abbrechen", style: TextStyle(color: COLOR_ADD)),

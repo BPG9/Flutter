@@ -253,7 +253,7 @@ class _BadgeWidgetState extends State<BadgeWidget> {
         // Progress circle
         AnimatedCircularChart(
           key: popUp ? key2 : key,
-          size: Size.square(verSize(54, 135) * (popUp ? 1.3 : 1) / _perLine),
+          size: Size.square(verSize(46, 135) * (popUp ? 1.3 : 1) / _perLine),
           initialChartData: [
             CircularStackEntry(
               [
@@ -266,8 +266,8 @@ class _BadgeWidgetState extends State<BadgeWidget> {
         ),
         // Picture/Badge
         Container(
-          width: horSize(63, 50) * (popUp ? 1.3 : 1) / _perLine,
-          height: horSize(63, 50) * (popUp ? 1.3 : 1) / _perLine,
+          width: horSize(64, 50) * (popUp ? 1.3 : 1) / _perLine,
+          height: horSize(64, 50) * (popUp ? 1.3 : 1) / _perLine,
           decoration: BoxDecoration(shape: BoxShape.circle),
           child: FlatButton(
             padding: EdgeInsets.zero,

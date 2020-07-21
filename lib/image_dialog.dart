@@ -84,6 +84,7 @@ class _ImageDialogState extends State<ImageDialog> {
                       QueryBackend.imageURLProfile(img),
                       height: verSize(13, 27),
                       width: horSize(23, 16),
+                      fit: BoxFit.contain,
                     ),
                     /*child: Container(
                       height: verSize(13, 27),

@@ -72,7 +72,6 @@ class _LogInState extends State<LogIn> {
       Navigator.pop(context);
       Navigator.popAndPushNamed(context, "/home");
     }
-
   }
 
   /// Creates the input change buttons used for this widget.
@@ -88,7 +87,7 @@ class _LogInState extends State<LogIn> {
       splashColor: Color(0xFF4AD285).withOpacity(.6),
       child: Text(function == null ? text.toUpperCase() : text),
       onPressed: function,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
     );
   }
 
@@ -105,14 +104,19 @@ class _LogInState extends State<LogIn> {
         break;
     }
     return Container(
-      margin: EdgeInsets.only(right: size(88, 216), left: size(88, 216)),
-      height: 35,
+      //margin: EdgeInsets.symmetric(horizontal: horSize(22.8, 40)),
+      height: verSize(5, 10),
       decoration: BoxDecoration(
         color: Colors.grey,
-        borderRadius: BorderRadius.circular(40.0),
+        borderRadius: BorderRadius.circular(20.0),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: ButtonBar(
+        mainAxisSize: MainAxisSize.min,
+        buttonPadding: EdgeInsets.zero,
+        buttonHeight: verSize(100, 100),
+        buttonMinWidth: horSize(22.5, 30),
+        alignment: MainAxisAlignment.center,
+        //mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // LogIn-Button
           _customButtons("Login", funct1),
@@ -131,8 +135,8 @@ class _LogInState extends State<LogIn> {
       TextEditingController ctrl, IconData icon, String text,
       {bool pwField = false}) {
     return Container(
-      height: verSize(pwField ? 10 : 14, 15),
-      margin: EdgeInsets.only(top: 15.5, left: 16, right: 16),
+      height: verSize(pwField ? 9 : 13, 15),
+      margin: EdgeInsets.only(top: verSize(3, 10), left: 16, right: 16), //15.5
       //padding: EdgeInsets.only(left: 10, right: 15),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0)),
       child: TextFormField(
@@ -188,9 +192,9 @@ class _LogInState extends State<LogIn> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Hinweis"),
-          content:
-              Text("Möchten Sie wirklich ohne Accountverbindung fortfahen?\n"
-                  "Sie benötigen einen Account für Rundgänge, können diesen aber auch später einrichten."),
+          content: Text(
+              "Möchtest Du wirklich ohne Accountverbindung fortfahen?\n"
+              "Du benötigst einen Account für Rundgänge, kannst diesen aber auch später einrichten."),
           actions: [
             FlatButton(
               child: Text("Zurück"),
@@ -211,7 +215,7 @@ class _LogInState extends State<LogIn> {
     var content;
     // not all fields filled
     if (_usCtrl.text == "" || _pwCtrl.text == "" || _pw2Ctrl.text == "")
-      content = Text("Bitte füllen Sie alle Felder aus.");
+      content = Text("Bitte fülle alle Felder aus.");
     // the two passwords dont match
     else if (_pwCtrl.text != _pw2Ctrl.text)
       content = Text("Die eingegebenen Passwörter stimmen nicht überein.");
@@ -222,8 +226,8 @@ class _LogInState extends State<LogIn> {
           style: TextStyle(fontSize: 18.0, color: Colors.black),
           children: [
             TextSpan(
-                text: "Gehen Sie sicher, dass Sie für den Benutzernamen "
-                    "keine persönlichen Informationen verwenden.\n"
+                text: "Bitte überprüfe, dass Du für den Benutzernamen "
+                    "keine persönlichen Informationen verwendet hast.\n"
                     "Eingabe: "),
             TextSpan(
                 text: _usCtrl.text,
@@ -292,8 +296,11 @@ class _LogInState extends State<LogIn> {
           children: [
             // LogIn-Box
             Container(
-              height: SizeConfig.safeBlockVertical *
-                  (_type == LogInType.SIGNUP ? 55.5 : 42.5),
+              //height: _type == LogInType.SIGNUP ? 400 : 300,
+              /*SizeConfig.safeBlockVertical *
+                  (_type == LogInType.SIGNUP ? 47 : 36.5)*/
+
+              //55.5, 42.5
               margin: const EdgeInsets.only(bottom: 27),
               padding: const EdgeInsets.only(top: 16),
               decoration: BoxDecoration(
@@ -307,7 +314,16 @@ class _LogInState extends State<LogIn> {
                   ),
                 ],
               ),
-              child: Column(children: [_topButtons(), _textFields()]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _topButtons(),
+                  //Container(height: 6), //verSize(2, 3.5)
+                  _textFields(),
+                  Container(height: verSize(4, 15)), //verSize(2, 3.5)
+                ],
+              ),
             ),
             // Submit-Button
             Positioned.fill(
@@ -324,7 +340,8 @@ class _LogInState extends State<LogIn> {
                     borderRadius: BorderRadius.circular(18.0),
                   ),
                   child: Text("Bestätigen", textScaleFactor: 1.3),
-                  onPressed: _userVal(_usCtrl.text) != null || _usCtrl.text.isEmpty
+                  onPressed: _userVal(_usCtrl.text) != null ||
+                          _usCtrl.text.isEmpty
                       ? null
                       : (_type == LogInType.SIGNUP ? _signUpDialog : _login),
                 ),
@@ -354,8 +371,10 @@ class _LogInState extends State<LogIn> {
   /// Tries to login using the controller's current contents.
   _login() async {
     bool b = await MuseumDatabase().logIn(_usCtrl.text, _pwCtrl.text);
-    if (b) _nextScreen();
-    else _failedLogin();
+    if (b)
+      _nextScreen();
+    else
+      _failedLogin();
 
     if (b && widget.skippable) {
       MuseumDatabase().downloadBadges();
@@ -369,8 +388,8 @@ class _LogInState extends State<LogIn> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text("Hinweis"),
-        content: Text(
-            "Die eingegebenen Benutzerdaten sind nicht korrekt. Überprüfen Sie die Eingaben und versuchen es erneut!"),
+        content: Text("Die eingegebenen Benutzerdaten sind nicht korrekt. "
+            "Überprüfe bitte die Eingaben und versuche es erneut!"),
         actions: [
           FlatButton(
             child: Text("Schließen"),

@@ -101,7 +101,7 @@ class _ProfileState extends State<Profile> {
             "Favoriten": FavWidget(),
             "Meine Touren": DownloadColumn(
               QueryBackend.created,
-              notFoundText: "\n\nSie haben noch keine Touren erstellt.",
+              notFoundText: "\n\nDu hast noch keine Touren erstellt.",
               showSearchId: true,
               deleteTour: true,
             ),

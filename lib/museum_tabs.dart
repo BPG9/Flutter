@@ -263,29 +263,6 @@ class MuseumSettings extends StatelessWidget {
     showDialog(context: context, builder: (context) => dialog);
   }
 
-  Widget _logout(BuildContext context) {
-    return AlertDialog(
-      title: Text("Warnung"),
-      content: Text("Möchten Sie sich wirklich ausloggen?\n"
-          "Alle heruntergeladenen Touren werden gelöscht. Wenn Sie eine Tour favorisieren, können Sie sie "
-          "beim nächsten Anmelden leichter wiederfinden."),
-      actions: [
-        FlatButton(
-          child: Text("Zurück", style: TextStyle(color: COLOR_PROFILE)),
-          onPressed: () => Navigator.pop(context),
-        ),
-        FlatButton(
-          child: Text("Abmelden", style: TextStyle(color: COLOR_PROFILE)),
-          onPressed: () async {
-            await MuseumDatabase().logOut();
-            Navigator.pop(context);
-            Navigator.popAndPushNamed(context, "/profile");
-          },
-        )
-      ],
-    );
-  }
-
   void _select(val, BuildContext context) {
     switch (val) {
       case _OptionType.EDIT_IMG:
@@ -319,6 +296,7 @@ class MuseumSettings extends StatelessWidget {
       title: Text("Geschichte Vernetzt"),
       content: Container(
         height: verSize(40, 30),
+        width: horSize(80, 80),
         child: ListView(
           //mainAxisSize: MainAxisSize.min,
           children: [
@@ -369,6 +347,29 @@ class MuseumSettings extends StatelessWidget {
           child: Text("Schließen", style: TextStyle(color: COLOR_PROFILE)),
           onPressed: () => Navigator.pop(context),
         ),
+      ],
+    );
+  }
+
+  Widget _logout(BuildContext context) {
+    return AlertDialog(
+      title: Text("Warnung"),
+      content: Text("Möchtest Du Dich wirklich ausloggen?\n"
+          "Alle heruntergeladenen Touren werden gelöscht. Wenn Du eine Tour favorisierst, kann "
+          "diese bei der nächsten Anmeldung leichter wiedergefunden werden."),
+      actions: [
+        FlatButton(
+          child: Text("Zurück", style: TextStyle(color: COLOR_PROFILE)),
+          onPressed: () => Navigator.pop(context),
+        ),
+        FlatButton(
+          child: Text("Abmelden", style: TextStyle(color: COLOR_PROFILE)),
+          onPressed: () async {
+            await MuseumDatabase().logOut();
+            Navigator.pop(context);
+            Navigator.popAndPushNamed(context, "/profile");
+          },
+        )
       ],
     );
   }

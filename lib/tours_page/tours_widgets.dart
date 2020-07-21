@@ -51,14 +51,16 @@ class _TourPanel extends StatelessWidget {
 
   const _TourPanel(this._tour, this._color,
       {this.type = PanelType.SHOW,
-        this.secondType = PanelType.NONE,
+      this.secondType = PanelType.NONE,
       Key key,
       this.showAuthor = true,
       this.showID = true})
       : super(key: key);
 
-  Widget _textBox(String text, Size s,
-      {fontStyle = FontStyle.normal,
+  Widget _textBox(String text,
+      {width,
+      height,
+      fontStyle = FontStyle.normal,
       fontWeight = FontWeight.normal,
       textAlign = TextAlign.left,
       textColor = Colors.black,
@@ -68,8 +70,10 @@ class _TourPanel extends StatelessWidget {
       double fontSize = 15.0}) {
     return Container(
       margin: margin,
-      width: SizeConfig.safeBlockHorizontal * s.width,
-      height: SizeConfig.safeBlockVertical * s.height,
+      width: width,
+      //SizeConfig.safeBlockHorizontal * s.width,
+      height: height,
+      //SizeConfig.safeBlockVertical * s.height,
       alignment: alignment,
       child: Text(
         text,
@@ -106,7 +110,9 @@ class _TourPanel extends StatelessWidget {
 
   void _download(context) async {
     String s;
-    if (await MuseumDatabase()
+    if (await MuseumDatabase().idExists(_tour.onlineId))
+      s = "Tour bereits heruntergeladen!";
+    else if (await MuseumDatabase()
         .joinAndDownloadTour(_tour.onlineId, searchId: false))
       s = "Tour heruntergeladen!";
     else
@@ -122,7 +128,7 @@ class _TourPanel extends StatelessWidget {
         children: [
           _textBox(
             _tour.name.text,
-            Size(size(90, 80), size(7.5, 11)),
+            //s: Size(size(90, 80), size(6.5, 11)),
             margin: EdgeInsets.only(bottom: 3),
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -149,11 +155,15 @@ class _TourPanel extends StatelessWidget {
               ],
             ),
           ),
-          _textBox(_tour.descr.text, Size(size(50, 80), size(7, 18)),
-              textAlign: TextAlign.justify,
-              fontSize: size(13, 15),
-              maxLines: 3,
-              alignment: Alignment.topLeft),
+          _textBox(
+            _tour.descr.text,
+            width: horSize(50, 80),
+            height: verSize(7, 18),
+            textAlign: TextAlign.justify,
+            fontSize: size(13, 15),
+            maxLines: 3,
+            alignment: Alignment.topLeft,
+          ),
           (showID && _tour.searchId != null && _tour.searchId != ""
               ? SelectableText(
                   "Such-ID: " + _tour.searchId,
@@ -177,7 +187,7 @@ class _TourPanel extends StatelessWidget {
       case PanelType.SHOW:
         return FlatButton(
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           color: _color,
           child: Text("Anzeigen",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
@@ -186,7 +196,7 @@ class _TourPanel extends StatelessWidget {
       case PanelType.DOWNLOAD:
         return FlatButton(
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           color: _color,
           child: Text("Download",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
@@ -195,14 +205,15 @@ class _TourPanel extends StatelessWidget {
       case PanelType.DELETE:
         //TODO implement delete
         return FlatButton(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           color: _color,
           child: Text("Löschen",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
           onPressed: () {},
         );
-      default: return Container();
+      default:
+        return Container();
     }
   }
 
@@ -211,8 +222,10 @@ class _TourPanel extends StatelessWidget {
     return border(
       Row(
         children: [
-          _pictureLeft(_tour.stops[0], Size(30, size(29, 57)),
-              margin: EdgeInsets.only(right: 10)),
+          _pictureLeft(
+            _tour.stops[0], Size(horSize(8.5, 20), horSize(7, 57)), //Size(30, size(29, 57))
+            margin: EdgeInsets.only(right: 10),
+          ),
           _infoRight(context),
         ],
       ),
@@ -378,8 +391,8 @@ class _TourPopUpState extends State<_TourPopUp> {
   Widget _popUp(context) {
     return AlertDialog(
       title: Text("Warnung"),
-      content: Text(
-          "Möchten Sie die ausgewählte Tour wirklich entfernen?\nDies kann nicht rückgängig gemacht werden."),
+      content: Text("Die ausgewählte Tour wirklich entfernen?\n"
+          "Dies kann nicht rückgängig gemacht werden."),
       actions: [
         FlatButton(
           child: Text("Abbrechen", style: TextStyle(color: COLOR_TOUR)),
@@ -425,6 +438,7 @@ class _TourListState extends State<TourList> {
       stream: MuseumDatabase().getTourStops(),
       builder: (context, snap) {
         List<TourWithStops> tours = snap.data ?? List<TourWithStops>();
+        print("AAAAAAA ${tours.length}");
         return _toursFromList(tours);
       },
     );

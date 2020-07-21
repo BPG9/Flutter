@@ -37,7 +37,8 @@ class _AddTourState extends State<AddTour> {
 
           switch (_type) {
             case AddType.CREATE:
-              return CreateTour(goBack, _tour);/*
+              return CreateTour(goBack, _tour);
+            /*
               return StreamBuilder(
                 stream: MuseumDatabase().watchCustomStop(),
                 builder: (context, snap) {
@@ -77,7 +78,9 @@ class _AddTourState extends State<AddTour> {
                         padding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 80),
                         child: Text(
-                          "Sie müssen einen Erstellercode über die Einstellungen eingeben, damit Sie eine Tour erstellen können.",
+                          "Du musst einen Erstellercode über die Einstellungen eingeben, "
+                          "damit Du eine Tour erstellen kannst. Diese erhälst Du z.B. "
+                          "von einem Lehrer.",
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 17),
                         ),
@@ -99,15 +102,14 @@ class _AddTourState extends State<AddTour> {
                   "assets/images/undraw_new_entries_nh3h.png",
                   "Tour erstellen",
                   "Erstelle Deine eigene Tour durch das Landesmuseum.",
-                  "Neue Tour erstellen",
-                  () async {
-                    setState(() => _type = AddType.CREATE);
+                  "Neue Tour erstellen", () async {
+                setState(() => _type = AddType.CREATE);
 
-                    var name = (await MuseumDatabase().getUser())?.username;
+                var name = (await MuseumDatabase().getUser())?.username;
 
-                    _tour = TourWithStops.empty(name);
-                    _tour.stops.add(ActualStop.custom());
-                  }),
+                _tour = TourWithStops.empty(name);
+                _tour.stops.add(ActualStop.custom());
+              }),
               margin: margin),
           border(
               _content(

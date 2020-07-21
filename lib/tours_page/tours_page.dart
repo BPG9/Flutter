@@ -115,7 +115,10 @@ class _ToursState extends State<Tours> {
               color: COLOR_TOUR, fontWeight: FontWeight.bold, fontSize: 25),
         ),
         GestureDetector(
-          onTap: () => print("QR not implemented"),
+          onTap: () {
+            print("QR not implemented");
+
+          },
           child: border(
             Icon(FontAwesomeIcons.qrcode, size: 50),
             borderColor: COLOR_TOUR,
@@ -125,6 +128,7 @@ class _ToursState extends State<Tours> {
       ],
     );
   }
+  final GlobalKey _qrKey = GlobalKey(debugLabel: "QR");
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +142,7 @@ class _ToursState extends State<Tours> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 80),
               child: Text(
-                "Sie müssen sich anmelden, um auf die angebotenen Touren zugreifen zu können.",
+                "Du musst dich anmelden, um auf die angebotenen Touren zugreifen zu können.",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 17),
               ),
@@ -156,6 +160,7 @@ class _ToursState extends State<Tours> {
             "Code": _code(),
           },
           color: COLOR_TOUR,
+          showMap: true,
         );
       },
     );

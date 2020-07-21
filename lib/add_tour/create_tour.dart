@@ -65,7 +65,7 @@ class _CreateTourState extends State<CreateTour> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       color: COLOR_ADD.withOpacity(.5),
-      height: verSize(13, 10),
+      height: horSize(22, 10),
       width: horSize(100, 100),
       child: Wrap(
         alignment: WrapAlignment.center,
@@ -221,7 +221,8 @@ class _CreateTourState extends State<CreateTour> {
         builder: (context) => AlertDialog(
               title: Text("Warnung"),
               content: Text(
-                  "Möchten Sie die ausgewählte Station wirklich entfernen?\nDies kann nicht rückgängig gemacht werden."),
+                  "Möchtest Du die ausgewählte Station wirklich entfernen?\n"
+                  "Dies kann nicht rückgängig gemacht werden."),
               actions: [
                 FlatButton(
                   child: Text("Abbrechen", style: TextStyle(color: COLOR_ADD)),
@@ -307,7 +308,8 @@ class _CreateTourState extends State<CreateTour> {
                       borderRadius: BorderRadius.circular(10)),
                   textColor: Colors.white,
                   color: COLOR_ADD,
-                  onPressed: () => showDialog(context: context, builder: (c) => _confirmCreate()),
+                  onPressed: () => showDialog(
+                      context: context, builder: (c) => _confirmCreate()),
                   child: Text("Fertigstellen"),
                 ),
                 FlatButton(
@@ -444,7 +446,8 @@ class _CreateTourState extends State<CreateTour> {
         builder: (context) => AlertDialog(
               title: Text("Warnung"),
               content: Text(
-                  "Möchten Sie wirklich zur Übersicht zurückkehren?\nAlle Änderungen gehen unwiderruflich verloren."),
+                  "Wirklich zur Übersicht zurückkehren?\n"
+                      "Alle Änderungen gehen unwiderruflich verloren."),
               actions: [
                 FlatButton(
                   child: Text("Abbrechen", style: TextStyle(color: COLOR_ADD)),

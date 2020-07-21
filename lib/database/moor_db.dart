@@ -284,7 +284,9 @@ class MuseumDatabase extends _$MuseumDatabase {
     return _db;
   }
 
-  MuseumDatabase._create() : _mutex = Mutex(), super(_openConnection());
+  MuseumDatabase._create()
+      : _mutex = Mutex(),
+        super(_openConnection());
 
   @override
   int get schemaVersion => 5;
@@ -296,6 +298,15 @@ class MuseumDatabase extends _$MuseumDatabase {
   Future setUser(UsersCompanion uc) {
     customStatement("DELETE FROM users");
     return into(users).insert(uc);
+  }
+
+  Future<bool> idExists(String onlineId) async {
+    Tour t = await (select(tours)
+          ..where((tbl) => tbl.onlineId.equals(onlineId)))
+        .getSingle();
+    print(t != null);
+    print(t?.onlineId ?? "" + "     " + onlineId);
+    return Future.value(t != null);
   }
 
   Future updateUsername(String name, String refresh) async {
@@ -835,7 +846,10 @@ class MuseumDatabase extends _$MuseumDatabase {
   Stream<List<Tour>> getTours() => select(tours).watch();
 
   Stream<List<TourWithStops>> getTourStops() {
-    final tour_ids = select(tours, distinct: true).map((t) => t.id).watch();
+    final tour_ids = select(tours, distinct: true).map((t) {
+      print("BBBBBBBBBB ${t.id}");
+      return t.id;
+    }).watch();
 
     var t = tour_ids.map((list) => list.map((id) => getTour(id)).toList());
 
@@ -867,7 +881,8 @@ class MuseumDatabase extends _$MuseumDatabase {
 
   Future<List<Stop>> getStops() => select(stops).get();
 
-  Future<Stop> getStop(String id) => (select(stops)..where((s) => s.id.equals(id))).getSingle();
+  Future<Stop> getStop(String id) =>
+      (select(stops)..where((s) => s.id.equals(id))).getSingle();
 
   Stream<List<Stop>> stopSearch(String text) {
     if (text.isEmpty) return Stream.value(List<Stop>());
@@ -1112,10 +1127,8 @@ class MuseumDatabase extends _$MuseumDatabase {
     for (Object o in checkList) {
       if (o is Map)
         await _client.mutate(MutationOptions(
-          documentNode: gql(MutationBackend.deleteCheckpoint(token, id)),
-          onError: (e) => print("EXC_deleteAllMut: " + e.toString())
-        ));
-
+            documentNode: gql(MutationBackend.deleteCheckpoint(token, id)),
+            onError: (e) => print("EXC_deleteAllMut: " + e.toString())));
     }
 
     print("EEE ONLINE CHECKS DELETED");
@@ -1125,12 +1138,13 @@ class MuseumDatabase extends _$MuseumDatabase {
   Future<String> checkRefresh() async {
     String token = "";
     await _mutex.acquire();
-    try{
+    try {
       token = await accessToken();
-      if (token != null && token != "" && !await GraphQLConfiguration.isConnected(token))
+      if (token != null &&
+          token != "" &&
+          !await GraphQLConfiguration.isConnected(token))
         token = await refreshAccess();
-    }
-    finally {
+    } finally {
       _mutex.release();
     }
     return Future.value(token);
@@ -1225,7 +1239,7 @@ class MuseumDatabase extends _$MuseumDatabase {
         var own = m["owner"];
         if (own is Map && own.containsKey("username")) author = own["username"];
         Tour t = Tour(
-            id: -1,
+            id: null,
             onlineId: m["id"],
             searchId: m["searchId"],
             name: m["name"],
@@ -1289,7 +1303,12 @@ class MuseumDatabase extends _$MuseumDatabase {
     print("AAA");
     if (tour == null || tour.stops.isEmpty) return Future.value(false);
 
-    print("ID: "+tour.id.toString() +" Name: "+ tour.name.text +" Search: "+ tour.searchId);
+    print("ID: " +
+        tour.id.toString() +
+        " Name: " +
+        tour.name.text +
+        " Search: " +
+        tour.searchId);
     for (var s in tour.stops) {
       print(s.stop.name);
       print("EXTRA[" +
@@ -1311,7 +1330,8 @@ class MuseumDatabase extends _$MuseumDatabase {
       var oldId = tour.id?.value;
       if (oldId != null && oldId > 0) {
         await (delete(tours)..where((t) => t.id.equals(oldId))).go();
-        await (delete(stopFeatures)..where((sf) => sf.id_tour.equals(oldId))).go();
+        await (delete(stopFeatures)..where((sf) => sf.id_tour.equals(oldId)))
+            .go();
         await (delete(tourStops)..where((t) => t.id_tour.equals(oldId))).go();
         await (delete(this.extras)..where((e) => e.id_tour.equals(oldId))).go();
         print("EEE LOCAL DELETED");

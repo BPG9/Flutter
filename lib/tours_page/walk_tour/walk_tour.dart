@@ -47,7 +47,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
     Color colorNav = Colors.white;
     return Container(
       padding: EdgeInsets.only(left: 15, right: 15, bottom: 9, top: topPad),
-      height: verSize(13, 25) + topPad,
+      height: verSize(10, 25) + topPad, //13,25
       decoration: BoxDecoration(
         color: COLOR_TOUR,
         border: Border(bottom: BorderSide(color: Colors.black, width: 1.5)),
@@ -189,7 +189,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
       builder: (context) => AlertDialog(
         title: Text("Achtung"),
         content: Text(
-            "Wenn Sie die Tour jetzt beenden, gehen ggf. Ihre gesamten Antworten verloren."),
+            "Wenn Du die Tour jetzt beendest, gehen ggf. Deine gesamten Antworten verloren."),
         actions: [
           FlatButton(
             onPressed: () {
@@ -216,8 +216,8 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
       context: context,
       builder: (context) => AlertDialog(
         title: Text("Achtung"),
-        content: Text(
-            "Nachdem Sie sich die Ergebnisse angeschaut haben, können Sie ihre Antworten nicht mehr verändern.\nFortfahren?"),
+        content: Text("Nachdem Du die Ergebnisse angeschaut hast, können Deine "
+            "Antworten nicht mehr verändert werden.\nFortfahren?"),
         actions: [
           FlatButton(
             onPressed: () => Navigator.pop(context),
@@ -338,7 +338,8 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                       /*TourWalkerTasks(widget
                         .tour.tasks[widget.tour.stops[_currentItem].name]),*/
                       Container(
-                          height: bottomOff == 0 ? verSize(15, 21) : bottomOff),
+                          height: bottomOff == 0 ? verSize(11, 21) : bottomOff),
+                      //15,21
                       //_content(),
                     ],
                   ),
