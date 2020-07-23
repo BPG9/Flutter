@@ -93,7 +93,6 @@ class _TourExtraState extends State<TourExtra> {
                 defaultToHttps: true,
               ),
               onOpen: (elem) async {
-                print("AAAAD");
                 if (await canLaunch(elem.url))
                   await launch(elem.url);
                 else

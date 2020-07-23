@@ -152,12 +152,14 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                         fit: BoxFit.cover),*/
                     border: Border(right: BorderSide(color: Colors.black)),
                   ),
-                  child: QueryBackend.networkImageWidget(
-                    QueryBackend.imageURLPicture(
-                        stops[index].stop.images.isNotEmpty
-                            ? stops[index].stop.images[0]
-                            : ""),
-                  ),
+                  child: stops[index].stop.id == customName
+                      ? Image(image: AssetImage("assets/images/haupthalle_hlm_blue.png"), fit: BoxFit.cover,)
+                      : QueryBackend.networkImageWidget(
+                          QueryBackend.imageURLPicture(
+                              stops[index].stop.images.isNotEmpty
+                                  ? stops[index].stop.images[0]
+                                  : ""),
+                        ),
                 ),
                 Container(
                   //color: Colors.yellow,
@@ -338,7 +340,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                       /*TourWalkerTasks(widget
                         .tour.tasks[widget.tour.stops[_currentItem].name]),*/
                       Container(
-                          height: bottomOff == 0 ? verSize(11, 21) : bottomOff),
+                          height: bottomOff == 0 ? verSize(12, 21) : bottomOff),
                       //15,21
                       //_content(),
                     ],

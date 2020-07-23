@@ -112,6 +112,8 @@ class TourWithStops {
         if (task != null && up["text"] is String) {
           String text = up["text"];
           if (type == ExtraType.TASK_TEXT){
+            if (text.startsWith("Antwort: "))
+              text = text.replaceAll("Antwort: ", "");
             task.entries[0].valB.text = text;
           }
           else if (type == ExtraType.TASK_SINGLE) {

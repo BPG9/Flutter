@@ -304,8 +304,8 @@ class MuseumDatabase extends _$MuseumDatabase {
     Tour t = await (select(tours)
           ..where((tbl) => tbl.onlineId.equals(onlineId)))
         .getSingle();
-    print(t != null);
-    print(t?.onlineId ?? "" + "     " + onlineId);
+    //print(t != null);
+    //print(t?.onlineId ?? "" + "     " + onlineId);
     return Future.value(t != null);
   }
 
@@ -846,10 +846,7 @@ class MuseumDatabase extends _$MuseumDatabase {
   Stream<List<Tour>> getTours() => select(tours).watch();
 
   Stream<List<TourWithStops>> getTourStops() {
-    final tour_ids = select(tours, distinct: true).map((t) {
-      print("BBBBBBBBBB ${t.id}");
-      return t.id;
-    }).watch();
+    final tour_ids = select(tours, distinct: true).map((t) => t.id).watch();
 
     var t = tour_ids.map((list) => list.map((id) => getTour(id)).toList());
 
@@ -1120,15 +1117,19 @@ class MuseumDatabase extends _$MuseumDatabase {
       return Future.value(false);
     }
 
-    print(result.data.data);
-
     List<Object> checkList = result.data.data['checkpointsTour'];
 
     for (Object o in checkList) {
-      if (o is Map)
-        await _client.mutate(MutationOptions(
-            documentNode: gql(MutationBackend.deleteCheckpoint(token, id)),
+      if (o is Map){
+        QueryResult r = await _client.mutate(MutationOptions(
+            documentNode: gql(MutationBackend.deleteCheckpoint(token, o["id"])),
             onError: (e) => print("EXC_deleteAllMut: " + e.toString())));
+        if (r.data.data["ok"]==null || !r.data.data["ok"]["boolean"]) {
+          print("ERROR_deleteAllMut:");
+          print(o);
+          print(r.data.data["ok"]);
+        }
+      }
     }
 
     print("EEE ONLINE CHECKS DELETED");
@@ -1334,6 +1335,7 @@ class MuseumDatabase extends _$MuseumDatabase {
             .go();
         await (delete(tourStops)..where((t) => t.id_tour.equals(oldId))).go();
         await (delete(this.extras)..where((e) => e.id_tour.equals(oldId))).go();
+        print(entry.stops.length);
         print("EEE LOCAL DELETED");
       }
 

@@ -170,10 +170,14 @@ class _TourPanel extends StatelessWidget {
                   style: TextStyle(fontStyle: FontStyle.italic),
                 )
               : Container()),
-          Row(
-            children: <Widget>[
+          ButtonBar(
+            buttonMinWidth: horSize(21.5, 10),
+            mainAxisSize: MainAxisSize.max,
+            //buttonPadding: EdgeInsets.only(right: horSize(10, 10)),
+            alignment: MainAxisAlignment.start,
+            children: [
               _oneButton(type, context),
-              Container(width: 5),
+              //Container(width: 5),
               _oneButton(secondType, context),
             ],
           ),
@@ -223,7 +227,8 @@ class _TourPanel extends StatelessWidget {
       Row(
         children: [
           _pictureLeft(
-            _tour.stops[0], Size(horSize(8.5, 20), horSize(7, 57)), //Size(30, size(29, 57))
+            _tour.stops[0], Size(horSize(8.5, 8.5), size(29, 57)),
+            //Size(30, size(29, 57))
             margin: EdgeInsets.only(right: 10),
           ),
           _infoRight(context),
@@ -438,7 +443,6 @@ class _TourListState extends State<TourList> {
       stream: MuseumDatabase().getTourStops(),
       builder: (context, snap) {
         List<TourWithStops> tours = snap.data ?? List<TourWithStops>();
-        print("AAAAAAA ${tours.length}");
         return _toursFromList(tours);
       },
     );
@@ -469,11 +473,18 @@ class DownloadColumn extends StatefulWidget {
 class _DownloadColumnState extends State<DownloadColumn> {
   List<TourWithStops> _list = List<TourWithStops>();
   bool _loading = false;
+  Future fut;
 
   @override
   void initState() {
     super.initState();
-    initList();
+    fut = initList();
+  }
+
+  @override
+  void dispose() {
+    fut.timeout(Duration(seconds: 0), onTimeout: () => Future.value(true));
+    super.dispose();
   }
 
   initList() async {
@@ -483,7 +494,6 @@ class _DownloadColumnState extends State<DownloadColumn> {
     String token = await MuseumDatabase().checkRefresh();
 
     if (token == null || token == "") return;
-
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.query(QueryOptions(
       documentNode: gql(widget.query(token)),
@@ -519,10 +529,9 @@ class _DownloadColumnState extends State<DownloadColumn> {
       if (checkpoints.isEmpty) continue;
       var firstStop = checkpoints.where((s) => s["index"] == 1).toList()[0];
 
-      Stop s = allStops.firstWhere((e) =>
-          e.id ==
-          firstStop["museumObject"][
-              "objectId"]); //await MuseumDatabase().getStop(firstStop["museumObject"]["objectId"]);
+      Stop s = allStops
+          .firstWhere((e) => e.id == firstStop["museumObject"]["objectId"]);
+      //await MuseumDatabase().getStop(firstStop["museumObject"]["objectId"]);
 
       _list.add(
           TourWithStops(t, <ActualStop>[ActualStop(s, StopFeature(), [])]));

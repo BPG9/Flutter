@@ -1587,7 +1587,6 @@ class _HomeMuseumState extends State<HomeMuseum> {
         content = _directions();
         break;
       default:
-        debugPrint("AAAAAA");
         content = _aboutMuseum();
     }
     return WillPopScope(

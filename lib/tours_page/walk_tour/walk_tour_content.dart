@@ -4,6 +4,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/modelling.dart';
@@ -43,9 +44,10 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
     return Column(
       //shrinkWrap: true,
       //padding: EdgeInsets.all(0),
+
       children: [
         // Images
-        feat.showImages
+        feat.showImages && feat.id_stop!=customName
             ? ImageCaroussel.fromStrings(widget.stop.stop.images)
             : Container(height: 16),
         _information(feat.showText, feat.showDetails),
@@ -108,12 +110,12 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
                   collapsed: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      SelectableText(
                         stop.descr,
                         maxLines: 5,
                         textAlign: TextAlign.left,
                         style: TextStyle(fontSize: 18),
-                        overflow: TextOverflow.ellipsis,
+                        //overflow: TextOverflow.ellipsis,
                       ),
                       _expButton("Mehr anzeigen"),
                     ],
@@ -121,8 +123,8 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
                   expanded: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SelectableText(
-                        stop.descr,
+                      SelectableLinkify(
+                        text: stop.descr,
                         textAlign: TextAlign.left,
                         style: TextStyle(fontSize: 18),
                       ),

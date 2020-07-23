@@ -25,7 +25,8 @@ class _ProfileState extends State<Profile> {
     //TODO label sometimes a bit to low -> why?
     if (user.producer)
       label = Positioned(
-        top: verSize(16.5, 20, top: true),
+        bottom: verSize(10, 20),
+        //top: verSize(16.5, 20, top: true),
         left: verSize(20, 19) + 35,
         child: Text(
           "Ersteller-Status",
