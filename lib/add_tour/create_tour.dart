@@ -8,7 +8,7 @@ import 'package:museum_app/museum_tabs.dart';
 import 'package:reorderables/reorderables.dart';
 
 import '../SizeConfig.dart';
-import 'add_tour.dart';
+import '../util.dart';
 import 'edit_single_stop.dart';
 
 class CreateTour extends StatefulWidget {
@@ -334,8 +334,8 @@ class _CreateTourState extends State<CreateTour> {
   Widget _confirmCreate() {
     return AlertDialog(
       title: Text("Hinweis"),
-      content: Text("Möchten Du fortfahren?\n"
-          "Das Museum behälts sich vor, die erstellte Tour einer Qualitätssicherung zu unterziehen und sie "
+      content: Text("Möchtest Du fortfahren?\n"
+          "Das Museum behält sich vor, die erstellte Tour einer Qualitätssicherung zu unterziehen und sie "
           "ggf. unter Nennung Deines Nutzernamens zu veröffentlichen."),
       actions: [
         FlatButton(

@@ -110,12 +110,12 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
                   collapsed: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SelectableText(
+                      Text(
                         stop.descr,
                         maxLines: 5,
                         textAlign: TextAlign.left,
                         style: TextStyle(fontSize: 18),
-                        //overflow: TextOverflow.ellipsis,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       _expButton("Mehr anzeigen"),
                     ],
@@ -148,7 +148,7 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
       "Material": s.material,
       "Größe": s.size,
       "Ort": s.location,
-      "Kontext": s.interContext
+      //"Kontext": s.interContext
     };
     map.removeWhere((key, val) => val == null || (val is String && val.trim() == ""));
 

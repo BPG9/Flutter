@@ -18,6 +18,7 @@ class TourWithStops {
   final TextEditingController descr = TextEditingController();
   final String author;
   double difficulty;
+  //TODO change to lastEdit
   DateTime creationTime;
   final int id;
   final String onlineId;

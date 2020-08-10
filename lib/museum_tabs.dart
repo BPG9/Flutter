@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:museum_app/graphql/mutations.dart';
+import 'package:museum_app/util.dart';
 
 import 'SizeConfig.dart';
 import 'constants.dart';
@@ -141,6 +142,7 @@ enum _OptionType {
   LOGIN,
   LOGOUT,
   PROMOTE,
+  PRIVACY,
   ABOUT,
 }
 
@@ -287,6 +289,9 @@ class MuseumSettings extends StatelessWidget {
       case _OptionType.LOGIN:
         Navigator.popAndPushNamed(context, "/profile");
         break;
+      case _OptionType.PRIVACY:
+        openPDF(PDF_PRIVACY);
+        break;
       default:
     }
   }
@@ -343,6 +348,10 @@ class MuseumSettings extends StatelessWidget {
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: 16),
       actions: [
+        FlatButton(
+          child: Text("Datenschutz", style: TextStyle(color: COLOR_PROFILE)),
+          onPressed: () => _select(_OptionType.PRIVACY, context),
+        ),
         FlatButton(
           child: Text("Schließen", style: TextStyle(color: COLOR_PROFILE)),
           onPressed: () => Navigator.pop(context),
@@ -437,10 +446,11 @@ class MuseumSettings extends StatelessWidget {
     );
   }
 
-  _popUpList(bool logged, bool producer) {
+  List<PopupMenuItem> _popUpList(bool logged, bool producer) {
     List<PopupMenuItem> base = [
       _myPopUpItem("Einloggen", Icons.redo, _OptionType.LOGIN),
       _myPopUpItem("Über diese App", Icons.info, _OptionType.ABOUT),
+      //_myPopUpItem("Datenschutz", Icons.lock_outline, _OptionType.PRIVACY)
       //_myPopUpItem("DEBUG clear", Icons.clear, _OptionType.clear),
       //_myPopUpItem("DEBUG demo", Icons.play_arrow, _OptionType.demo),
     ];
@@ -457,8 +467,13 @@ class MuseumSettings extends StatelessWidget {
           0,
           _myPopUpItem(
               "Passwort ändern", Icons.fiber_pin, _OptionType.EDIT_PW));
-      base.insert(0,
-          _myPopUpItem("Username ändern", Icons.person, _OptionType.EDIT_US));
+      base.insert(
+          0,
+          _myPopUpItem(
+            "Username ändern",
+            Icons.person,
+            _OptionType.EDIT_US,
+          ));
       base.insert(0,
           _myPopUpItem("Profilbild ändern", Icons.image, _OptionType.EDIT_IMG));
     }

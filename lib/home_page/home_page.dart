@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/home_page/home_museum.dart';
 import 'package:museum_app/museum_tabs.dart';
+import 'package:museum_app/util.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -419,7 +420,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           GestureDetector(
-            onTap: () => listeKreative().then((file) => OpenFile.open(file.path)),
+            onTap: () => openPDF(PDF_K_SCHREIB),//listeKreative().then((file) => OpenFile.open(file.path)),
             child: Row(
               //mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -444,7 +445,7 @@ class _HomeState extends State<Home> {
           ),
           Container(height: verSize(2, 1)),
           GestureDetector(
-            onTap: () => handreichung().then((file) => OpenFile.open(file.path)),
+            onTap: () => openPDF(PDF_HANDR),//handreichung().then((file) => OpenFile.open(file.path)),
             child: Row(
               //mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -470,9 +471,7 @@ class _HomeState extends State<Home> {
           ),
           Container(height: verSize(2, 1)),
           GestureDetector(
-            onTap: () => abExample().then((file) {
-              OpenFile.open(file.path);
-            }),
+            onTap: () => openPDF(PDF_EXAMPLE),//abExample().then((file) => OpenFile.open(file.path)),
             child: Row(
               //mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -616,33 +615,6 @@ class _HomeState extends State<Home> {
     } else {
       throw 'Could not launch $url';
     }
-  }
-
-  Future<File> listeKreative() async {
-    Directory tempDir = await getTemporaryDirectory();
-    File tempFile = File('${tempDir.path}/liste_kreative.pdf');
-    ByteData bd = await rootBundle
-        .load('assets/pdfs/Liste_kreativer_Schreibaufgaben.pdf');
-    await tempFile.writeAsBytes(bd.buffer.asUint8List(), flush: true);
-    return tempFile;
-  }
-
-  Future<File> abExample() async {
-    Directory tempDir = await getTemporaryDirectory();
-    File tempFile = File('${tempDir.path}/ab_example.pdf');
-    ByteData bd = await rootBundle.load(
-        'assets/pdfs/AB_Exemplarische-Herangehensweise-an-ein-Ausstellungsobjekt.pdf');
-    await tempFile.writeAsBytes(bd.buffer.asUint8List(), flush: true);
-    return tempFile;
-  }
-
-  Future<File> handreichung() async {
-    Directory tempDir = await getTemporaryDirectory();
-    File tempFile = File('${tempDir.path}/handreichung.pdf');
-    ByteData bd = await rootBundle
-        .load('assets/pdfs/Handreichung_Schule-und-Museum_2011.pdf');
-    await tempFile.writeAsBytes(bd.buffer.asUint8List(), flush: true);
-    return tempFile;
   }
 
   Widget _aboutProjectText() {

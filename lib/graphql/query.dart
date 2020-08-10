@@ -38,7 +38,7 @@ class QueryBackend {
   static String getTour(String token, String tourId) {
     return """query{
       tour(token: "$token", tourId: "$tourId"){
-        creation
+        lastEdit
         currentCheckpoints
         description
         difficulty
@@ -125,7 +125,7 @@ class QueryBackend {
   static String favTours(String token) {
     return """query{
       favouriteTours(token: "$token"){
-        creation
+        lastEdit
         currentCheckpoints
         description
         difficulty
@@ -158,7 +158,7 @@ class QueryBackend {
   static String featured(String token) {
     return """query{
       featured(token: "$token"){
-        creation
+        lastEdit
         description
         difficulty
         id
@@ -175,7 +175,7 @@ class QueryBackend {
   static created(String token) {
     return """query{
       ownedTours(token: "$token"){
-        creation
+        lastEdit
         currentCheckpoints
         description
         difficulty
@@ -205,6 +205,12 @@ class QueryBackend {
   static String availProfile(String token) {
     return """query{
       availableProfilePictures(token: "$token")
+    }""";
+  }
+
+  static String myProfilePic(String token) {
+    return """query{
+      myProfilePictures(token: "$token")
     }""";
   }
 

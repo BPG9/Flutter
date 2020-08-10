@@ -4,13 +4,14 @@ import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:museum_app/SizeConfig.dart';
-import 'package:museum_app/add_tour/add_tour.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/modelling.dart';
 import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/graphql/graphqlConf.dart';
 import 'package:museum_app/graphql/query.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour.dart';
+
+import '../util.dart';
 
 Widget _pictureLeft(ActualStop stop, Size s, {margin = EdgeInsets.zero}) {
   String path = stop.stop != null && stop.stop.images.isNotEmpty
@@ -158,10 +159,10 @@ class _TourPanel extends StatelessWidget {
           _textBox(
             _tour.descr.text,
             width: horSize(50, 80),
-            height: verSize(7, 18),
+            height: verSize(8.5, 18),
             textAlign: TextAlign.justify,
             fontSize: size(13, 15),
-            maxLines: 3,
+            maxLines: 4,
             alignment: Alignment.topLeft,
           ),
           (showID && _tour.searchId != null && _tour.searchId != ""
@@ -171,10 +172,14 @@ class _TourPanel extends StatelessWidget {
                 )
               : Container()),
           ButtonBar(
-            buttonMinWidth: horSize(21.5, 10),
+            buttonMinWidth: secondType != PanelType.NONE
+                ? horSize(21.5, 10)
+                : horSize(30, 30),
             mainAxisSize: MainAxisSize.max,
             //buttonPadding: EdgeInsets.only(right: horSize(10, 10)),
-            alignment: MainAxisAlignment.start,
+            alignment: secondType != PanelType.NONE
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.center,
             children: [
               _oneButton(type, context),
               //Container(width: 5),
@@ -214,17 +219,48 @@ class _TourPanel extends StatelessWidget {
           color: _color,
           child: Text("Löschen",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
-          onPressed: () {},
+          onPressed: () async {
+            String token = await MuseumDatabase().accessToken();
+            showDialog(context: context, builder: (c) => _deleteTour(token, _tour.onlineId, context));
+            //Scaffold.of(context).showSnackBar(SnackBar(content: Text("Not yet implemented")));
+            //print("Not yet implemented");
+          },
         );
       default:
         return Container();
     }
   }
 
+  Widget _deleteTour(String token, String onlineID, context) {
+    return AlertDialog(
+      title: Text("WARNUNG"),
+      content: Text("Das Löschen von einer Tour kann NICHT rückgängig gemacht werden. "
+          "Die Tour kann anschließend nicht mehr heruntergeladen oder abgelaufen werden.\n"
+          "Bitte sei Dir absolut sicher, bevor du fortfährst."),
+      actions: [
+        FlatButton(
+          child: Text("Zurück", style: TextStyle(color: COLOR_PROFILE)),
+          onPressed: () {
+            Navigator.pop(context); },
+        ),
+        FlatButton(
+          child: Text("Tour löschen", style: TextStyle(color: COLOR_PROFILE)),
+          onPressed: () {
+            MuseumDatabase().deleteTour(token, onlineID);
+
+            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Tour gelöscht. Lade die Liste ggf. neu.")));
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return border(
       Row(
+        //crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _pictureLeft(
             _tour.stops[0], Size(horSize(8.5, 8.5), size(29, 57)),
@@ -516,7 +552,7 @@ class _DownloadColumnState extends State<DownloadColumn> {
           author: m["owner"]["username"],
           difficulty: m["difficulty"].toDouble(),
           desc: m["description"],
-          creationTime: DateTime.parse(m["creation"]));
+          creationTime: DateTime.parse(m["lastEdit"]));
 
       // Add the first used Stop (for its image)
       QueryResult stopResult = await _client.query(QueryOptions(

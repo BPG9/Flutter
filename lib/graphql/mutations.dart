@@ -236,4 +236,20 @@ class MutationBackend {
       }
     }""";
   }
+
+  static String updateTourInfo(String token, String tourId, int diff, String name, String descr) {
+    return """mutation{
+      updateTour(description: "$descr", difficulty: $diff, name: "$name", token: "$token", tourId: "$tourId"){
+        ok {... on BooleanField{boolean}}
+      }
+    }""";
+  }
+
+  static String deleteTour(String token, String tourId) {
+    return """mutation{
+      deleteTour(token: "$token", tourId: "$tourId"){
+        ok {... on BooleanField{boolean}}
+      }
+    }""";
+  }
 }

@@ -43,11 +43,11 @@ class _ImageDialogState extends State<ImageDialog> {
     String token = await MuseumDatabase().accessToken();
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.query(QueryOptions(
-      documentNode: gql(QueryBackend.availProfile(token)),
+      documentNode: gql(QueryBackend.myProfilePic(token)),
       //onError: (e) => print("ERROR_auth: " + e.toString()),
     ));
     _list.clear();
-    for (var s in result.data.data["availableProfilePictures"]) {
+    for (var s in result.data.data["myProfilePictures"]) {
       _list.add(s.toString());
     }
     setState(() {});
@@ -79,6 +79,7 @@ class _ImageDialogState extends State<ImageDialog> {
                         MuseumDatabase().updateImage(img);
                         Navigator.pop(context);
                       }
+                      else print(result.data.data);
                     },
                     child: QueryBackend.networkImageWidget(
                       QueryBackend.imageURLProfile(img),

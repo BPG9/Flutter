@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:museum_app/SizeConfig.dart';
@@ -8,6 +6,7 @@ import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/museum_tabs.dart';
 
 import '../constants.dart';
+import '../util.dart';
 import 'create_tour.dart';
 
 class AddTour extends StatefulWidget {
@@ -121,7 +120,11 @@ class _AddTourState extends State<AddTour> {
               margin: margin),
           border(
               GestureDetector(
-                onTap: () => print("Video Erklär Tour"),
+                onTap: () {
+                  Scaffold.of(context).showSnackBar(
+                      SnackBar(content: Text("Not yet implemented")));
+                  print("Video Erklär Tour");
+                },
                 child: Row(
                   //mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -275,31 +278,4 @@ class _AddTourState extends State<AddTour> {
       ),
     );
   }
-}
-
-Widget border(Widget w,
-    {width,
-    borderColor = COLOR_ADD,
-    height,
-    margin,
-    padding = const EdgeInsets.all(8)}) {
-  return Container(
-    width: width,
-    height: height,
-    padding: padding,
-    margin: margin,
-    decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: borderColor, width: 2),
-        borderRadius: BorderRadius.all(Radius.circular(18.0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.8),
-            spreadRadius: 1,
-            blurRadius: 2,
-            offset: Offset.fromDirection(pi / 2),
-          )
-        ]),
-    child: w,
-  );
 }

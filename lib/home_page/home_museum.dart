@@ -1,18 +1,15 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/home_page/home_page.dart';
 import 'package:museum_app/museum_tabs.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
+import '../util.dart';
 
 class HomeMuseum extends StatefulWidget {
   final void Function() goBack;
@@ -281,7 +278,7 @@ class _HomeMuseumState extends State<HomeMuseum> {
               ),
             ),
             GestureDetector(
-              onTap: () => barrierefreiPDF().then((file) => OpenFile.open(file.path)),
+              onTap: () => openPDF(PDF_BARRIERE),//barrierefreiPDF().then((file) => OpenFile.open(file.path)),
               child: Row(
                 //mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -309,15 +306,6 @@ class _HomeMuseumState extends State<HomeMuseum> {
         margin: EdgeInsets.only(left: 16.0, right: 16, top: 6, bottom: 15),
       ),
     );
-  }
-
-  Future<File> barrierefreiPDF() async {
-    Directory tempDir = await getTemporaryDirectory();
-    File tempFile = File('${tempDir.path}/HLMD_Orientierungsplan_barrierefrei.pdf');
-    ByteData bd = await rootBundle
-        .load('assets/pdfs/HLMD_Orientierungsplan_barrierefrei.pdf');
-    await tempFile.writeAsBytes(bd.buffer.asUint8List(), flush: true);
-    return tempFile;
   }
 
   _launchURL(String url) async {

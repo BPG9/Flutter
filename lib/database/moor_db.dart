@@ -355,7 +355,7 @@ class MuseumDatabase extends _$MuseumDatabase {
           id: object['objectId'],
           images: images,
           name: object['title'],
-          descr: object['description'],
+          descr: object['description'] ?? "",
           time: Value(object['year']),
           creator: Value(object['creator']),
           division: Value(object['subCategory']),
@@ -464,6 +464,8 @@ class MuseumDatabase extends _$MuseumDatabase {
 
   Future removeFavStop(String id) async {
     var stopIds = await select(users).map((u) => u.favStops).getSingle();
+    if (!stopIds.contains(id))
+      return;
     stopIds.remove(id);
 
 //    String accessToken = await this.accessToken();
@@ -515,6 +517,8 @@ class MuseumDatabase extends _$MuseumDatabase {
 
   Future removeFavTour(String id) async {
     var tourIds = await select(users).map((u) => u.favTours).getSingle();
+    if (!tourIds.contains(id))
+      return;
     tourIds.remove(id);
 
 //    String accessToken = await this.accessToken();
@@ -599,8 +603,10 @@ class MuseumDatabase extends _$MuseumDatabase {
         documentNode: gql(QueryBackend.favTours(access)),
       ));
       List<String> favTours = List<String>();
-      for (var m in result.data["favouriteTours"] ?? [])
-        favTours.add(m.data["id"].toString());
+      if (result.data != null) {
+        for (var m in result.data["favouriteTours"] ?? [])
+          favTours.add(m.data["id"].toString());
+      }
       print("FAVTOURS" + favTours.toString());
 
       var u = UsersCompanion(
@@ -1021,6 +1027,7 @@ class MuseumDatabase extends _$MuseumDatabase {
           // delete all checkpoints
           await _deleteAllOnlineCheckpoints(token, tourId);
           //TODO Tour Eigenschaften (Name, Descr, difficulty, date) anpassen
+          await _updateTour(token, o);
           continue;
         }
         var id = o.author.substring(0, min(3, o.author.length)) +
@@ -1120,11 +1127,12 @@ class MuseumDatabase extends _$MuseumDatabase {
     List<Object> checkList = result.data.data['checkpointsTour'];
 
     for (Object o in checkList) {
-      if (o is Map){
+      if (o is Map) {
         QueryResult r = await _client.mutate(MutationOptions(
             documentNode: gql(MutationBackend.deleteCheckpoint(token, o["id"])),
             onError: (e) => print("EXC_deleteAllMut: " + e.toString())));
-        if (r.data.data["ok"]==null || !r.data.data["ok"]["boolean"]) {
+        if (r.data.data["deleteCheckpoint"]["ok"] == null ||
+            !r.data.data["deleteCheckpoint"]["ok"]["boolean"]) {
           print("ERROR_deleteAllMut:");
           print(o);
           print(r.data.data["ok"]);
@@ -1134,6 +1142,41 @@ class MuseumDatabase extends _$MuseumDatabase {
 
     print("EEE ONLINE CHECKS DELETED");
     return Future.value(true);
+  }
+
+  Future<bool> deleteTour(String token, String onlineID) async {
+    // Delete on Server
+    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
+    //QueryResult result = await
+    _client.mutate(MutationOptions(
+      documentNode: gql(MutationBackend.deleteTour(token, onlineID)),
+    ));
+
+    var id = await (select(tours)
+          ..where((tbl) => tbl.onlineId.equals(onlineID)))
+        .map((a) => a.id)
+        .getSingle();
+
+    // Clean up local DB
+    this.removeTour(id);
+    // (Pot.) clean up favTours
+    this.removeFavTour(onlineID);
+  }
+
+  Future<bool> _updateTour(String token, Tour t) async {
+    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
+    // liste aller checkpoint (ids)
+
+    QueryResult result = await _client.mutate(MutationOptions(
+      documentNode: gql(MutationBackend.updateTourInfo(
+          token, t.onlineId, t.difficulty.floor(), t.name, t.desc)),
+    ));
+
+    if (result.hasException) {
+      print("EXC_updateTour: " + result.exception.toString());
+      return Future.value(false);
+    }
+    return Future.value(result.data["updateTour"]["ok"]["boolean"]);
   }
 
   Future<String> checkRefresh() async {
@@ -1246,7 +1289,7 @@ class MuseumDatabase extends _$MuseumDatabase {
             name: m["name"],
             author: author,
             difficulty: m["difficulty"].toDouble(),
-            creationTime: DateTime.parse(m["creation"]),
+            creationTime: DateTime.parse(m["lastEdit"]),
             desc: m["description"]);
         tour = TourWithStops(t, <ActualStop>[]);
       } else if (m.containsKey("index") && tour != null) {

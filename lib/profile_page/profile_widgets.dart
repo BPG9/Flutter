@@ -180,6 +180,7 @@ class _FavWidgetState extends State<FavWidget> {
                     DownloadColumn(
                       QueryBackend.favTours,
                       notFoundText: "Keine Touren favorisiert.",
+                      showSearchId: true,
                     ),
                   ],
             );

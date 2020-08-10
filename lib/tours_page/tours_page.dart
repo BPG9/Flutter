@@ -2,12 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:museum_app/add_tour/add_tour.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/graphql/query.dart';
 import 'package:museum_app/museum_tabs.dart';
 import 'package:museum_app/tours_page/tours_widgets.dart';
+
+import '../util.dart';
 
 class Tours extends StatefulWidget {
   Tours({Key key}) : super(key: key);
@@ -116,8 +117,8 @@ class _ToursState extends State<Tours> {
         ),
         GestureDetector(
           onTap: () {
+            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Not yet implemented")));
             print("QR not implemented");
-
           },
           child: border(
             Icon(FontAwesomeIcons.qrcode, size: 50),
