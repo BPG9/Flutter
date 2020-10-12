@@ -115,8 +115,16 @@ class _AddTourState extends State<AddTour> {
                   "assets/images/authentication.png",
                   "Tour bearbeiten",
                   "Bearbeite eine Deiner lokalen Touren oder ergänze sie um Stationen.",
-                  "Touren bearbeiten",
-                  () => setState(() => _type = AddType.EDIT)),
+                  "Touren bearbeiten", () async {
+                var tours = await MuseumDatabase().createdTours();
+                if (tours != null && tours.isEmpty) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          "Du musst zuerst eine erstellte Tour herunterladen.")));
+                  _type = AddType.CHOOSE;
+                } else
+                  setState(() => _type = AddType.EDIT);
+              }),
               margin: margin),
           border(
               GestureDetector(

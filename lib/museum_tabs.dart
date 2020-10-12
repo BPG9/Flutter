@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:museum_app/graphql/mutations.dart';
+import 'package:museum_app/server_connection/mutations.dart';
 import 'package:museum_app/util.dart';
 
 import 'SizeConfig.dart';
 import 'constants.dart';
 import 'database/moor_db.dart';
-import 'graphql/graphqlConf.dart';
 import 'image_dialog.dart';
 import 'map/map_page.dart';
+import 'server_connection/graphqlConf.dart';
 
 class MuseumTabs extends StatefulWidget {
   final Widget top;

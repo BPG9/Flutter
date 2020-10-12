@@ -5,7 +5,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/graphql/mutations.dart';
+import 'package:museum_app/server_connection/mutations.dart';
 
 class LogIn extends StatefulWidget {
   final bool skippable;

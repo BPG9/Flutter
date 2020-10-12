@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/graphql/query.dart';
 import 'package:museum_app/login_page/login_page.dart';
 import 'package:museum_app/museum_tabs.dart';
 import 'package:museum_app/profile_page/profile_widgets.dart';
+import 'package:museum_app/server_connection/http_query.dart';
+import 'package:museum_app/server_connection/query.dart';
 import 'package:museum_app/tours_page/tours_widgets.dart';
 
 class Profile extends StatefulWidget {
@@ -59,8 +60,8 @@ class _ProfileState extends State<Profile> {
                         height: verSize(20, 19),
                         width: verSize(20, 19),
                       )
-                    : QueryBackend.networkImageWidget(
-                        QueryBackend.imageURLProfile(user.imgPath),
+                    : HttpQuery.networkImageWidget(
+                  HttpQuery.imageURLProfile(user.imgPath),
                         height: verSize(20, 19),
                         width: verSize(20, 19),
                       ),

@@ -7,11 +7,11 @@ import 'dart:ui';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
-import 'package:moor_ffi/moor_ffi.dart';
+import 'package:moor/ffi.dart';
 import 'package:museum_app/constants.dart';
-import 'package:museum_app/graphql/graphqlConf.dart';
-import 'package:museum_app/graphql/mutations.dart';
-import 'package:museum_app/graphql/query.dart';
+import 'package:museum_app/server_connection/graphqlConf.dart';
+import 'package:museum_app/server_connection/mutations.dart';
+import 'package:museum_app/server_connection/query.dart';
 import 'package:mutex/mutex.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -841,7 +841,9 @@ class MuseumDatabase extends _$MuseumDatabase {
     });
   }
 
-  Stream<List<Badge>> getBadges() => select(badges).watch();
+  Future<List<Badge>> getBadges() => select(badges).get();
+
+  Stream<List<Badge>> watchBadges() => select(badges).watch();
 
   Future<int> addBadge(BadgesCompanion bc) {
     return into(badges).insert(bc);
@@ -1109,6 +1111,13 @@ class MuseumDatabase extends _$MuseumDatabase {
     ));
 
     return Future.value(true);
+  }
+
+  Future<List<Tour>> createdTours() async {
+    String un = (await getUser()).username;
+    var q = select(tours)..where((t) => t.author.equals(un));
+
+    return q.get();
   }
 
   Future<bool> _deleteAllOnlineCheckpoints(String token, String id) async {

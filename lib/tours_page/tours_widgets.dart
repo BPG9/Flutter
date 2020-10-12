@@ -7,8 +7,9 @@ import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/modelling.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/graphql/graphqlConf.dart';
-import 'package:museum_app/graphql/query.dart';
+import 'package:museum_app/server_connection/graphqlConf.dart';
+import 'package:museum_app/server_connection/http_query.dart';
+import 'package:museum_app/server_connection/query.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour.dart';
 
 import '../util.dart';
@@ -31,8 +32,8 @@ Widget _pictureLeft(ActualStop stop, Size s, {margin = EdgeInsets.zero}) {
     child: ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(10.0)),
       child: path != ""
-          ? QueryBackend.networkImageWidget(
-              QueryBackend.imageURLPicture(path),
+          ? HttpQuery.networkImageWidget(
+        HttpQuery.imageURLPicture(path),
             )
           : Container(),
     ),
@@ -465,6 +466,8 @@ class TourList extends StatefulWidget {
 
 class _TourListState extends State<TourList> {
   Widget _toursFromList(List<TourWithStops> list) {
+    if (widget.tours==null && list.isEmpty)
+      return Center(child: Text("Es wurde keine Tour heruntergeladen."));
     return Column(
       children: list.map((t) => _TourPanel(t, COLOR_TOUR)).toList(),
     );

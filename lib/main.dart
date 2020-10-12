@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/graphql/graphqlConf.dart';
+import 'package:museum_app/server_connection/graphqlConf.dart';
 import 'package:museum_app/route_generator.dart';
 
 void main() async {

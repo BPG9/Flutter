@@ -309,7 +309,9 @@ class _CreateTourState extends State<CreateTour> {
                   textColor: Colors.white,
                   color: COLOR_ADD,
                   onPressed: () => showDialog(
-                      context: context, builder: (c) => _confirmCreate()),
+                    context: context,
+                    builder: (c) => _check() ? _confirmCreate() : _noCorrectAnswer(),
+                  ),
                   child: Text("Fertigstellen"),
                 ),
                 FlatButton(
@@ -328,6 +330,31 @@ class _CreateTourState extends State<CreateTour> {
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       ),
       showSetting: false,
+    );
+  }
+
+  bool _check() {
+    for (ActualStop s in widget.tour.stops)
+      for (ActualExtra e in s.extras)
+        if ((e.type == ExtraType.TASK_MULTI ||
+                e.type == ExtraType.TASK_SINGLE) &&
+            e.task.correct.isEmpty) return false;
+    return true;
+  }
+
+  Widget _noCorrectAnswer() {
+    return AlertDialog(
+      title: Text("Warnung"),
+      content: Text(
+          "Die Tour konnte leider nicht erstellt werden, da mindestens eine "
+          "MultipleChoice-Aufgabe keine korrekte Antworten enthält.\n"
+          "Bitte markiere bei jeder dieser Aufgabenarten mindestens eine Antwortmöglichkeit als korrekt."),
+      actions: [
+        FlatButton(
+          child: Text("Schließen", style: TextStyle(color: COLOR_ADD)),
+          onPressed: () => Navigator.pop(context),
+        )
+      ],
     );
   }
 
@@ -445,9 +472,8 @@ class _CreateTourState extends State<CreateTour> {
         context: context,
         builder: (context) => AlertDialog(
               title: Text("Warnung"),
-              content: Text(
-                  "Wirklich zur Übersicht zurückkehren?\n"
-                      "Alle Änderungen gehen unwiderruflich verloren."),
+              content: Text("Wirklich zur Übersicht zurückkehren?\n"
+                  "Alle Änderungen gehen unwiderruflich verloren."),
               actions: [
                 FlatButton(
                   child: Text("Abbrechen", style: TextStyle(color: COLOR_ADD)),

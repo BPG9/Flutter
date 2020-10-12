@@ -2,8 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/graphql/graphqlConf.dart';
-import 'package:museum_app/graphql/query.dart';
+import 'package:museum_app/server_connection/graphqlConf.dart';
+import 'package:museum_app/server_connection/http_query.dart';
 import 'package:photo_view/photo_view.dart';
 
 import 'SizeConfig.dart';
@@ -44,7 +44,7 @@ class _ImageCarouselState extends State<ImageCaroussel> {
     _images.clear();
     for (var s in widget.imagePaths) {
       _images.add(Image.network(
-        QueryBackend.imageURLPicture(s),
+        HttpQuery.imageURLPicture(s),
         //GraphQLConfiguration().imageURLProfile("5e7e091dbef4a100e3735722"),
         headers: {"Authorization": "Bearer $token"},
         fit: BoxFit.contain,

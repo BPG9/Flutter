@@ -6,7 +6,8 @@ import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/graphql/query.dart';
+import 'package:museum_app/server_connection/http_query.dart';
+import 'package:museum_app/server_connection/query.dart';
 import 'package:museum_app/tours_page/tours_widgets.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_content.dart';
 
@@ -47,15 +48,15 @@ class _FavWidgetState extends State<FavWidget> {
               itemCount: stops.length,
               // One "bubble"
               itemBuilder: (context, index) {
-
                 //TODO possible multiple new token creation
                 return FutureBuilder(
-                  future: QueryBackend.networkImage(QueryBackend.imageURLPicture(
-                      stops[index].images.first)),
+                  future: HttpQuery.networkImage(
+                      HttpQuery.imageURLPicture(stops[index].images.first)),
                   builder: (context, snap) {
                     ImageProvider image;
                     image = snap?.data;
-                    image ??= Image.asset("assets/images/empty_profile.png").image;
+                    image ??=
+                        Image.asset("assets/images/empty_profile.png").image;
 
                     return avatarWithBorder(
                       image,
@@ -72,16 +73,14 @@ class _FavWidgetState extends State<FavWidget> {
                     );
                   },
                 );
-
-
               }),
         ),
       ],
     );
   }
 
-  Widget avatarWithBorder(
-      ImageProvider image, double radius, {double borderWidth = 0,
+  Widget avatarWithBorder(ImageProvider image, double radius,
+      {double borderWidth = 0,
       Color borderColor = Colors.black,
       Widget child,
       EdgeInsetsGeometry padding = EdgeInsets.zero}) {
@@ -195,7 +194,68 @@ class BadgeWidget extends StatefulWidget {
   BadgeWidget({Key key}) : super(key: key);
 
   @override
-  _BadgeWidgetState createState() => _BadgeWidgetState(3);
+  _BadgeState createState() => _BadgeState();
+}
+
+class _BadgeState extends State<BadgeWidget> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  List buildWidgets(List<Badge> badges) {
+    if (badges == null || badges.length == 0) return [Text("hhöjk")];
+    return badges.map((b) {
+      double perc = b.current * 100 / b.toGet;
+      return Stack(
+        children: [
+          Positioned(
+            top: horSize(30, 10) / 2 - horSize(20, 40) / 2,
+            left: horSize(30, 10) / 2 - horSize(20, 40) / 2,
+            child: CircleAvatar(
+              radius: horSize(20, 40) / 2,
+              child: HttpQuery.networkImageWidget(
+                HttpQuery.imageURLBadge(b.imgPath),
+                fit: BoxFit.fill,
+                width: 2000,
+                height: 2000,
+              ),
+              backgroundColor: Colors.white,
+            ),
+          ),
+          AnimatedCircularChart(
+            chartType: CircularChartType.Radial,
+            size: Size(horSize(30, 10), horSize(30, 10)),
+            initialChartData: [
+              CircularStackEntry(
+                [
+                  CircularSegmentEntry(perc, b.color),
+                  CircularSegmentEntry(100 - perc, Colors.blueGrey[100]),
+                ],
+              ),
+            ],
+            percentageValues: true,
+          ),
+          Text("${b.current.toInt()}/${b.toGet.toInt()}"),
+        ],
+      );
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: MuseumDatabase().watchBadges(),
+      builder: (context, snap) {
+        if (snap.hasError || !snap.hasData) {
+          return Text("Fehler");
+        }
+        List<Badge> badges = snap.data;
+
+        return Wrap(children: buildWidgets(badges));
+      },
+    );
+  }
 }
 
 class _BadgeWidgetState extends State<BadgeWidget> {
@@ -278,8 +338,8 @@ class _BadgeWidgetState extends State<BadgeWidget> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(80.0),
             ),
-            child: QueryBackend.networkImageWidget(
-              QueryBackend.imageURLBadge(b.imgPath),
+            child: HttpQuery.networkImageWidget(
+              HttpQuery.imageURLBadge(b.imgPath),
               fit: BoxFit.fill,
               width: horSize(63, 50) * (popUp ? 1.3 : 1) / _perLine,
               height: horSize(63, 50) * (popUp ? 1.3 : 1) / _perLine,
@@ -293,7 +353,7 @@ class _BadgeWidgetState extends State<BadgeWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: MuseumDatabase().getBadges(),
+        stream: MuseumDatabase().watchBadges(),
         builder: (context, snapBad) {
           List<Badge> badges = snapBad.data ?? List<Badge>();
           return Container(
@@ -302,20 +362,5 @@ class _BadgeWidgetState extends State<BadgeWidget> {
             child: _getGrid(badges.map((b) => _buildBadge(b)).toList()),
           );
         });
-  }
-}
-
-class StatWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(
-          "Not yet implemented",
-          style: TextStyle(fontSize: 25),
-        ),
-      ],
-    );
   }
 }

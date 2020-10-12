@@ -11,8 +11,9 @@ import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/modelling.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/graphql/graphqlConf.dart';
-import 'package:museum_app/graphql/query.dart';
+import 'package:museum_app/server_connection/graphqlConf.dart';
+import 'package:museum_app/server_connection/http_query.dart';
+import 'package:museum_app/server_connection/query.dart';
 import 'package:museum_app/map/map_page.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_content.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_extras.dart';
@@ -154,8 +155,8 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                   ),
                   child: stops[index].stop.id == customName
                       ? Image(image: AssetImage("assets/images/haupthalle_hlm_blue.png"), fit: BoxFit.cover,)
-                      : QueryBackend.networkImageWidget(
-                          QueryBackend.imageURLPicture(
+                      : HttpQuery.networkImageWidget(
+                    HttpQuery.imageURLPicture(
                               stops[index].stop.images.isNotEmpty
                                   ? stops[index].stop.images[0]
                                   : ""),
@@ -469,6 +470,25 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                       for (var extra in stop.extras)
                         if (extra.task != null) extra.task.reset();
                     Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: Text("TEST"),
+                  onPressed: () async {
+                    GraphQLClient _client =
+                    GraphQLConfiguration().clientToQuery();
+                    User user = await MuseumDatabase().getUser();
+
+                    QueryResult result = await _client.query(QueryOptions(
+                      documentNode: gql(QueryBackend.exportResult(
+                          user.accessToken,
+                          widget.tour.onlineId,
+                          user.username)),
+                    ));
+
+                    HttpQuery.getReport(widget.tour.onlineId);
+
                     Navigator.pop(context);
                   },
                 ),

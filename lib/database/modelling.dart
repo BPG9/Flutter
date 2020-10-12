@@ -7,8 +7,8 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
 import 'package:museum_app/constants.dart';
-import 'package:museum_app/graphql/graphqlConf.dart';
-import 'package:museum_app/graphql/query.dart';
+import 'package:museum_app/server_connection/graphqlConf.dart';
+import 'package:museum_app/server_connection/query.dart';
 
 import '../SizeConfig.dart';
 import 'moor_db.dart';

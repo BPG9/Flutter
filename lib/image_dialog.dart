@@ -4,10 +4,11 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/graphql/mutations.dart';
-import 'package:museum_app/graphql/query.dart';
+import 'package:museum_app/server_connection/http_query.dart';
+import 'package:museum_app/server_connection/mutations.dart';
+import 'package:museum_app/server_connection/query.dart';
 
-import 'graphql/graphqlConf.dart';
+import 'server_connection/graphqlConf.dart';
 
 class ImageDialog extends StatefulWidget {
   ImageDialog({Key key}) : super(key: key);
@@ -81,8 +82,8 @@ class _ImageDialogState extends State<ImageDialog> {
                       }
                       else print(result.data.data);
                     },
-                    child: QueryBackend.networkImageWidget(
-                      QueryBackend.imageURLProfile(img),
+                    child: HttpQuery.networkImageWidget(
+                      HttpQuery.imageURLProfile(img),
                       height: verSize(13, 27),
                       width: horSize(23, 16),
                       fit: BoxFit.contain,
