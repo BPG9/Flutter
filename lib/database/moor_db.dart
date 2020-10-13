@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/material.dart' as mat;
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
@@ -55,6 +56,8 @@ class Users extends Table {
 }
 
 class Badges extends Table {
+  TextColumn get id => text()();
+
   TextColumn get name => text()();
 
   RealColumn get current => real().withDefault(const Constant(0.0))();
@@ -64,10 +67,8 @@ class Badges extends Table {
   IntColumn get color =>
       integer().withDefault(const Constant(0)).map(ColorConverter())();
 
-  TextColumn get imgPath => text()();
-
   @override
-  Set<Column> get primaryKey => {name};
+  Set<Column> get primaryKey => {id};
 }
 
 class Tours extends Table {
@@ -395,11 +396,26 @@ class MuseumDatabase extends _$MuseumDatabase {
       List list = d.data["availableBadges"];
       for (var object in list) {
         print(object);
+        String name = object["name"];
+        Color c = mat.Colors.red;
+        if (name.toLowerCase().contains("bronze")) {
+          c = Color(0xcd7f32);
+          name = name.replaceAll("bronze", "");
+        }
+        else if (name.toLowerCase().contains("silber")) {
+          c = mat.Colors.grey[600];
+          name = name.replaceAll("silber", "");
+        }
+        else if (name.toLowerCase().contains("gold")) {
+          c = mat.Colors.amber;
+          name = name.replaceAll("gold", "");
+        }
+
         var comp = BadgesCompanion.insert(
-          name: object["name"],
-          color: Value(Color(0xFFFF0000)),
+          name: name.trim(),
+          color: Value(c),
           toGet: object["cost"].toDouble(),
-          imgPath: object["id"],
+          id: object["id"],
         ); //.createCompanion(true);
         listBadges.add(comp);
       }

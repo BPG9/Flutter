@@ -494,17 +494,17 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
 }
 
 class Badge extends DataClass implements Insertable<Badge> {
+  final String id;
   final String name;
   final double current;
   final double toGet;
   final Color color;
-  final String imgPath;
   Badge(
-      {@required this.name,
+      {@required this.id,
+      @required this.name,
       @required this.current,
       @required this.toGet,
-      @required this.color,
-      @required this.imgPath});
+      @required this.color});
   factory Badge.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -512,6 +512,7 @@ class Badge extends DataClass implements Insertable<Badge> {
     final doubleType = db.typeSystem.forDartType<double>();
     final intType = db.typeSystem.forDartType<int>();
     return Badge(
+      id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
       current:
           doubleType.mapFromDatabaseResponse(data['${effectivePrefix}current']),
@@ -519,13 +520,14 @@ class Badge extends DataClass implements Insertable<Badge> {
           doubleType.mapFromDatabaseResponse(data['${effectivePrefix}to_get']),
       color: $BadgesTable.$converter0.mapToDart(
           intType.mapFromDatabaseResponse(data['${effectivePrefix}color'])),
-      imgPath: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}img_path']),
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<String>(id);
+    }
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
@@ -539,14 +541,12 @@ class Badge extends DataClass implements Insertable<Badge> {
       final converter = $BadgesTable.$converter0;
       map['color'] = Variable<int>(converter.mapToSql(color));
     }
-    if (!nullToAbsent || imgPath != null) {
-      map['img_path'] = Variable<String>(imgPath);
-    }
     return map;
   }
 
   BadgesCompanion toCompanion(bool nullToAbsent) {
     return BadgesCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       current: current == null && nullToAbsent
           ? const Value.absent()
@@ -555,9 +555,6 @@ class Badge extends DataClass implements Insertable<Badge> {
           toGet == null && nullToAbsent ? const Value.absent() : Value(toGet),
       color:
           color == null && nullToAbsent ? const Value.absent() : Value(color),
-      imgPath: imgPath == null && nullToAbsent
-          ? const Value.absent()
-          : Value(imgPath),
     );
   }
 
@@ -565,122 +562,125 @@ class Badge extends DataClass implements Insertable<Badge> {
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Badge(
+      id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       current: serializer.fromJson<double>(json['current']),
       toGet: serializer.fromJson<double>(json['toGet']),
       color: serializer.fromJson<Color>(json['color']),
-      imgPath: serializer.fromJson<String>(json['imgPath']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
       'current': serializer.toJson<double>(current),
       'toGet': serializer.toJson<double>(toGet),
       'color': serializer.toJson<Color>(color),
-      'imgPath': serializer.toJson<String>(imgPath),
     };
   }
 
   Badge copyWith(
-          {String name,
+          {String id,
+          String name,
           double current,
           double toGet,
-          Color color,
-          String imgPath}) =>
+          Color color}) =>
       Badge(
+        id: id ?? this.id,
         name: name ?? this.name,
         current: current ?? this.current,
         toGet: toGet ?? this.toGet,
         color: color ?? this.color,
-        imgPath: imgPath ?? this.imgPath,
       );
   @override
   String toString() {
     return (StringBuffer('Badge(')
+          ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('current: $current, ')
           ..write('toGet: $toGet, ')
-          ..write('color: $color, ')
-          ..write('imgPath: $imgPath')
+          ..write('color: $color')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => $mrjf($mrjc(
-      name.hashCode,
-      $mrjc(current.hashCode,
-          $mrjc(toGet.hashCode, $mrjc(color.hashCode, imgPath.hashCode)))));
+      id.hashCode,
+      $mrjc(name.hashCode,
+          $mrjc(current.hashCode, $mrjc(toGet.hashCode, color.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Badge &&
+          other.id == this.id &&
           other.name == this.name &&
           other.current == this.current &&
           other.toGet == this.toGet &&
-          other.color == this.color &&
-          other.imgPath == this.imgPath);
+          other.color == this.color);
 }
 
 class BadgesCompanion extends UpdateCompanion<Badge> {
+  final Value<String> id;
   final Value<String> name;
   final Value<double> current;
   final Value<double> toGet;
   final Value<Color> color;
-  final Value<String> imgPath;
   const BadgesCompanion({
+    this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.current = const Value.absent(),
     this.toGet = const Value.absent(),
     this.color = const Value.absent(),
-    this.imgPath = const Value.absent(),
   });
   BadgesCompanion.insert({
+    @required String id,
     @required String name,
     this.current = const Value.absent(),
     @required double toGet,
     this.color = const Value.absent(),
-    @required String imgPath,
-  })  : name = Value(name),
-        toGet = Value(toGet),
-        imgPath = Value(imgPath);
+  })  : id = Value(id),
+        name = Value(name),
+        toGet = Value(toGet);
   static Insertable<Badge> custom({
+    Expression<String> id,
     Expression<String> name,
     Expression<double> current,
     Expression<double> toGet,
     Expression<int> color,
-    Expression<String> imgPath,
   }) {
     return RawValuesInsertable({
+      if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (current != null) 'current': current,
       if (toGet != null) 'to_get': toGet,
       if (color != null) 'color': color,
-      if (imgPath != null) 'img_path': imgPath,
     });
   }
 
   BadgesCompanion copyWith(
-      {Value<String> name,
+      {Value<String> id,
+      Value<String> name,
       Value<double> current,
       Value<double> toGet,
-      Value<Color> color,
-      Value<String> imgPath}) {
+      Value<Color> color}) {
     return BadgesCompanion(
+      id: id ?? this.id,
       name: name ?? this.name,
       current: current ?? this.current,
       toGet: toGet ?? this.toGet,
       color: color ?? this.color,
-      imgPath: imgPath ?? this.imgPath,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -694,20 +694,17 @@ class BadgesCompanion extends UpdateCompanion<Badge> {
       final converter = $BadgesTable.$converter0;
       map['color'] = Variable<int>(converter.mapToSql(color.value));
     }
-    if (imgPath.present) {
-      map['img_path'] = Variable<String>(imgPath.value);
-    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('BadgesCompanion(')
+          ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('current: $current, ')
           ..write('toGet: $toGet, ')
-          ..write('color: $color, ')
-          ..write('imgPath: $imgPath')
+          ..write('color: $color')
           ..write(')'))
         .toString();
   }
@@ -717,6 +714,18 @@ class $BadgesTable extends Badges with TableInfo<$BadgesTable, Badge> {
   final GeneratedDatabase _db;
   final String _alias;
   $BadgesTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedTextColumn _id;
+  @override
+  GeneratedTextColumn get id => _id ??= _constructId();
+  GeneratedTextColumn _constructId() {
+    return GeneratedTextColumn(
+      'id',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _nameMeta = const VerificationMeta('name');
   GeneratedTextColumn _name;
   @override
@@ -759,20 +768,8 @@ class $BadgesTable extends Badges with TableInfo<$BadgesTable, Badge> {
         defaultValue: const Constant(0));
   }
 
-  final VerificationMeta _imgPathMeta = const VerificationMeta('imgPath');
-  GeneratedTextColumn _imgPath;
   @override
-  GeneratedTextColumn get imgPath => _imgPath ??= _constructImgPath();
-  GeneratedTextColumn _constructImgPath() {
-    return GeneratedTextColumn(
-      'img_path',
-      $tableName,
-      false,
-    );
-  }
-
-  @override
-  List<GeneratedColumn> get $columns => [name, current, toGet, color, imgPath];
+  List<GeneratedColumn> get $columns => [id, name, current, toGet, color];
   @override
   $BadgesTable get asDslTable => this;
   @override
@@ -784,6 +781,11 @@ class $BadgesTable extends Badges with TableInfo<$BadgesTable, Badge> {
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
     if (data.containsKey('name')) {
       context.handle(
           _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
@@ -801,17 +803,11 @@ class $BadgesTable extends Badges with TableInfo<$BadgesTable, Badge> {
       context.missing(_toGetMeta);
     }
     context.handle(_colorMeta, const VerificationResult.success());
-    if (data.containsKey('img_path')) {
-      context.handle(_imgPathMeta,
-          imgPath.isAcceptableOrUnknown(data['img_path'], _imgPathMeta));
-    } else if (isInserting) {
-      context.missing(_imgPathMeta);
-    }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {name};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Badge map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;

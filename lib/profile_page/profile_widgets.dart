@@ -10,6 +10,7 @@ import 'package:museum_app/server_connection/http_query.dart';
 import 'package:museum_app/server_connection/query.dart';
 import 'package:museum_app/tours_page/tours_widgets.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_content.dart';
+import 'package:overlay_container/overlay_container.dart';
 
 class FavWidget extends StatefulWidget {
   FavWidget({Key key}) : super(key: key);
@@ -198,46 +199,79 @@ class BadgeWidget extends StatefulWidget {
 }
 
 class _BadgeState extends State<BadgeWidget> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  List<bool> popUps = List<bool>();
 
   List buildWidgets(List<Badge> badges) {
     if (badges == null || badges.length == 0) return [Text("hhöjk")];
     return badges.map((b) {
       double perc = b.current * 100 / b.toGet;
-      return Stack(
-        children: [
-          Positioned(
-            top: horSize(30, 10) / 2 - horSize(20, 40) / 2,
-            left: horSize(30, 10) / 2 - horSize(20, 40) / 2,
-            child: CircleAvatar(
-              radius: horSize(20, 40) / 2,
-              child: HttpQuery.networkImageWidget(
-                HttpQuery.imageURLBadge(b.imgPath),
-                fit: BoxFit.fill,
-                width: 2000,
-                height: 2000,
-              ),
-              backgroundColor: Colors.white,
-            ),
-          ),
-          AnimatedCircularChart(
-            chartType: CircularChartType.Radial,
-            size: Size(horSize(30, 10), horSize(30, 10)),
-            initialChartData: [
-              CircularStackEntry(
-                [
-                  CircularSegmentEntry(perc, b.color),
-                  CircularSegmentEntry(100 - perc, Colors.blueGrey[100]),
+      int i = badges.indexOf(b);
+      if (popUps.length != badges.length) popUps.add(false);
+      return Container(
+        width: horSize(30, 10),
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: () => setState(() => popUps[i] = !popUps[i]),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: horSize(30, 10) / 2 - horSize(20, 40) / 2,
+                    left: horSize(30, 10) / 2 - horSize(20, 40) / 2,
+                    child: CircleAvatar(
+                      radius: horSize(20, 40) / 2,
+                      child: HttpQuery.networkImageWidget(
+                        HttpQuery.imageURLBadge(b.id),
+                        fit: BoxFit.fill,
+                        width: 2000,
+                        height: 2000,
+                      ),
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  AnimatedCircularChart(
+                    chartType: CircularChartType.Radial,
+                    size: Size(horSize(30, 10), horSize(30, 10)),
+                    initialChartData: [
+                      CircularStackEntry(
+                        [
+                          CircularSegmentEntry(perc, b.color),
+                          CircularSegmentEntry(
+                              100 - perc, Colors.blueGrey[100]),
+                        ],
+                      ),
+                    ],
+                    percentageValues: true,
+                  ),
                 ],
               ),
-            ],
-            percentageValues: true,
-          ),
-          Text("${b.current.toInt()}/${b.toGet.toInt()}"),
-        ],
+            ),
+            OverlayContainer(
+              show: popUps[i],
+              position:
+                  OverlayContainerPosition(horSize(1, 1), horSize(30, 10) / 2 + horSize(5, 4)),
+              //asWideAsParent: true,
+              child: GestureDetector(
+                onTap: () => setState(() => popUps[i] = !popUps[i]),
+                child: Container(
+                  //height: 70,
+                  width: horSize(30, 10) - horSize(2, 2),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.40),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(5),
+                  child: Text(
+                    "${b.name}\n"
+                    "${b.current.toInt()}/${b.toGet.toInt()}",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       );
     }).toList();
   }
@@ -339,7 +373,7 @@ class _BadgeWidgetState extends State<BadgeWidget> {
               borderRadius: BorderRadius.circular(80.0),
             ),
             child: HttpQuery.networkImageWidget(
-              HttpQuery.imageURLBadge(b.imgPath),
+              HttpQuery.imageURLBadge(b.id),
               fit: BoxFit.fill,
               width: horSize(63, 50) * (popUp ? 1.3 : 1) / _perLine,
               height: horSize(63, 50) * (popUp ? 1.3 : 1) / _perLine,
