@@ -85,7 +85,7 @@ class Tours extends Table {
 
   RealColumn get difficulty => real()();
 
-  DateTimeColumn get creationTime => dateTime()();
+  DateTimeColumn get lastEdit => dateTime()();
 
   TextColumn get desc => text()();
 
@@ -827,7 +827,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     var query = select(tours)
       ..where((tour) => tour.name.equals(t.name.text))
       ..where((tour) => tour.author.equals(t.author))
-      ..where((tour) => tour.creationTime.equals(t.creationTime));
+      ..where((tour) => tour.lastEdit.equals(t.lastEdit));
 
     return query.watchSingle();
   }
@@ -1028,7 +1028,6 @@ class MuseumDatabase extends _$MuseumDatabase {
           tourId = o.onlineId;
           // delete all checkpoints
           await _deleteAllOnlineCheckpoints(token, tourId);
-          //TODO Tour Eigenschaften (Name, Descr, difficulty, date) anpassen
           await _updateTour(token, o);
           continue;
         }
@@ -1298,7 +1297,7 @@ class MuseumDatabase extends _$MuseumDatabase {
             name: m["name"],
             author: author,
             difficulty: m["difficulty"].toDouble(),
-            creationTime: DateTime.parse(m["lastEdit"]),
+            lastEdit: DateTime.parse(m["lastEdit"]),
             desc: m["description"]);
         tour = TourWithStops(t, <ActualStop>[]);
       } else if (m.containsKey("index") && tour != null) {

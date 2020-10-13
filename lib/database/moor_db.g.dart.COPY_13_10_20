@@ -305,21 +305,6 @@ class UsersCompanion extends UpdateCompanion<User> {
     }
     return map;
   }
-
-  @override
-  String toString() {
-    return (StringBuffer('UsersCompanion(')
-          ..write('producer: $producer, ')
-          ..write('accessToken: $accessToken, ')
-          ..write('refreshToken: $refreshToken, ')
-          ..write('username: $username, ')
-          ..write('imgPath: $imgPath, ')
-          ..write('favStops: $favStops, ')
-          ..write('favTours: $favTours, ')
-          ..write('onboardEnd: $onboardEnd')
-          ..write(')'))
-        .toString();
-  }
 }
 
 class $UsersTable extends Users with TableInfo<$UsersTable, User> {
@@ -698,18 +683,6 @@ class BadgesCompanion extends UpdateCompanion<Badge> {
       map['img_path'] = Variable<String>(imgPath.value);
     }
     return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('BadgesCompanion(')
-          ..write('name: $name, ')
-          ..write('current: $current, ')
-          ..write('toGet: $toGet, ')
-          ..write('color: $color, ')
-          ..write('imgPath: $imgPath')
-          ..write(')'))
-        .toString();
   }
 }
 
@@ -1222,25 +1195,6 @@ class StopsCompanion extends UpdateCompanion<Stop> {
     }
     return map;
   }
-
-  @override
-  String toString() {
-    return (StringBuffer('StopsCompanion(')
-          ..write('id: $id, ')
-          ..write('images: $images, ')
-          ..write('name: $name, ')
-          ..write('descr: $descr, ')
-          ..write('time: $time, ')
-          ..write('creator: $creator, ')
-          ..write('division: $division, ')
-          ..write('artType: $artType, ')
-          ..write('material: $material, ')
-          ..write('size: $size, ')
-          ..write('location: $location, ')
-          ..write('interContext: $interContext')
-          ..write(')'))
-        .toString();
-  }
 }
 
 class $StopsTable extends Stops with TableInfo<$StopsTable, Stop> {
@@ -1604,15 +1558,6 @@ class DivisionsCompanion extends UpdateCompanion<Division> {
     }
     return map;
   }
-
-  @override
-  String toString() {
-    return (StringBuffer('DivisionsCompanion(')
-          ..write('name: $name, ')
-          ..write('color: $color')
-          ..write(')'))
-        .toString();
-  }
 }
 
 class $DivisionsTable extends Divisions
@@ -1687,7 +1632,7 @@ class Tour extends DataClass implements Insertable<Tour> {
   final String name;
   final String author;
   final double difficulty;
-  final DateTime lastEdit;
+  final DateTime creationTime;
   final String desc;
   Tour(
       {@required this.id,
@@ -1696,7 +1641,7 @@ class Tour extends DataClass implements Insertable<Tour> {
       @required this.name,
       @required this.author,
       @required this.difficulty,
-      @required this.lastEdit,
+      @required this.creationTime,
       @required this.desc});
   factory Tour.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -1716,8 +1661,8 @@ class Tour extends DataClass implements Insertable<Tour> {
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}author']),
       difficulty: doubleType
           .mapFromDatabaseResponse(data['${effectivePrefix}difficulty']),
-      lastEdit: dateTimeType
-          .mapFromDatabaseResponse(data['${effectivePrefix}last_edit']),
+      creationTime: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}creation_time']),
       desc: stringType.mapFromDatabaseResponse(data['${effectivePrefix}desc']),
     );
   }
@@ -1742,8 +1687,8 @@ class Tour extends DataClass implements Insertable<Tour> {
     if (!nullToAbsent || difficulty != null) {
       map['difficulty'] = Variable<double>(difficulty);
     }
-    if (!nullToAbsent || lastEdit != null) {
-      map['last_edit'] = Variable<DateTime>(lastEdit);
+    if (!nullToAbsent || creationTime != null) {
+      map['creation_time'] = Variable<DateTime>(creationTime);
     }
     if (!nullToAbsent || desc != null) {
       map['desc'] = Variable<String>(desc);
@@ -1766,9 +1711,9 @@ class Tour extends DataClass implements Insertable<Tour> {
       difficulty: difficulty == null && nullToAbsent
           ? const Value.absent()
           : Value(difficulty),
-      lastEdit: lastEdit == null && nullToAbsent
+      creationTime: creationTime == null && nullToAbsent
           ? const Value.absent()
-          : Value(lastEdit),
+          : Value(creationTime),
       desc: desc == null && nullToAbsent ? const Value.absent() : Value(desc),
     );
   }
@@ -1783,7 +1728,7 @@ class Tour extends DataClass implements Insertable<Tour> {
       name: serializer.fromJson<String>(json['name']),
       author: serializer.fromJson<String>(json['author']),
       difficulty: serializer.fromJson<double>(json['difficulty']),
-      lastEdit: serializer.fromJson<DateTime>(json['lastEdit']),
+      creationTime: serializer.fromJson<DateTime>(json['creationTime']),
       desc: serializer.fromJson<String>(json['desc']),
     );
   }
@@ -1797,7 +1742,7 @@ class Tour extends DataClass implements Insertable<Tour> {
       'name': serializer.toJson<String>(name),
       'author': serializer.toJson<String>(author),
       'difficulty': serializer.toJson<double>(difficulty),
-      'lastEdit': serializer.toJson<DateTime>(lastEdit),
+      'creationTime': serializer.toJson<DateTime>(creationTime),
       'desc': serializer.toJson<String>(desc),
     };
   }
@@ -1809,7 +1754,7 @@ class Tour extends DataClass implements Insertable<Tour> {
           String name,
           String author,
           double difficulty,
-          DateTime lastEdit,
+          DateTime creationTime,
           String desc}) =>
       Tour(
         id: id ?? this.id,
@@ -1818,7 +1763,7 @@ class Tour extends DataClass implements Insertable<Tour> {
         name: name ?? this.name,
         author: author ?? this.author,
         difficulty: difficulty ?? this.difficulty,
-        lastEdit: lastEdit ?? this.lastEdit,
+        creationTime: creationTime ?? this.creationTime,
         desc: desc ?? this.desc,
       );
   @override
@@ -1830,7 +1775,7 @@ class Tour extends DataClass implements Insertable<Tour> {
           ..write('name: $name, ')
           ..write('author: $author, ')
           ..write('difficulty: $difficulty, ')
-          ..write('lastEdit: $lastEdit, ')
+          ..write('creationTime: $creationTime, ')
           ..write('desc: $desc')
           ..write(')'))
         .toString();
@@ -1848,7 +1793,7 @@ class Tour extends DataClass implements Insertable<Tour> {
                   $mrjc(
                       author.hashCode,
                       $mrjc(difficulty.hashCode,
-                          $mrjc(lastEdit.hashCode, desc.hashCode))))))));
+                          $mrjc(creationTime.hashCode, desc.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -1859,7 +1804,7 @@ class Tour extends DataClass implements Insertable<Tour> {
           other.name == this.name &&
           other.author == this.author &&
           other.difficulty == this.difficulty &&
-          other.lastEdit == this.lastEdit &&
+          other.creationTime == this.creationTime &&
           other.desc == this.desc);
 }
 
@@ -1870,7 +1815,7 @@ class ToursCompanion extends UpdateCompanion<Tour> {
   final Value<String> name;
   final Value<String> author;
   final Value<double> difficulty;
-  final Value<DateTime> lastEdit;
+  final Value<DateTime> creationTime;
   final Value<String> desc;
   const ToursCompanion({
     this.id = const Value.absent(),
@@ -1879,7 +1824,7 @@ class ToursCompanion extends UpdateCompanion<Tour> {
     this.name = const Value.absent(),
     this.author = const Value.absent(),
     this.difficulty = const Value.absent(),
-    this.lastEdit = const Value.absent(),
+    this.creationTime = const Value.absent(),
     this.desc = const Value.absent(),
   });
   ToursCompanion.insert({
@@ -1889,14 +1834,14 @@ class ToursCompanion extends UpdateCompanion<Tour> {
     @required String name,
     @required String author,
     @required double difficulty,
-    @required DateTime lastEdit,
+    @required DateTime creationTime,
     @required String desc,
   })  : onlineId = Value(onlineId),
         searchId = Value(searchId),
         name = Value(name),
         author = Value(author),
         difficulty = Value(difficulty),
-        lastEdit = Value(lastEdit),
+        creationTime = Value(creationTime),
         desc = Value(desc);
   static Insertable<Tour> custom({
     Expression<int> id,
@@ -1905,7 +1850,7 @@ class ToursCompanion extends UpdateCompanion<Tour> {
     Expression<String> name,
     Expression<String> author,
     Expression<double> difficulty,
-    Expression<DateTime> lastEdit,
+    Expression<DateTime> creationTime,
     Expression<String> desc,
   }) {
     return RawValuesInsertable({
@@ -1915,7 +1860,7 @@ class ToursCompanion extends UpdateCompanion<Tour> {
       if (name != null) 'name': name,
       if (author != null) 'author': author,
       if (difficulty != null) 'difficulty': difficulty,
-      if (lastEdit != null) 'last_edit': lastEdit,
+      if (creationTime != null) 'creation_time': creationTime,
       if (desc != null) 'desc': desc,
     });
   }
@@ -1927,7 +1872,7 @@ class ToursCompanion extends UpdateCompanion<Tour> {
       Value<String> name,
       Value<String> author,
       Value<double> difficulty,
-      Value<DateTime> lastEdit,
+      Value<DateTime> creationTime,
       Value<String> desc}) {
     return ToursCompanion(
       id: id ?? this.id,
@@ -1936,7 +1881,7 @@ class ToursCompanion extends UpdateCompanion<Tour> {
       name: name ?? this.name,
       author: author ?? this.author,
       difficulty: difficulty ?? this.difficulty,
-      lastEdit: lastEdit ?? this.lastEdit,
+      creationTime: creationTime ?? this.creationTime,
       desc: desc ?? this.desc,
     );
   }
@@ -1962,28 +1907,13 @@ class ToursCompanion extends UpdateCompanion<Tour> {
     if (difficulty.present) {
       map['difficulty'] = Variable<double>(difficulty.value);
     }
-    if (lastEdit.present) {
-      map['last_edit'] = Variable<DateTime>(lastEdit.value);
+    if (creationTime.present) {
+      map['creation_time'] = Variable<DateTime>(creationTime.value);
     }
     if (desc.present) {
       map['desc'] = Variable<String>(desc.value);
     }
     return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ToursCompanion(')
-          ..write('id: $id, ')
-          ..write('onlineId: $onlineId, ')
-          ..write('searchId: $searchId, ')
-          ..write('name: $name, ')
-          ..write('author: $author, ')
-          ..write('difficulty: $difficulty, ')
-          ..write('lastEdit: $lastEdit, ')
-          ..write('desc: $desc')
-          ..write(')'))
-        .toString();
   }
 }
 
@@ -2060,13 +1990,15 @@ class $ToursTable extends Tours with TableInfo<$ToursTable, Tour> {
     );
   }
 
-  final VerificationMeta _lastEditMeta = const VerificationMeta('lastEdit');
-  GeneratedDateTimeColumn _lastEdit;
+  final VerificationMeta _creationTimeMeta =
+      const VerificationMeta('creationTime');
+  GeneratedDateTimeColumn _creationTime;
   @override
-  GeneratedDateTimeColumn get lastEdit => _lastEdit ??= _constructLastEdit();
-  GeneratedDateTimeColumn _constructLastEdit() {
+  GeneratedDateTimeColumn get creationTime =>
+      _creationTime ??= _constructCreationTime();
+  GeneratedDateTimeColumn _constructCreationTime() {
     return GeneratedDateTimeColumn(
-      'last_edit',
+      'creation_time',
       $tableName,
       false,
     );
@@ -2086,7 +2018,7 @@ class $ToursTable extends Tours with TableInfo<$ToursTable, Tour> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, onlineId, searchId, name, author, difficulty, lastEdit, desc];
+      [id, onlineId, searchId, name, author, difficulty, creationTime, desc];
   @override
   $ToursTable get asDslTable => this;
   @override
@@ -2133,11 +2065,13 @@ class $ToursTable extends Tours with TableInfo<$ToursTable, Tour> {
     } else if (isInserting) {
       context.missing(_difficultyMeta);
     }
-    if (data.containsKey('last_edit')) {
-      context.handle(_lastEditMeta,
-          lastEdit.isAcceptableOrUnknown(data['last_edit'], _lastEditMeta));
+    if (data.containsKey('creation_time')) {
+      context.handle(
+          _creationTimeMeta,
+          creationTime.isAcceptableOrUnknown(
+              data['creation_time'], _creationTimeMeta));
     } else if (isInserting) {
-      context.missing(_lastEditMeta);
+      context.missing(_creationTimeMeta);
     }
     if (data.containsKey('desc')) {
       context.handle(
@@ -2303,16 +2237,6 @@ class TourStopsCompanion extends UpdateCompanion<TourStop> {
       map['id_stop'] = Variable<String>(id_stop.value);
     }
     return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('TourStopsCompanion(')
-          ..write('id: $id, ')
-          ..write('id_tour: $id_tour, ')
-          ..write('id_stop: $id_stop')
-          ..write(')'))
-        .toString();
   }
 }
 
@@ -2697,21 +2621,6 @@ class ExtrasCompanion extends UpdateCompanion<Extra> {
       map['answer_cor'] = Variable<String>(converter.mapToSql(answerCor.value));
     }
     return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ExtrasCompanion(')
-          ..write('pos_extra: $pos_extra, ')
-          ..write('pos_stop: $pos_stop, ')
-          ..write('id_tour: $id_tour, ')
-          ..write('id_stop: $id_stop, ')
-          ..write('textInfo: $textInfo, ')
-          ..write('type: $type, ')
-          ..write('answerOpt: $answerOpt, ')
-          ..write('answerCor: $answerCor')
-          ..write(')'))
-        .toString();
   }
 }
 
@@ -3122,19 +3031,6 @@ class StopFeaturesCompanion extends UpdateCompanion<StopFeature> {
       map['show_details'] = Variable<bool>(showDetails.value);
     }
     return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('StopFeaturesCompanion(')
-          ..write('id: $id, ')
-          ..write('id_tour: $id_tour, ')
-          ..write('id_stop: $id_stop, ')
-          ..write('showImages: $showImages, ')
-          ..write('showText: $showText, ')
-          ..write('showDetails: $showDetails')
-          ..write(')'))
-        .toString();
   }
 }
 

@@ -213,7 +213,6 @@ class _TourPanel extends StatelessWidget {
           onPressed: () => _download(context),
         );
       case PanelType.DELETE:
-        //TODO implement delete
         return FlatButton(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -555,7 +554,7 @@ class _DownloadColumnState extends State<DownloadColumn> {
           author: m["owner"]["username"],
           difficulty: m["difficulty"].toDouble(),
           desc: m["description"],
-          creationTime: DateTime.parse(m["lastEdit"]));
+          lastEdit: DateTime.parse(m["lastEdit"]));
 
       // Add the first used Stop (for its image)
       QueryResult stopResult = await _client.query(QueryOptions(

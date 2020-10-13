@@ -373,7 +373,7 @@ class _CreateTourState extends State<CreateTour> {
           child: Text("Weiter", style: TextStyle(color: COLOR_ADD)),
           onPressed: () async {
             Navigator.of(context).pop();
-            widget.tour.creationTime = DateTime.now();
+            widget.tour.lastEdit = DateTime.now();
             bool edit = widget.tour.onlineId != null;
             print("EDIT: $edit");
             bool ok = await MuseumDatabase()

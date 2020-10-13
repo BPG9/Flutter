@@ -225,7 +225,6 @@ class _EditSingleStopState extends State<EditSingleStop> {
             funct: _onTapTask,
             key: _keyTask,
           ),
-          // TODO MC speichere "nichts ist richtig" ab
           _withLabel(
             FontAwesomeIcons.fileImage,
             "Bild",

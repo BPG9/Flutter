@@ -20,8 +20,7 @@ class TourWithStops {
   final String author;
   double difficulty;
 
-  //TODO change to lastEdit
-  DateTime creationTime;
+  DateTime lastEdit;
   final int id;
   final String onlineId;
   final String searchId;
@@ -35,7 +34,7 @@ class TourWithStops {
     this.name.text = t.name;
     this.descr.text = t.desc;
     difficulty = t.difficulty;
-    creationTime = t.creationTime;
+    lastEdit = t.lastEdit;
   }
 
   TourWithStops.empty(String author)
@@ -46,7 +45,7 @@ class TourWithStops {
                 onlineId: null,
                 author: author,
                 difficulty: 0,
-                creationTime: null,
+                lastEdit: null,
                 desc: ""),
             <ActualStop>[]);
 
@@ -55,7 +54,7 @@ class TourWithStops {
       name: Value(name.text),
       author: Value(author),
       difficulty: Value(difficulty),
-      creationTime: Value(creationTime),
+      lastEdit: Value(lastEdit),
       onlineId: Value(onlineId ?? ""),
       searchId: Value(searchId ??
           author.substring(0, min(3, author.length)) +
@@ -148,8 +147,8 @@ class TourWithStops {
 
   Widget buildTime(
       {Color color = COLOR_TOUR, Color color2 = Colors.black, scale = 1.0}) {
-    if (creationTime == null) return Container();
-    String s = DateFormat('dd.MM.yyyy').format(creationTime);
+    if (lastEdit == null) return Container();
+    String s = DateFormat('dd.MM.yyyy').format(lastEdit);
     return Row(
       //crossAxisAlignment: CrossAxisAlignment.center,
       children: [
