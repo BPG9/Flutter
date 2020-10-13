@@ -373,7 +373,7 @@ class _TourPopUpState extends State<_TourPopUp> {
                 size: 46,
               ),
               onPressed: () async {
-                print("KURZ");
+                print("KURZ_SYNC");
                 await t.syncTasks();
                 Navigator.push(
                     context,
@@ -381,7 +381,7 @@ class _TourPopUpState extends State<_TourPopUp> {
                         builder: (context) => TourWalker(tour: t)));
               },
               onLongPress: () {
-                print("LANG");
+                print("LANG_RESET");
                 t.resetTasks();
 
                 Navigator.push(

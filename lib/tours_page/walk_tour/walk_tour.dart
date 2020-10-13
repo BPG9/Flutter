@@ -11,10 +11,10 @@ import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/modelling.dart';
 import 'package:museum_app/database/moor_db.dart';
+import 'package:museum_app/map/map_page.dart';
 import 'package:museum_app/server_connection/graphqlConf.dart';
 import 'package:museum_app/server_connection/http_query.dart';
 import 'package:museum_app/server_connection/query.dart';
-import 'package:museum_app/map/map_page.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_content.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_extras.dart';
 import 'package:open_file/open_file.dart';
@@ -422,7 +422,8 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Möchtest Du Deine Antworten als TXT-Datei speichern?",
+                    "Deine Antworten wurden auf dem Server gespeichert. \n"
+                    "Möchtest Du Deine Antworten exportieren/speichern?",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: horSize(4, 2),
@@ -453,9 +454,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                     print(s);
 
                     // reset
-                    for (var stop in widget.tour.stops)
-                      for (var extra in stop.extras)
-                        if (extra.task != null) extra.task.reset();
+                    //widget.tour.resetTasks();
                     saveAndReturnTxt(s)
                         .then((file) => OpenFile.open(file.path));
                     //Navigator.pop(context);
@@ -463,32 +462,15 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                   },
                 ),
                 FlatButton(
+                  child: Text("Ja (Alternativ)", style: TextStyle(color: COLOR_TOUR)),
+                  onPressed: () => HttpQuery.getReport(widget.tour.onlineId),
+                ),
+                FlatButton(
                   child: Text("Nein", style: TextStyle(color: COLOR_TOUR)),
                   onPressed: () {
                     // reset
-                    for (var stop in widget.tour.stops)
-                      for (var extra in stop.extras)
-                        if (extra.task != null) extra.task.reset();
+                    //widget.tour.resetTasks();
                     Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                ),
-                FlatButton(
-                  child: Text("TEST"),
-                  onPressed: () async {
-                    GraphQLClient _client =
-                    GraphQLConfiguration().clientToQuery();
-                    User user = await MuseumDatabase().getUser();
-
-                    QueryResult result = await _client.query(QueryOptions(
-                      documentNode: gql(QueryBackend.exportResult(
-                          user.accessToken,
-                          widget.tour.onlineId,
-                          user.username)),
-                    ));
-
-                    HttpQuery.getReport(widget.tour.onlineId);
-
                     Navigator.pop(context);
                   },
                 ),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -18,6 +19,7 @@ class TourWithStops {
   final TextEditingController descr = TextEditingController();
   final String author;
   double difficulty;
+
   //TODO change to lastEdit
   DateTime creationTime;
   final int id;
@@ -29,7 +31,7 @@ class TourWithStops {
       : id = t.id,
         author = t.author,
         onlineId = t.onlineId,
-  searchId = t.searchId {
+        searchId = t.searchId {
     this.name.text = t.name;
     this.descr.text = t.desc;
     difficulty = t.difficulty;
@@ -55,13 +57,14 @@ class TourWithStops {
       difficulty: Value(difficulty),
       creationTime: Value(creationTime),
       onlineId: Value(onlineId ?? ""),
-      searchId: Value(searchId ?? author.substring(0, min(3, author.length)) +
-          name.text.substring(0, min(4, name.text.length)) +
-          (name.text.length + difficulty).toString() +
-          (id?.toString() ?? "")),
+      searchId: Value(searchId ??
+          author.substring(0, min(3, author.length)) +
+              name.text.substring(0, min(4, name.text.length)) +
+              (name.text.length + difficulty).toString() +
+              (id?.toString() ?? "")),
       desc: Value(descr.text),
       id: id == null ? Value.absent() : Value(id),
-    );//.createCompanion(nullToAbsent);
+    ); //.createCompanion(nullToAbsent);
   }
 
   Widget getRating(
@@ -77,9 +80,7 @@ class TourWithStops {
       );
 
   void resetTasks() {
-    for (var s in stops)
-      for (var e in s.extras)
-        (e?.task)?.reset();
+    for (var s in stops) for (var e in s.extras) (e?.task)?.reset();
   }
 
   Future<bool> syncTasks() async {
@@ -88,7 +89,8 @@ class TourWithStops {
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.query(QueryOptions(
-      documentNode: gql(QueryBackend.answersInTour(token, u.username, onlineId)),
+      documentNode:
+          gql(QueryBackend.answersInTour(token, u.username, onlineId)),
     ));
     if (result.hasException) {
       print(result.exception.toString());
@@ -112,21 +114,30 @@ class TourWithStops {
         ExtraType type = localList[index].type;
         if (task != null && up["text"] is String) {
           String text = up["text"];
-          if (type == ExtraType.TASK_TEXT){
+          if (type == ExtraType.TASK_TEXT) {
             if (text.startsWith("Antwort: "))
               text = text.replaceAll("Antwort: ", "");
             task.entries[0].valB.text = text;
-          }
-          else if (type == ExtraType.TASK_SINGLE) {
-            int i = int.parse(text.substring(1, text.length-1));
-            task.selected = i;
-            task.entries[i].valB = true;
-          }
-          else if (type == ExtraType.TASK_MULTI) {
-            List<int> l = text.substring(1, text.length-1).split(",").map((e) => int.parse(e)).toList();
-            for (int i in l) {
+          } else if (type == ExtraType.TASK_SINGLE) {
+            int i;
+            try {
+              i = int.parse(text.substring(1, text.length - 1));
               task.entries[i].valB = true;
-            }
+            } catch (_) {}
+            task.selected = i;
+          } else if (type == ExtraType.TASK_MULTI) {
+            List l2 = jsonDecode(text);
+            print(l2);
+            /*if (text == "[]") continue;
+
+            List<int> l = text
+                .substring(1, text.length - 1)
+                .split(",")
+                .map((e) => int.parse(e))
+                .toList();*/
+
+            for (int i in l2)
+              task.entries[i].valB = true;
           }
         }
       }
@@ -183,7 +194,8 @@ class ActualStop {
                 id_stop: customName,
                 showImages: false,
                 showText: true,
-                showDetails: false, id: null),
+                showDetails: false,
+                id: null),
             <ActualExtra>[]);
 }
 

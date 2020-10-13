@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'package:museum_app/database/moor_db.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,14 +23,6 @@ class HttpQuery {
     } else {
       print("ERROR $url");
     }
-
-    http.Response r = await http.get(
-      url,
-      headers: {"Authorization": "Bearer $token"},
-    );
-
-    print("Statuscode: ${r.statusCode}");
-    print(r.body);
   }
 
   static String imageURLProfile(String id) {
