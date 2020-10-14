@@ -49,10 +49,10 @@ class EnterMuseum extends StatelessWidget {
   }
 
   void nextScreen(context) async {
-    final User user = await MuseumDatabase().getUser();
+    final User user = await MuseumDatabase().usersDao.getUser();
     final bool onboardEnd = user.onboardEnd;
     if (user.refreshToken != null && user.refreshToken != "")
-      MuseumDatabase().refreshAccess();
+      MuseumDatabase().usersDao.refreshAccess();
     Navigator.pushNamed(context, onboardEnd ? "/home" : "/onboard");
   }
 

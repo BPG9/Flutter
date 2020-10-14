@@ -20,7 +20,7 @@ class GraphQLConfiguration {
 
   static AuthLink _authLink = AuthLink(
      getToken: () async {
-       String token = await MuseumDatabase().accessToken();
+       String token = await MuseumDatabase().usersDao.accessToken();
        return 'Bearer $token';
        },
    );

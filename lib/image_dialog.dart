@@ -5,7 +5,6 @@ import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/server_connection/http_query.dart';
-import 'package:museum_app/server_connection/mutations.dart';
 import 'package:museum_app/server_connection/query.dart';
 
 import 'server_connection/graphqlConf.dart';
@@ -41,7 +40,7 @@ class _ImageDialogState extends State<ImageDialog> {
   }
 
   _initList() async {
-    String token = await MuseumDatabase().accessToken();
+    String token = await MuseumDatabase().usersDao.accessToken();
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.query(QueryOptions(
       documentNode: gql(QueryBackend.myProfilePic(token)),
@@ -70,17 +69,10 @@ class _ImageDialogState extends State<ImageDialog> {
                 .map(
                   (img) => GestureDetector(
                     onTap: () async {
-                      String token = await MuseumDatabase().accessToken();
-                      GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-                      QueryResult result = await _client.mutate(MutationOptions(
-                        documentNode: gql(MutationBackend.chooseProfilePicture(img, token)),
-                      ));
-
-                      if (result.data.data["chooseProfilePicture"]["ok"]["boolean"] == true){
-                        MuseumDatabase().updateImage(img);
+                      if (await MuseumDatabase().usersDao.updateImage(img))
                         Navigator.pop(context);
-                      }
-                      else print(result.data.data);
+                      else
+                        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Ein Fehler trat auf.")));
                     },
                     child: HttpQuery.networkImageWidget(
                       HttpQuery.imageURLProfile(img),

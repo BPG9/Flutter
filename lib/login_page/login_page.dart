@@ -378,7 +378,7 @@ class _LogInState extends State<LogIn> {
       _failedLogin();
 
     if (b && widget.skippable) {
-      MuseumDatabase().downloadBadges();
+      MuseumDatabase().badgesDao.downloadBadges();
       MuseumDatabase().downloadStops();
     }
   }

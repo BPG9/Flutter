@@ -28,7 +28,7 @@ class _AddTourState extends State<AddTour> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return StreamBuilder(
-        stream: MuseumDatabase().watchUser(),
+        stream: MuseumDatabase().usersDao.watchUser(),
         builder: (context, snap) {
           User u = snap.data;
           if (u == null) return Container();
@@ -104,7 +104,7 @@ class _AddTourState extends State<AddTour> {
                   "Neue Tour erstellen", () async {
                 setState(() => _type = AddType.CREATE);
 
-                var name = (await MuseumDatabase().getUser())?.username;
+                var name = (await MuseumDatabase().usersDao.getUser())?.username;
 
                 _tour = TourWithStops.empty(name);
                 _tour.stops.add(ActualStop.custom());

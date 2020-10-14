@@ -134,7 +134,7 @@ class _ToursState extends State<Tours> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: MuseumDatabase().accessToken(),
+      future: MuseumDatabase().usersDao.accessToken(),
       builder: (context, snap) {
         String token = snap.data ?? "";
         if (!snap.hasData || token == "")

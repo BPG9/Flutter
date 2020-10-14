@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
 import 'package:moor/ffi.dart';
 import 'package:museum_app/constants.dart';
+import 'package:museum_app/database/dao/users_dao.dart';
 import 'package:museum_app/server_connection/graphqlConf.dart';
 import 'package:museum_app/server_connection/mutations.dart';
 import 'package:museum_app/server_connection/query.dart';
@@ -18,6 +19,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'dao/badges_dao.dart';
 import 'modelling.dart';
 
 part 'moor_db.g.dart';
@@ -272,11 +274,9 @@ LazyDatabase _openConnection() {
   TourStops,
   Extras,
   StopFeatures
-])
+], daos: [BadgesDao, UsersDao])
 class MuseumDatabase extends _$MuseumDatabase {
   static MuseumDatabase _db;
-
-  final Mutex _mutex;
 
   //static String customID = "Custom";
 
@@ -285,21 +285,10 @@ class MuseumDatabase extends _$MuseumDatabase {
     return _db;
   }
 
-  MuseumDatabase._create()
-      : _mutex = Mutex(),
-        super(_openConnection());
+  MuseumDatabase._create() : super(_openConnection());
 
   @override
   int get schemaVersion => 5;
-
-  Stream<User> watchUser() => select(users).watchSingle();
-
-  Future<User> getUser() => select(users).getSingle();
-
-  Future setUser(UsersCompanion uc) {
-    customStatement("DELETE FROM users");
-    return into(users).insert(uc);
-  }
 
   Future<bool> idExists(String onlineId) async {
     Tour t = await (select(tours)
@@ -310,29 +299,8 @@ class MuseumDatabase extends _$MuseumDatabase {
     return Future.value(t != null);
   }
 
-  Future updateUsername(String name, String refresh) async {
-    await initUser();
-    String oldName = await select(users).map((u) => u.username).getSingle();
-    await batch((batch) {
-      batch.update(users,
-          UsersCompanion(username: Value(name), refreshToken: Value(refresh)));
-      batch.update(tours, ToursCompanion(author: Value(name)),
-          where: ($ToursTable t) => t.author.equals(oldName));
-    });
-    refreshAccess();
-  }
-
-  Future setProducer() {
-    return update(users).write(UsersCompanion(producer: Value(true)));
-  }
-
-  Future updateImage(String imgPath) async {
-    await initUser();
-    return update(users).write(UsersCompanion(imgPath: Value(imgPath)));
-  }
-
   Future<bool> downloadStops({access = ""}) async {
-    String accessToken = await this.accessToken();
+    String accessToken = await usersDao.accessToken();
     if (accessToken == "") accessToken = access;
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
@@ -376,200 +344,19 @@ class MuseumDatabase extends _$MuseumDatabase {
     return Future.value(true);
   }
 
-  Future<bool> downloadBadges({access = ""}) async {
-    String token = await accessToken();
-    if (token == "") token = access;
-
-    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-    QueryResult result = await _client.query(QueryOptions(
-      documentNode: gql(QueryBackend.allBadges(token)),
-    ));
-    if (result.hasException) {
-      print(result.exception.toString());
-      return Future.value(false);
-    }
-    if (result.loading) return Future.value(false);
-    var d = result.data;
-    if (d?.data == null) return Future.value(false);
-    if (d is LazyCacheMap) {
-      var listBadges = <BadgesCompanion>[];
-      List list = d.data["availableBadges"];
-      for (var object in list) {
-        print(object);
-        String name = object["name"];
-        Color c = mat.Colors.red;
-        if (name.toLowerCase().contains("bronze")) {
-          c = Color(0xFFCD8032);
-          name = name.replaceAll("bronze", "");
-        }
-        else if (name.toLowerCase().contains("silber")) {
-          c = Color(0xFFC0C0C0);
-          name = name.replaceAll("silber", "");
-        }
-        else if (name.toLowerCase().contains("gold")) {
-          c = Color(0xFFFED700);
-          name = name.replaceAll("gold", "");
-        }
-
-        var comp = BadgesCompanion.insert(
-          name: name.trim(),
-          color: Value(c),
-          toGet: object["cost"].toDouble(),
-          id: object["id"],
-        ); //.createCompanion(true);
-        listBadges.add(comp);
-      }
-      batch((batch) => batch.insertAll(badges, listBadges,
-          mode: InsertMode.insertOrReplace));
-    }
-
-    return Future.value(true);
-  }
-
-  Future updateOnboard(bool b) async {
-    await initUser();
-    return update(users).write(UsersCompanion(onboardEnd: Value(b)));
-  }
-
-  Future<bool> onboardEnd() {
-    return select(users).map((u) => u.onboardEnd).getSingle();
-  }
-
-  Future<String> accessToken() {
-    return select(users).map((u) => u.accessToken).getSingle();
-  }
-
   Future init() async {
-    await initUser();
+    await usersDao.initUser();
     await setDivisions();
     User u = await select(users).getSingle();
 
     //print(u);
     /* Caused issues: Logged in although skipped, tried download, ...*/
     if (await GraphQLConfiguration.isConnected(u.accessToken)) {
-      if (await refreshAccess() != "") {
+      if (await usersDao.refreshAccess() != "") {
         await downloadStops();
-        await downloadBadges();
+        await badgesDao.downloadBadges();
       }
     }
-  }
-
-  Future initUser() async {
-    await customStatement(
-        "INSERT INTO users (username, imgPath, onboardEnd, producer) SELECT '', 'assets/images/empty_profile.png', false, false WHERE NOT EXISTS (SELECT * FROM users)");
-  }
-
-  Future addFavStop(String id) async {
-    var stopIds = await select(users).map((u) => u.favStops).getSingle();
-    stopIds.add(id);
-
-    //String accessToken = await this.accessToken();
-    //if (!await GraphQLConfiguration.isConnected(accessToken))
-    //  accessToken = await refreshAccess();
-    String token = await MuseumDatabase().checkRefresh();
-
-    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-    QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.addFavStop(token, id)),
-      onError: (e) => print("ERROR_addFavStop: " + e.toString()),
-    ));
-
-    if (result.data["addFavouriteObject"].data["ok"]["boolean"])
-      update(users).write(UsersCompanion(favStops: Value(stopIds)));
-  }
-
-  Future removeFavStop(String id) async {
-    var stopIds = await select(users).map((u) => u.favStops).getSingle();
-    if (!stopIds.contains(id))
-      return;
-    stopIds.remove(id);
-
-//    String accessToken = await this.accessToken();
-//    if (!await GraphQLConfiguration.isConnected(accessToken))
-//      accessToken = await refreshAccess();
-    String token = await MuseumDatabase().checkRefresh();
-
-    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-    QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.removeFavStop(token, id)),
-      onError: (e) => print("ERROR_removeFavStop: " + e.toString()),
-    ));
-
-    if (result.data["removeFavouriteObject"].data["ok"]["boolean"])
-      update(users).write(UsersCompanion(favStops: Value(stopIds)));
-  }
-
-  Future<bool> isFavStop(String id) async {
-    var stopIds = await select(users).map((u) => u.favStops).getSingle();
-
-    return stopIds.where((fav) => fav == id).isNotEmpty;
-  }
-
-  Future<List<Stop>> getFavStops() async {
-    var stopIds = await select(users).map((u) => u.favStops).getSingle();
-
-    var query = select(stops)..where((s) => s.id.isIn(stopIds));
-    return query.get();
-  }
-
-  Future addFavTour(String id) async {
-    var tourIds = await select(users).map((u) => u.favTours).getSingle();
-    tourIds.add(id);
-
-//    String accessToken = await this.accessToken();
-//    if (!await GraphQLConfiguration.isConnected(accessToken))
-//      accessToken = await refreshAccess();
-    String token = await MuseumDatabase().checkRefresh();
-
-    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-    QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.addFavTour(token, id)),
-      onError: (e) => print("ERROR_addFavTour: " + e.toString()),
-    ));
-
-    if (result.data["addFavouriteTour"].data["ok"]["boolean"])
-      update(users).write(UsersCompanion(favTours: Value(tourIds)));
-  }
-
-  Future removeFavTour(String id) async {
-    var tourIds = await select(users).map((u) => u.favTours).getSingle();
-    if (!tourIds.contains(id))
-      return;
-    tourIds.remove(id);
-
-//    String accessToken = await this.accessToken();
-//    if (!await GraphQLConfiguration.isConnected(accessToken))
-//      accessToken = await refreshAccess();
-    String token = await MuseumDatabase().checkRefresh();
-
-    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-    QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.removeFavTour(token, id)),
-      onError: (e) => print("ERROR_addFavTour: " + e.toString()),
-    ));
-
-    if (result.data["removeFavouriteTour"].data["ok"]["boolean"])
-      update(users).write(UsersCompanion(favTours: Value(tourIds)));
-  }
-
-  Future<bool> isFavTour(String id) async {
-    var tourIds = await select(users).map((u) => u.favTours).getSingle();
-
-    return tourIds.where((fav) => fav == id).isNotEmpty;
-  }
-
-  Stream<List<TourWithStops>> watchFavTours() {
-    var tourIds = select(users).map((u) => u.favTours).watchSingle();
-
-    //tourIds.forEach((list) => list.forEach((s) async => await joinAndDownloadTour(s, searchId: false)));
-
-    var tours = getTourStops();
-
-    return Rx.combineLatest2(
-        tourIds,
-        tours,
-        (List<String> ids, List<TourWithStops> tours) =>
-            tours.where((t) => ids.contains(t.onlineId)).toList());
   }
 
   Future<bool> logIn(String username, String password) async {
@@ -586,7 +373,7 @@ class MuseumDatabase extends _$MuseumDatabase {
       String refresh = map['refreshToken'];
 
       downloadStops(access: access);
-      downloadBadges(access: access);
+      badgesDao.downloadBadges(access: access);
 
       result = await _client.query(QueryOptions(
         documentNode: gql(QueryBackend.userInfo(access)),
@@ -664,7 +451,7 @@ class MuseumDatabase extends _$MuseumDatabase {
 //    String token = await accessToken();
 //    if (!await GraphQLConfiguration.isConnected(token))
 //      token = await refreshAccess();
-    String token = await MuseumDatabase().checkRefresh();
+    String token = await usersDao.checkRefresh();
     if (token == "") {
       print("ERROR_TOKEN uploadAnswers");
       return;
@@ -751,7 +538,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     }
   }
 
-  void clear() {
+  void clearAll() {
     customStatement("DELETE FROM users");
     //customStatement("DELETE FROM tourStops");
     customStatement("DELETE FROM stops");
@@ -769,6 +556,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     return query.watchSingle();
   }
 
+  @deprecated
   Future<void> updateStopFeatures(String stop_id, int tour_id,
       {images, text, details}) {
     if (stop_id != customName)
@@ -857,16 +645,6 @@ class MuseumDatabase extends _$MuseumDatabase {
     });
   }
 
-  Future<List<Badge>> getBadges() => select(badges).get();
-
-  Stream<List<Badge>> watchBadges() => select(badges).watch();
-
-  Future<int> addBadge(BadgesCompanion bc) {
-    return into(badges).insert(bc);
-  }
-
-  Stream<List<Division>> getDivisions() => select(divisions).watch();
-
   Stream<List<Tour>> getTours() => select(tours).watch();
 
   Stream<List<TourWithStops>> getTourStops() {
@@ -898,10 +676,13 @@ class MuseumDatabase extends _$MuseumDatabase {
     return SwitchLatestStream(res);
   }
 
+  @deprecated
   Stream<List<Stop>> watchStops() => select(stops).watch();
 
+  @deprecated
   Future<List<Stop>> getStops() => select(stops).get();
 
+  @deprecated
   Future<Stop> getStop(String id) =>
       (select(stops)..where((s) => s.id.equals(id))).getSingle();
 
@@ -954,6 +735,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     return query.watch();
   }
 
+  @deprecated
   Stream<List<Extra>> getExtrasId(int id_tour, String id_stop) {
     final contentQuery = select(extras)
       //.join([innerJoin(stops, stops.id.equalsExp(tourStops.id_stop))])
@@ -963,6 +745,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     return contentQuery.watch();
   }
 
+  @deprecated
   Stream<List<Stop>> getStopsId(int id) {
     final contentQuery = select(tourStops)
         .join([innerJoin(stops, stops.id.equalsExp(tourStops.id_stop))])
@@ -1031,7 +814,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     //String token = await accessToken();
     //if (!await GraphQLConfiguration.isConnected(token))
     //  token = await refreshAccess();
-    String token = await MuseumDatabase().checkRefresh();
+    String token = await usersDao.checkRefresh();
     if (token == "") return Future.value(false);
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
@@ -1129,7 +912,7 @@ class MuseumDatabase extends _$MuseumDatabase {
   }
 
   Future<List<Tour>> createdTours() async {
-    String un = (await getUser()).username;
+    String un = (await usersDao.getUser()).username;
     var q = select(tours)..where((t) => t.author.equals(un));
 
     return q.get();
@@ -1184,7 +967,7 @@ class MuseumDatabase extends _$MuseumDatabase {
     // Clean up local DB
     this.removeTour(id);
     // (Pot.) clean up favTours
-    this.removeFavTour(onlineID);
+    usersDao.removeFavTour(onlineID);
   }
 
   Future<bool> _updateTour(String token, Tour t) async {
@@ -1203,49 +986,11 @@ class MuseumDatabase extends _$MuseumDatabase {
     return Future.value(result.data["updateTour"]["ok"]["boolean"]);
   }
 
-  Future<String> checkRefresh() async {
-    String token = "";
-    await _mutex.acquire();
-    try {
-      token = await accessToken();
-      if (token != null &&
-          token != "" &&
-          !await GraphQLConfiguration.isConnected(token))
-        token = await refreshAccess();
-    } finally {
-      _mutex.release();
-    }
-    return Future.value(token);
-  }
-
-  Future<String> refreshAccess() async {
-    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-    String refresh = await select(users).map((u) => u.refreshToken).getSingle();
-    if (refresh == "") return Future.value("");
-
-    QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.refresh(refresh)),
-    ));
-
-    if (result.hasException)
-      print("EXC_refresh: " + result.exception.toString());
-    else if (result.loading)
-      print("LOADING");
-    else {
-      String newToken = result.data['refresh'].data["newToken"];
-      update(users).write(UsersCompanion(accessToken: Value(newToken)));
-      print("NEW TOKEN ${DateFormat("hh:mm:ss").format(DateTime.now())}");
-      downloadStops();
-      return Future.value(newToken);
-    }
-    return Future.value("");
-  }
-
   Future<bool> joinAndDownloadTour(String id, {bool searchId = true}) async {
 //    String token = await accessToken();
 //    if (!await GraphQLConfiguration.isConnected(token))
 //      token = await refreshAccess();
-    String token = await MuseumDatabase().checkRefresh();
+    String token = await usersDao.checkRefresh();
     if (token == null || token == "") return Future.value(false);
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
@@ -1443,6 +1188,8 @@ class MuseumDatabase extends _$MuseumDatabase {
       return Future.value(true);
     });
   }
+
+  Stream<List<Division>> watchDivisions() => select(divisions).watch();
 
   Future<void> setDivisions() async {
     await batch((batch) {

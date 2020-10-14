@@ -220,7 +220,7 @@ class _TourPanel extends StatelessWidget {
           child: Text("Löschen",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
           onPressed: () async {
-            String token = await MuseumDatabase().accessToken();
+            String token = await MuseumDatabase().usersDao.accessToken();
             showDialog(context: context, builder: (c) => _deleteTour(token, _tour.onlineId, context));
             //Scaffold.of(context).showSnackBar(SnackBar(content: Text("Not yet implemented")));
             //print("Not yet implemented");
@@ -390,7 +390,7 @@ class _TourPopUpState extends State<_TourPopUp> {
               },
             ),
             FutureBuilder(
-              future: MuseumDatabase().isFavTour(t.onlineId),
+              future: MuseumDatabase().usersDao.isFavTour(t.onlineId),
               builder: (context, snap) {
                 bool fav = snap.data ?? false;
                 return FlatButton(
@@ -404,9 +404,9 @@ class _TourPopUpState extends State<_TourPopUp> {
                   ),
                   onPressed: () async {
                     if (fav)
-                      await MuseumDatabase().removeFavTour(t.onlineId);
+                      await MuseumDatabase().usersDao.removeFavTour(t.onlineId);
                     else
-                      await MuseumDatabase().addFavTour(t.onlineId);
+                      await MuseumDatabase().usersDao.addFavTour(t.onlineId);
                     setState(() {});
                   },
                 );
@@ -529,7 +529,7 @@ class _DownloadColumnState extends State<DownloadColumn> {
     //String token = await MuseumDatabase().accessToken();
     //if (!await GraphQLConfiguration.isConnected(token))
     //  token = await MuseumDatabase().refreshAccess();
-    String token = await MuseumDatabase().checkRefresh();
+    String token = await MuseumDatabase().usersDao.checkRefresh();
 
     if (token == null || token == "") return;
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();

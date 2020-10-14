@@ -89,7 +89,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return StreamBuilder(
-      stream: MuseumDatabase().watchUser(),
+      stream: MuseumDatabase().usersDao.watchUser(),
       initialData: User(accessToken: "foo", username: "...", imgPath: "", producer: false),
       builder: (context, snap) {
         User user = snap.data;

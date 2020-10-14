@@ -158,7 +158,7 @@ class MuseumSettings extends StatelessWidget {
   }
 
   Future<void> _editUS(BuildContext context) async {
-    String accesToken = await MuseumDatabase().accessToken();
+    String accesToken = await MuseumDatabase().usersDao.accessToken();
     var ctrl = TextEditingController();
 
     showDialog(
@@ -185,26 +185,13 @@ class MuseumSettings extends StatelessWidget {
                   child: Text("Bestätigen",
                       style: TextStyle(color: COLOR_PROFILE)),
                   onPressed: () async {
-                    GraphQLClient _client =
-                        GraphQLConfiguration().clientToQuery();
-                    print(ctrl.text);
-                    QueryResult result = await _client.mutate(MutationOptions(
-                      documentNode: gql(MutationBackend.changeUsername(
-                          accesToken, ctrl.text.trim())),
-                      update: (cache, result) => cache,
-                      onError: (e) => print("ERROR_changeUS " + e.toString()),
-                    ));
-
-                    if (result.hasException || result.data == null) return;
-
-                    print(result.data);
-                    if (result.data['changeUsername']["ok"]["boolean"] ==
-                        true) {
-                      MuseumDatabase().updateUsername(ctrl.text.trim(),
-                          result.data["changeUsername"]["refreshToken"]);
-                      //MuseumDatabase().refreshToken();
+                    if (await MuseumDatabase()
+                        .usersDao
+                        .updateUsername(ctrl.text.trim(), accesToken))
                       Navigator.pop(context);
-                    }
+                    else
+                      Scaffold.of(context).showSnackBar(
+                          SnackBar(content: Text("Ein Fehler trat auf.")));
                   },
                 )
               ],
@@ -215,7 +202,7 @@ class MuseumSettings extends StatelessWidget {
     var ctrl = TextEditingController();
     var ctrl2 = TextEditingController();
     final key = GlobalKey<FormFieldState>();
-    String accesToken = await MuseumDatabase().accessToken();
+    String accesToken = await MuseumDatabase().usersDao.accessToken();
 
     var dialog = AlertDialog(
       title: Text("Passwort ändern"),
@@ -384,7 +371,7 @@ class MuseumSettings extends StatelessWidget {
   }
 
   _promote(context) async {
-    String token = await MuseumDatabase().accessToken();
+    String token = await MuseumDatabase().usersDao.accessToken();
     final key = GlobalKey<FormFieldState>();
     TextEditingController ctrl = TextEditingController();
     showDialog(
@@ -392,6 +379,7 @@ class MuseumSettings extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: Text("Erstellercode eingeben"),
         content: TextFormField(
+          maxLength: 8,
           controller: ctrl,
           key: key,
           validator: (s) => "Der Code $s wurde nicht akzeptiert",
@@ -404,21 +392,11 @@ class MuseumSettings extends StatelessWidget {
           FlatButton(
             child: Text("Bestätigen", style: TextStyle(color: COLOR_PROFILE)),
             onPressed: () async {
-              GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-              print(ctrl.text);
-              QueryResult result = await _client.mutate(MutationOptions(
-                  documentNode:
-                      gql(MutationBackend.promote(token, ctrl.text.trim())),
-                  update: (cache, result) => cache));
-              if (result.hasException)
-                print("EXC_promote: " + result.exception.toString());
-              if (result.data is LazyCacheMap) {
-                if (result.data['promoteUser']["ok"]["boolean"] == true) {
-                  MuseumDatabase().setProducer();
-                  Navigator.pop(context);
-                } else
-                  key.currentState.validate();
-              }
+              String s = ctrl.text.trim();
+              if (await MuseumDatabase().usersDao.setProducer(token, s))
+                Navigator.pop(context);
+              else
+                key.currentState.validate();
             },
           ),
         ],
@@ -429,7 +407,7 @@ class MuseumSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: MuseumDatabase().watchUser(),
+      stream: MuseumDatabase().usersDao.watchUser(),
       builder: (context, snap) {
         bool logged = snap.hasData && snap.data.accessToken != "";
         bool producer = snap.hasData && snap.data.producer;
@@ -459,23 +437,25 @@ class MuseumSettings extends StatelessWidget {
       base.removeAt(0);
       if (!producer)
         base.insert(
-            0,
-            _myPopUpItem(
-                "Tourersteller werden", Icons.work, _OptionType.PROMOTE));
-      base.insert(0, _myPopUpItem("Ausloggen", Icons.undo, _OptionType.LOGOUT));
-      base.insert(
           0,
-          _myPopUpItem(
-              "Passwort ändern", Icons.fiber_pin, _OptionType.EDIT_PW));
+          _myPopUpItem("Tourersteller werden", Icons.work, _OptionType.PROMOTE),
+        );
       base.insert(
-          0,
-          _myPopUpItem(
-            "Username ändern",
-            Icons.person,
-            _OptionType.EDIT_US,
-          ));
-      base.insert(0,
-          _myPopUpItem("Profilbild ändern", Icons.image, _OptionType.EDIT_IMG));
+        0,
+        _myPopUpItem("Ausloggen", Icons.undo, _OptionType.LOGOUT),
+      );
+      base.insert(
+        0,
+        _myPopUpItem("Passwort ändern", Icons.fiber_pin, _OptionType.EDIT_PW),
+      );
+      base.insert(
+        0,
+        _myPopUpItem("Username ändern", Icons.person, _OptionType.EDIT_US),
+      );
+      base.insert(
+        0,
+        _myPopUpItem("Profilbild ändern", Icons.image, _OptionType.EDIT_IMG),
+      );
     }
 
     return base;

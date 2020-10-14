@@ -441,7 +441,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
                   onPressed: () async {
                     GraphQLClient _client =
                         GraphQLConfiguration().clientToQuery();
-                    User user = await MuseumDatabase().getUser();
+                    User user = await MuseumDatabase().usersDao.getUser();
 
                     QueryResult result = await _client.query(QueryOptions(
                       documentNode: gql(QueryBackend.exportResult(
@@ -498,7 +498,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
     return Column(
       children: <Widget>[
             StreamBuilder(
-              stream: MuseumDatabase().watchUser(),
+              stream: MuseumDatabase().usersDao.watchUser(),
               builder: (context, snap) {
                 String username = snap.data?.username ?? "Anon. User";
                 return RichText(

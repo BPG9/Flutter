@@ -83,8 +83,8 @@ class TourWithStops {
   }
 
   Future<bool> syncTasks() async {
-    User u = await MuseumDatabase().getUser();
-    String token = await MuseumDatabase().checkRefresh();
+    User u = await MuseumDatabase().usersDao.getUser();
+    String token = await MuseumDatabase().usersDao.checkRefresh();
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.query(QueryOptions(

@@ -10,7 +10,6 @@ import 'package:museum_app/server_connection/http_query.dart';
 import 'package:museum_app/server_connection/query.dart';
 import 'package:museum_app/tours_page/tours_widgets.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_content.dart';
-import 'package:overlay_container/overlay_container.dart';
 
 class FavWidget extends StatefulWidget {
   FavWidget({Key key}) : super(key: key);
@@ -139,11 +138,11 @@ class _FavWidgetState extends State<FavWidget> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return StreamBuilder(
-      stream: MuseumDatabase().getDivisions(),
+      stream: MuseumDatabase().watchDivisions(),
       builder: (context, snapDev) {
         var divisions = snapDev.data ?? List<Division>();
         return FutureBuilder(
-          future: MuseumDatabase().getFavStops(),
+          future: MuseumDatabase().usersDao.getFavStops(),
           builder: (context, snapStop) {
             var stops = snapStop.data ?? List<Stop>();
             // show every division with it's stops
@@ -274,7 +273,7 @@ class _BadgeState extends State<BadgeWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: MuseumDatabase().watchBadges(),
+      stream: MuseumDatabase().badgesDao.watchBadges(),
       builder: (context, snap) {
         // if (snap.hasError || !snap.hasData) return Text("Fehler");
         return Wrap(children: buildWidgets(snap?.data));
@@ -379,7 +378,7 @@ class _BadgeWidgetState extends State<BadgeWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: MuseumDatabase().watchBadges(),
+        stream: MuseumDatabase().badgesDao.watchBadges(),
         builder: (context, snapBad) {
           List<Badge> badges = snapBad.data ?? List<Badge>();
           return Container(

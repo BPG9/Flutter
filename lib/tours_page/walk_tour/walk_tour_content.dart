@@ -224,7 +224,7 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
           width: horSize(100, 100),
           alignment: Alignment.centerRight,
           child: FutureBuilder(
-            future: MuseumDatabase().isFavStop(id),
+            future: MuseumDatabase().usersDao.isFavStop(id),
             builder: (context, snap) {
               bool fav = snap.data ?? false;
               return FlatButton(
@@ -237,9 +237,9 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
                 ),
                 onPressed: () async {
                   if (fav)
-                    await MuseumDatabase().removeFavStop(id);
+                    await MuseumDatabase().usersDao.removeFavStop(id);
                   else
-                    await MuseumDatabase().addFavStop(id);
+                    await MuseumDatabase().usersDao.addFavStop(id);
                   setState(() {});
                   },
               );

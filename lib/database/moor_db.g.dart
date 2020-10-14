@@ -3278,6 +3278,10 @@ abstract class _$MuseumDatabase extends GeneratedDatabase {
   $StopFeaturesTable _stopFeatures;
   $StopFeaturesTable get stopFeatures =>
       _stopFeatures ??= $StopFeaturesTable(this);
+  BadgesDao _badgesDao;
+  BadgesDao get badgesDao => _badgesDao ??= BadgesDao(this as MuseumDatabase);
+  UsersDao _usersDao;
+  UsersDao get usersDao => _usersDao ??= UsersDao(this as MuseumDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

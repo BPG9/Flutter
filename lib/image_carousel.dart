@@ -38,7 +38,7 @@ class _ImageCarouselState extends State<ImageCaroussel> {
   }
 
   _initList() async {
-    String token = await MuseumDatabase().accessToken();
+    String token = await MuseumDatabase().usersDao.accessToken();
     bool connected = await GraphQLConfiguration.isConnected(token);
     if (!connected) return;
     _images.clear();

@@ -179,7 +179,7 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
       return GestureDetector(
         onTap: () {
           Navigator.pushNamed(context, "/login");
-          MuseumDatabase().updateOnboard(true);
+          MuseumDatabase().usersDao.updateOnboard(true);
         },
         child: textWithArrow("Zum Login ", size: horSize(7, 7)),
       );
