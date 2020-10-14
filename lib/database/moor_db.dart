@@ -399,15 +399,15 @@ class MuseumDatabase extends _$MuseumDatabase {
         String name = object["name"];
         Color c = mat.Colors.red;
         if (name.toLowerCase().contains("bronze")) {
-          c = Color(0xcd7f32);
+          c = Color(0xFFCD8032);
           name = name.replaceAll("bronze", "");
         }
         else if (name.toLowerCase().contains("silber")) {
-          c = mat.Colors.grey[600];
+          c = Color(0xFFC0C0C0);
           name = name.replaceAll("silber", "");
         }
         else if (name.toLowerCase().contains("gold")) {
-          c = mat.Colors.amber;
+          c = Color(0xFFFED700);
           name = name.replaceAll("gold", "");
         }
 
