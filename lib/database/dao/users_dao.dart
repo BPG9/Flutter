@@ -2,7 +2,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
 import 'package:museum_app/server_connection/graphqlConf.dart';
-import 'package:museum_app/server_connection/mutations.dart';
+import 'package:museum_app/server_connection/graphql_nodes.dart';
 import 'package:mutex/mutex.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -23,10 +23,49 @@ class UsersDao extends DatabaseAccessor<MuseumDatabase> with _$UsersDaoMixin {
 
   Future<User> getUser() => select(users).getSingle();
 
+  Future<bool> changePassword(String pw) async {
+    String accesToken = await checkRefresh();
+    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
+
+    QueryResult result = await _client.mutate(MutationOptions(
+      documentNode:
+          gql(MutationBackend.changePassword(accesToken, pw)),
+      update: (cache, result) => cache,
+      onError: (e) => print("ERROR_changePW ${e.toString()}"),
+    ));
+
+    return result.data.data["changePassword"]["ok"]["boolean"];
+  }
+
+  Future<bool> createUser(String username, String password) async {
+    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
+    QueryResult result = await _client.mutate(MutationOptions(
+      documentNode: gql(MutationBackend.createUser(username, password)),
+      onError: (e) => print("ERROR_signup: " + e.toString()),
+    ));
+
+    return result.data.data["createUser"]["ok"];
+  }
+
+  Future<List<String>> getMyImages() async {
+    String token = await checkRefresh();
+    List<String> l = List<String>();
+
+    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
+    QueryResult result = await _client.query(QueryOptions(
+      documentNode: gql(QueryBackend.myProfilePic(token)),
+      //onError: (e) => print("ERROR_auth: " + e.toString()),
+    ));
+    if (!result.hasException && result.data != null)
+      for (var s in result.data.data["myProfilePictures"]) l.add(s.toString());
+
+    return l;
+  }
+
   Future<bool> updateImage(String imgPath) async {
     initUser();
 
-    String token = await MuseumDatabase().usersDao.accessToken();
+    String token = await checkRefresh();
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     QueryResult result = await _client.mutate(MutationOptions(
       documentNode: gql(MutationBackend.chooseProfilePicture(imgPath, token)),
@@ -56,13 +95,14 @@ class UsersDao extends DatabaseAccessor<MuseumDatabase> with _$UsersDaoMixin {
         "INSERT INTO users (username, imgPath, onboardEnd, producer) SELECT '', 'assets/images/empty_profile.png', false, false WHERE NOT EXISTS (SELECT * FROM users)");
   }
 
-  Future<bool> updateUsername(String name, String access) async {
+  Future<bool> updateUsername(String name) async {
     initUser();
+    String token = await checkRefresh();
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
     print(name);
     QueryResult result = await _client.mutate(MutationOptions(
-      documentNode: gql(MutationBackend.changeUsername(access, name.trim())),
+      documentNode: gql(MutationBackend.changeUsername(token, name.trim())),
       update: (cache, result) => cache,
       onError: (e) => print("ERROR_changeUS " + e.toString()),
     ));
@@ -95,14 +135,14 @@ class UsersDao extends DatabaseAccessor<MuseumDatabase> with _$UsersDaoMixin {
     return b;
   }
 
+  Future<String> accessToken() => select(users).map((u) => u.accessToken).getSingle();
+
   Future<String> checkRefresh() async {
     String token = "";
     await _mutex.acquire();
     try {
       token = await accessToken();
-      if (token != null &&
-          token != "" &&
-          !await GraphQLConfiguration.isConnected(token))
+      if (!await GraphQLConfiguration.isConnected(token))
         token = await refreshAccess();
     } finally {
       _mutex.release();
@@ -130,18 +170,13 @@ class UsersDao extends DatabaseAccessor<MuseumDatabase> with _$UsersDaoMixin {
       db.downloadStops();
       return Future.value(newToken);
     }
-    return Future.value("");
+    //return Future.value("");
   }
 
-  Future<bool> onboardEnd() {
-    return select(users).map((u) => u.onboardEnd).getSingle();
-  }
+  Future<bool> onboardEnd() => select(users).map((u) => u.onboardEnd).getSingle();
 
-  Future<String> accessToken() {
-    return select(users).map((u) => u.accessToken).getSingle();
-  }
-
-  Future<bool> setProducer(String token, String code) async {
+  Future<bool> setProducer(String code) async {
+    String token = await checkRefresh();
     print("Promotion-Code: $code");
 
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
@@ -153,8 +188,7 @@ class UsersDao extends DatabaseAccessor<MuseumDatabase> with _$UsersDaoMixin {
       return false;
     }
     bool b = result.data['promoteUser']["ok"]["boolean"];
-    if (b)
-      update(users).write(UsersCompanion(producer: Value(true)));
+    if (b) update(users).write(UsersCompanion(producer: Value(true)));
     return b;
   }
 

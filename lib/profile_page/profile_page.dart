@@ -6,8 +6,8 @@ import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/login_page/login_page.dart';
 import 'package:museum_app/museum_tabs.dart';
 import 'package:museum_app/profile_page/profile_widgets.dart';
+import 'package:museum_app/server_connection/graphql_nodes.dart';
 import 'package:museum_app/server_connection/http_query.dart';
-import 'package:museum_app/server_connection/query.dart';
 import 'package:museum_app/tours_page/tours_widgets.dart';
 
 class Profile extends StatefulWidget {

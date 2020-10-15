@@ -5,7 +5,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/server_connection/mutations.dart';
+import 'package:museum_app/server_connection/graphql_nodes.dart';
 
 class LogIn extends StatefulWidget {
   final bool skippable;
@@ -131,8 +131,8 @@ class _LogInState extends State<LogIn> {
   ///
   /// The [icon] is displayed left to the text field. The [text] is displayed as
   /// the field's label. Set [pwField] to true to create a password-field.
-  Widget _customTextField(
-      TextEditingController ctrl, IconData icon, String text,
+  Widget _customTextField(TextEditingController ctrl, IconData icon,
+      String text,
       {bool pwField = false}) {
     return Container(
       height: verSize(pwField ? 9 : 13, 15),
@@ -177,8 +177,8 @@ class _LogInState extends State<LogIn> {
           // Retype Password field [SignUp]
           _type == LogInType.SIGNUP
               ? _customTextField(
-                  _pw2Ctrl, Icons.fiber_pin, 'Passwort bestätigen',
-                  pwField: true)
+              _pw2Ctrl, Icons.fiber_pin, 'Passwort bestätigen',
+              pwField: true)
               : Container(),
         ],
       ),
@@ -194,7 +194,7 @@ class _LogInState extends State<LogIn> {
           title: Text("Hinweis"),
           content: Text(
               "Möchtest Du wirklich ohne Accountverbindung fortfahen?\n"
-              "Du benötigst einen Account für Rundgänge, kannst diesen aber auch später einrichten."),
+                  "Du benötigst einen Account für Rundgänge, kannst diesen aber auch später einrichten."),
           actions: [
             FlatButton(
               child: Text("Zurück"),
@@ -245,9 +245,29 @@ class _LogInState extends State<LogIn> {
     ];
 
     // ... else be able to confirm the data
+    // TODO sffd
     if (!(content is Text))
       actions.add(
-        Mutation(
+        FlatButton(
+          child: Text("Weiter"),
+          onPressed: () async {
+            Navigator.pop(context);
+            bool b = await MuseumDatabase().usersDao.createUser(
+              _usCtrl.text.trim(),
+              _pwCtrl.text.trim(),
+            );
+            if (b)
+              setState(() {
+                _pwCtrl.clear();
+                _pw2Ctrl.clear();
+                _type = LogInType.LOGIN;
+              });
+            else
+              Scaffold.of(context).showSnackBar(
+                  SnackBar(content: Text("Der Username ist bereits vergeben.")));
+          },
+        ),
+        /*Mutation(
           options: MutationOptions(
               documentNode:
                   gql(MutationBackend.createUser(_pwCtrl.text, _usCtrl.text)),
@@ -264,20 +284,21 @@ class _LogInState extends State<LogIn> {
                     _type = LogInType.LOGIN;
                   });
                 } else
-                  print("AAAAAAAAAAAAAAAAAAAA");
+                  print("Error_Signup");
                   //_failedLogin();
               }),
           builder: (runMutation, result) => FlatButton(
             child: Text("Weiter"),
             onPressed: () => runMutation({}),
           ),
-        ),
+        ),*/
       );
 
     showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-            title: Text("Hinweis"), content: content, actions: actions));
+        builder: (context) =>
+            AlertDialog(
+                title: Text("Hinweis"), content: content, actions: actions));
   }
 
   @override
@@ -342,7 +363,7 @@ class _LogInState extends State<LogIn> {
                   ),
                   child: Text("Bestätigen", textScaleFactor: 1.3),
                   onPressed: _userVal(_usCtrl.text) != null ||
-                          _usCtrl.text.isEmpty
+                      _usCtrl.text.isEmpty
                       ? null
                       : (_type == LogInType.SIGNUP ? _signUpDialog : _login),
                 ),
@@ -353,18 +374,18 @@ class _LogInState extends State<LogIn> {
       ),
       floatingActionButton: widget.skippable
           ? FlatButton(
-              textColor: Colors.white,
-              color: COLOR_PROFILE,
-              splashColor: Colors.black.withOpacity(.1),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [Text("Skip"), Icon(Icons.skip_next)],
-              ),
-              onPressed: _skipDialog,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-              ),
-            )
+        textColor: Colors.white,
+        color: COLOR_PROFILE,
+        splashColor: Colors.black.withOpacity(.1),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [Text("Skip"), Icon(Icons.skip_next)],
+        ),
+        onPressed: _skipDialog,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.0),
+        ),
+      )
           : null,
     );
   }
@@ -387,17 +408,18 @@ class _LogInState extends State<LogIn> {
   _failedLogin() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Hinweis"),
-        content: Text("Die eingegebenen Benutzerdaten sind nicht korrekt. "
-            "Überprüfe bitte die Eingaben und versuche es erneut!"),
-        actions: [
-          FlatButton(
-            child: Text("Schließen"),
-            onPressed: () => Navigator.pop(context),
+      builder: (context) =>
+          AlertDialog(
+            title: Text("Hinweis"),
+            content: Text("Die eingegebenen Benutzerdaten sind nicht korrekt. "
+                "Überprüfe bitte die Eingaben und versuche es erneut!"),
+            actions: [
+              FlatButton(
+                child: Text("Schließen"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

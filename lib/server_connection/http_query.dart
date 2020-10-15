@@ -7,8 +7,7 @@ import 'graphqlConf.dart';
 
 class HttpQuery {
   static void getReport(String tourId) async {
-    User u = await MuseumDatabase().usersDao.getUser();
-    String token = u.accessToken;
+    String token = await MuseumDatabase().usersDao.checkRefresh();
 
     String url = "$SERVER_ADDRESS/file/report/?type=me&tour=$tourId";
 
@@ -84,7 +83,7 @@ class HttpQuery {
   static Widget networkImageWidget2(String url,
       {width = 50, height = 50, fit = BoxFit.cover}) {
     return FutureBuilder(
-      future: MuseumDatabase().usersDao.accessToken(),
+      future: MuseumDatabase().usersDao.checkRefresh(),
       builder: (context, snap) {
         String token = snap.data ?? "";
         return FutureBuilder(

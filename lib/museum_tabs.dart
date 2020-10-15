@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:museum_app/server_connection/mutations.dart';
 import 'package:museum_app/util.dart';
 
 import 'SizeConfig.dart';
@@ -9,7 +7,6 @@ import 'constants.dart';
 import 'database/moor_db.dart';
 import 'image_dialog.dart';
 import 'map/map_page.dart';
-import 'server_connection/graphqlConf.dart';
 
 class MuseumTabs extends StatefulWidget {
   final Widget top;
@@ -158,7 +155,6 @@ class MuseumSettings extends StatelessWidget {
   }
 
   Future<void> _editUS(BuildContext context) async {
-    String accesToken = await MuseumDatabase().usersDao.accessToken();
     var ctrl = TextEditingController();
 
     showDialog(
@@ -187,7 +183,7 @@ class MuseumSettings extends StatelessWidget {
                   onPressed: () async {
                     if (await MuseumDatabase()
                         .usersDao
-                        .updateUsername(ctrl.text.trim(), accesToken))
+                        .updateUsername(ctrl.text.trim()))
                       Navigator.pop(context);
                     else
                       Scaffold.of(context).showSnackBar(
@@ -198,11 +194,10 @@ class MuseumSettings extends StatelessWidget {
             ));
   }
 
-  Future<void> _editPW(BuildContext context) async {
+  Future<void> _editPW(BuildContext context) {
     var ctrl = TextEditingController();
     var ctrl2 = TextEditingController();
     final key = GlobalKey<FormFieldState>();
-    String accesToken = await MuseumDatabase().usersDao.accessToken();
 
     var dialog = AlertDialog(
       title: Text("Passwort ändern"),
@@ -235,15 +230,13 @@ class MuseumSettings extends StatelessWidget {
           child: Text("Bestätigen", style: TextStyle(color: COLOR_PROFILE)),
           onPressed: () async {
             if (!key.currentState.validate()) return;
-            GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-            print(ctrl.text);
-            await _client.mutate(MutationOptions(
-              documentNode: gql(
-                  MutationBackend.changePassword(accesToken, ctrl.text.trim())),
-              update: (cache, result) => cache,
-              onCompleted: (result) => Navigator.pop(context),
-              onError: (e) => print("ERROR"),
-            ));
+            if (await MuseumDatabase()
+                .usersDao
+                .changePassword(ctrl.text.trim()))
+              Navigator.pop(context);
+            else
+              Scaffold.of(context).showSnackBar(
+                  SnackBar(content: Text("Ein Fehler trat auf.")));
           },
         ),
       ],
@@ -371,7 +364,6 @@ class MuseumSettings extends StatelessWidget {
   }
 
   _promote(context) async {
-    String token = await MuseumDatabase().usersDao.accessToken();
     final key = GlobalKey<FormFieldState>();
     TextEditingController ctrl = TextEditingController();
     showDialog(
@@ -392,8 +384,8 @@ class MuseumSettings extends StatelessWidget {
           FlatButton(
             child: Text("Bestätigen", style: TextStyle(color: COLOR_PROFILE)),
             onPressed: () async {
-              String s = ctrl.text.trim();
-              if (await MuseumDatabase().usersDao.setProducer(token, s))
+              String code = ctrl.text.trim();
+              if (await MuseumDatabase().usersDao.setProducer(code))
                 Navigator.pop(context);
               else
                 key.currentState.validate();

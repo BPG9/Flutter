@@ -2,7 +2,8 @@ import "package:flutter/material.dart";
 import "package:graphql_flutter/graphql_flutter.dart";
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/server_connection/query.dart';
+
+import 'graphql_nodes.dart';
 
 class GraphQLConfiguration {
   static GraphQLConfiguration _gc;
@@ -20,7 +21,7 @@ class GraphQLConfiguration {
 
   static AuthLink _authLink = AuthLink(
      getToken: () async {
-       String token = await MuseumDatabase().usersDao.accessToken();
+       String token = await MuseumDatabase().usersDao.refreshAccess();
        return 'Bearer $token';
        },
    );
@@ -42,6 +43,8 @@ class GraphQLConfiguration {
   }
 
   static Future<bool> isConnected(String token) async {
+    if (token == null || token == "") return false;
+
     var r = await GraphQLConfiguration().clientToQuery().query(QueryOptions(
         documentNode: gql(QueryBackend.userInfo(token))
     ));

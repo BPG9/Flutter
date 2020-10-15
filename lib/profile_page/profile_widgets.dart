@@ -6,8 +6,8 @@ import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
+import 'package:museum_app/server_connection/graphql_nodes.dart';
 import 'package:museum_app/server_connection/http_query.dart';
-import 'package:museum_app/server_connection/query.dart';
 import 'package:museum_app/tours_page/tours_widgets.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_content.dart';
 

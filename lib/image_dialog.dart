@@ -1,13 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/server_connection/http_query.dart';
-import 'package:museum_app/server_connection/query.dart';
-
-import 'server_connection/graphqlConf.dart';
 
 class ImageDialog extends StatefulWidget {
   ImageDialog({Key key}) : super(key: key);
@@ -17,40 +13,33 @@ class ImageDialog extends StatefulWidget {
 }
 
 class _ImageDialogState extends State<ImageDialog> {
-  List<String> list = [
-    /*"assets/images/profile_test.png",
-    "assets/images/profile_test2.png",
-    'assets/images/haupthalle_hlm_blue.png',
-    "assets/images/profile_test.png",
-    "assets/images/profile_test2.png",
-    'assets/images/haupthalle_hlm_blue.png',
-    "assets/images/profile_test.png",
-    "assets/images/profile_test2.png",
-    'assets/images/haupthalle_hlm_blue.png',
-    "assets/images/profile_test.png",
-    "assets/images/profile_test2.png",
-    'assets/images/haupthalle_hlm_blue.png',*/
-  ];
-  List<String> _list = List<String>();
 
-  @override
-  void initState() {
-    _initList();
-    super.initState();
-  }
-
-  _initList() async {
-    String token = await MuseumDatabase().usersDao.accessToken();
-    GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-    QueryResult result = await _client.query(QueryOptions(
-      documentNode: gql(QueryBackend.myProfilePic(token)),
-      //onError: (e) => print("ERROR_auth: " + e.toString()),
-    ));
-    _list.clear();
-    for (var s in result.data.data["myProfilePictures"]) {
-      _list.add(s.toString());
-    }
-    setState(() {});
+  Widget _clickableIcon(String img) {
+    return GestureDetector(
+      onTap: () async {
+        if (await MuseumDatabase().usersDao.updateImage(img))
+          Navigator.pop(context);
+        else
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text("Ein Fehler trat auf.")));
+      },
+      child: HttpQuery.networkImageWidget(
+        HttpQuery.imageURLProfile(img),
+        height: verSize(13, 27),
+        width: horSize(23, 16),
+        fit: BoxFit.contain,
+      ),
+      /*child: Container(
+                      height: verSize(13, 27),
+                      width: horSize(23, 16),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage(img), fit: BoxFit.cover),
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                    ),*/
+    );
   }
 
   @override
@@ -61,39 +50,20 @@ class _ImageDialogState extends State<ImageDialog> {
       title: Text("Profilbild aussuchen"),
       content: Container(
         height: verSize(43, 43),
-        child: SingleChildScrollView(
-          child: Wrap(
-            spacing: 4,
-            runSpacing: 6,
-            children: _list
-                .map(
-                  (img) => GestureDetector(
-                    onTap: () async {
-                      if (await MuseumDatabase().usersDao.updateImage(img))
-                        Navigator.pop(context);
-                      else
-                        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Ein Fehler trat auf.")));
-                    },
-                    child: HttpQuery.networkImageWidget(
-                      HttpQuery.imageURLProfile(img),
-                      height: verSize(13, 27),
-                      width: horSize(23, 16),
-                      fit: BoxFit.contain,
-                    ),
-                    /*child: Container(
-                      height: verSize(13, 27),
-                      width: horSize(23, 16),
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(img), fit: BoxFit.cover),
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(9),
-                      ),
-                    ),*/
-                  ),
-                )
-                .toList(),
-          ),
+        child: FutureBuilder(
+          future: MuseumDatabase().usersDao.getMyImages(),
+          builder: (context, snap) {
+            if (snap.hasError || !snap.hasData || snap.data.isEmpty)
+              return Text("Es konnten keine Profilbilder abgerufen werden.");
+            List<String> list = snap?.data;
+            return SingleChildScrollView(
+              child: Wrap(
+                spacing: 4,
+                runSpacing: 6,
+                children: list.map((img) => _clickableIcon(img)).toList(),
+              ),
+            );
+          },
         ),
       ),
       actions: [

@@ -13,8 +13,8 @@ import 'package:museum_app/database/modelling.dart';
 import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/map/map_page.dart';
 import 'package:museum_app/server_connection/graphqlConf.dart';
+import 'package:museum_app/server_connection/graphql_nodes.dart';
 import 'package:museum_app/server_connection/http_query.dart';
-import 'package:museum_app/server_connection/query.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_content.dart';
 import 'package:museum_app/tours_page/walk_tour/walk_tour_extras.dart';
 import 'package:open_file/open_file.dart';
@@ -455,7 +455,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
 
                     // reset
                     //widget.tour.resetTasks();
-                    saveAndReturnTxt(s)
+                    _saveAndReturnTxt(s)
                         .then((file) => OpenFile.open(file.path));
                     //Navigator.pop(context);
                     //Navigator.pop(context);
@@ -479,7 +479,7 @@ class _TourWalkerState extends State<TourWalker> with TickerProviderStateMixin {
   }
 
   //save String to txt file and return file
-  Future<File> saveAndReturnTxt(String text) async {
+  Future<File> _saveAndReturnTxt(String text) async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final File file = File('${directory.path}/results.txt');
     await file.writeAsString(text);

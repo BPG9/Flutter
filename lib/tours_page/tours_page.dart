@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
 import 'package:museum_app/museum_tabs.dart';
-import 'package:museum_app/server_connection/query.dart';
+import 'package:museum_app/server_connection/graphql_nodes.dart';
 import 'package:museum_app/tours_page/tours_widgets.dart';
 
 import '../util.dart';
@@ -136,8 +136,8 @@ class _ToursState extends State<Tours> {
     return FutureBuilder(
       future: MuseumDatabase().usersDao.accessToken(),
       builder: (context, snap) {
-        String token = snap.data ?? "";
-        if (!snap.hasData || token == "")
+        bool b = snap.data?.trim() == "";
+        if (!snap.hasData || b)
           return MuseumTabs.single(
             _topInfo(),
             Padding(

@@ -4,17 +4,13 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter/material.dart' as mat;
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
 import 'package:moor/ffi.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/dao/users_dao.dart';
 import 'package:museum_app/server_connection/graphqlConf.dart';
-import 'package:museum_app/server_connection/mutations.dart';
-import 'package:museum_app/server_connection/query.dart';
-import 'package:mutex/mutex.dart';
+import 'package:museum_app/server_connection/graphql_nodes.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -679,7 +675,6 @@ class MuseumDatabase extends _$MuseumDatabase {
   @deprecated
   Stream<List<Stop>> watchStops() => select(stops).watch();
 
-  @deprecated
   Future<List<Stop>> getStops() => select(stops).get();
 
   @deprecated
@@ -951,23 +946,28 @@ class MuseumDatabase extends _$MuseumDatabase {
     return Future.value(true);
   }
 
-  Future<bool> deleteTour(String token, String onlineID) async {
+  Future<bool> deleteTour(String onlineID) async {
+    String token = await usersDao.checkRefresh();
+
     // Delete on Server
     GraphQLClient _client = GraphQLConfiguration().clientToQuery();
-    //QueryResult result = await
-    _client.mutate(MutationOptions(
+    QueryResult result = await _client.mutate(MutationOptions(
       documentNode: gql(MutationBackend.deleteTour(token, onlineID)),
     ));
 
-    var id = await (select(tours)
-          ..where((tbl) => tbl.onlineId.equals(onlineID)))
-        .map((a) => a.id)
-        .getSingle();
+    bool b = result.data.data["deleteTour"]["ok"]["boolean"];
+    if (b) {
+      var id = await (select(tours)
+        ..where((tbl) => tbl.onlineId.equals(onlineID)))
+          .map((a) => a.id)
+          .getSingle();
 
-    // Clean up local DB
-    this.removeTour(id);
-    // (Pot.) clean up favTours
-    usersDao.removeFavTour(onlineID);
+      // Clean up local DB
+      this.removeTour(id);
+      // (Pot.) clean up favTours
+      usersDao.removeFavTour(onlineID);
+    }
+    return b;
   }
 
   Future<bool> _updateTour(String token, Tour t) async {

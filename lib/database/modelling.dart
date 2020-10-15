@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:moor/moor.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/server_connection/graphqlConf.dart';
-import 'package:museum_app/server_connection/query.dart';
+import 'package:museum_app/server_connection/graphql_nodes.dart';
 
 import '../SizeConfig.dart';
 import 'moor_db.dart';
