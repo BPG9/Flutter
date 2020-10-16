@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:museum_app/SizeConfig.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/server_connection/graphql_nodes.dart';
 
 class LogIn extends StatefulWidget {
   final bool skippable;
@@ -143,7 +141,8 @@ class _LogInState extends State<LogIn> {
         onChanged: (_) => setState(() {}),
         controller: ctrl,
         obscureText: pwField,
-        autovalidate: true,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        //autovalidate: true,
         maxLength: pwField ? null : MAX_USERNAME,
         validator: pwField ? null : _userVal,
         decoration: InputDecoration(

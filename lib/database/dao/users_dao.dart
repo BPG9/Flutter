@@ -159,18 +159,18 @@ class UsersDao extends DatabaseAccessor<MuseumDatabase> with _$UsersDaoMixin {
       documentNode: gql(MutationBackend.refresh(refresh)),
     ));
 
+    String newToken = "";
     if (result.hasException)
       print("EXC_refresh: " + result.exception.toString());
     else if (result.loading)
       print("LOADING");
     else {
-      String newToken = result.data['refresh'].data["newToken"];
+      newToken = result.data['refresh'].data["newToken"];
       update(users).write(UsersCompanion(accessToken: Value(newToken)));
       print("NEW TOKEN ${DateFormat("hh:mm:ss").format(DateTime.now())}");
       db.downloadStops();
-      return Future.value(newToken);
     }
-    //return Future.value("");
+    return newToken;
   }
 
   Future<bool> onboardEnd() => select(users).map((u) => u.onboardEnd).getSingle();

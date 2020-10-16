@@ -15,7 +15,7 @@ class BadgesDao extends DatabaseAccessor<MuseumDatabase> with _$BadgesDaoMixin {
   Stream<List<Badge>> watchBadges() => select(badges).watch();
 
   Future setBadgeValue(String id, double value) {
-    (update(badges)..where((b) => b.id.equals(id))).write(BadgesCompanion(
+    return (update(badges)..where((b) => b.id.equals(id))).write(BadgesCompanion(
       current: Value(value),
     ));
   }

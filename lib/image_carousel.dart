@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:museum_app/database/moor_db.dart';
-import 'package:museum_app/server_connection/graphqlConf.dart';
 import 'package:museum_app/server_connection/http_query.dart';
 import 'package:photo_view/photo_view.dart';
 

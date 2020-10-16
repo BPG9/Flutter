@@ -232,7 +232,7 @@ class _TourPanel extends StatelessWidget {
     }
   }
 
-  Widget _deleteTour(String token, String onlineID, context) {
+  Widget _deleteTour(String onlineID, context) {
     return AlertDialog(
       title: Text("WARNUNG"),
       content: Text(

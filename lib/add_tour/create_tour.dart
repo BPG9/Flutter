@@ -260,7 +260,8 @@ class _CreateTourState extends State<CreateTour> {
           children: [
             TextFormField(
               controller: widget.tour.name,
-              autovalidate: true,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              //autovalidate: true,
               validator: (s) => MIN_TOURNAME > s.length
                   ? "Name zu kurz"
                   : (MAX_TOURNAME < s.length ? "Name zu lang" : null),

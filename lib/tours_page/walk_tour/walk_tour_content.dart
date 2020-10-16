@@ -214,7 +214,7 @@ class _TourWalkerContentState extends State<TourWalkerContent> {
   }
 
   Widget _extras(List<ActualExtra> extras) {
-    List<ActualExtra> tasks = extras?.where((e) => e.task != null).toList();
+    List<ActualExtra> tasks = (extras?.where((e) => e.task != null))?.toList();
     String id = widget.stop.stop.id;
 
     var base = List<Widget>();

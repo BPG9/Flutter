@@ -162,7 +162,8 @@ class MuseumSettings extends StatelessWidget {
         builder: (context) => AlertDialog(
               title: Text("Username ändern"),
               content: TextFormField(
-                autovalidate: true,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                //autovalidate: true,
                 controller: ctrl,
                 maxLength: MAX_USERNAME,
                 validator: (input) {
@@ -194,7 +195,7 @@ class MuseumSettings extends StatelessWidget {
             ));
   }
 
-  Future<void> _editPW(BuildContext context) {
+  void _editPW(BuildContext context) {
     var ctrl = TextEditingController();
     var ctrl2 = TextEditingController();
     final key = GlobalKey<FormFieldState>();

@@ -553,7 +553,7 @@ class MuseumDatabase extends _$MuseumDatabase {
   }
 
   @deprecated
-  Future<void> updateStopFeatures(String stop_id, int tour_id,
+  updateStopFeatures(String stop_id, int tour_id,
       {images, text, details}) {
     if (stop_id != customName)
       update(stopFeatures).replace(
