@@ -277,9 +277,14 @@ class _CreateTourState extends State<CreateTour> {
               minRating: 1,
               allowHalfRating: true,
               onRatingUpdate: (r) => widget.tour.difficulty = r,
-              itemBuilder: (context, _) => Icon(Icons.school),
+              //itemBuilder: (context, _) => Icon(Icons.school),
               tapOnlyMode: true,
               itemSize: 33,
+              ratingWidget: RatingWidget(
+                full: Icon(Icons.school),
+                half: Icon(Icons.school),
+                empty: Icon(Icons.school),
+              ),
             ),
             Text("Eine kurze Beschreibung verfassen:"),
             Container(
@@ -311,7 +316,8 @@ class _CreateTourState extends State<CreateTour> {
                   color: COLOR_ADD,
                   onPressed: () => showDialog(
                     context: context,
-                    builder: (c) => _check() ? _confirmCreate() : _noCorrectAnswer(),
+                    builder: (c) =>
+                        _check() ? _confirmCreate() : _noCorrectAnswer(),
                   ),
                   child: Text("Fertigstellen"),
                 ),

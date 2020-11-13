@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:keyboard_visibility/keyboard_visibility.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:museum_app/add_tour/add_tour.dart';
 import 'package:museum_app/bottom_navigationbar/animated_navigationbar.dart';
 import 'package:museum_app/home_page/home_page.dart';
@@ -52,8 +52,10 @@ class _BottomBarNavigationPatternExampleState
   @override
   void initState() {
     super.initState();
-    KeyboardVisibilityNotification().addNewListener(
-        onHide: () => FocusScope.of(context).requestFocus(FocusNode()));
+    KeyboardVisibility.onChange.listen(
+        (visible) => FocusScope.of(context).requestFocus(FocusNode())
+    );
+    //KeyboardVisibilityNotification().addNewListener(onHide: () => FocusScope.of(context).requestFocus(FocusNode()));
   }
 
   List<Widget> arr = [
