@@ -33,8 +33,8 @@ Widget _pictureLeft(ActualStop stop, Size s, {margin = EdgeInsets.zero}) {
       borderRadius: BorderRadius.all(Radius.circular(10.0)),
       child: path != ""
           ? HttpQuery.networkImageWidget(
-        HttpQuery.imageURLPicture(path),
-      )
+              HttpQuery.imageURLPicture(path),
+            )
           : Container(),
     ),
   );
@@ -53,23 +53,23 @@ class _TourPanel extends StatelessWidget {
 
   const _TourPanel(this._tour, this._color,
       {this.type = PanelType.SHOW,
-        this.secondType = PanelType.NONE,
-        Key key,
-        this.showAuthor = true,
-        this.showID = true})
+      this.secondType = PanelType.NONE,
+      Key key,
+      this.showAuthor = true,
+      this.showID = true})
       : super(key: key);
 
   Widget _textBox(String text,
       {width,
-        height,
-        fontStyle = FontStyle.normal,
-        fontWeight = FontWeight.normal,
-        textAlign = TextAlign.left,
-        textColor = Colors.black,
-        int maxLines = 2,
-        Alignment alignment = Alignment.bottomLeft,
-        margin = const EdgeInsets.all(0),
-        double fontSize = 15.0}) {
+      height,
+      fontStyle = FontStyle.normal,
+      fontWeight = FontWeight.normal,
+      textAlign = TextAlign.left,
+      textColor = Colors.black,
+      int maxLines = 2,
+      Alignment alignment = Alignment.bottomLeft,
+      margin = const EdgeInsets.all(0),
+      double fontSize = 15.0}) {
     return Container(
       margin: margin,
       width: width,
@@ -99,14 +99,13 @@ class _TourPanel extends StatelessWidget {
       barrierLabel: '',
       transitionDuration: Duration(milliseconds: 270),
       context: context,
-      transitionBuilder: (context, a1, a2, widget) =>
-          Transform.scale(
-            scale: a1.value,
-            child: Opacity(
-              opacity: a1.value,
-              child: _TourPopUp(_tour),
-            ),
-          ),
+      transitionBuilder: (context, a1, a2, widget) => Transform.scale(
+        scale: a1.value,
+        child: Opacity(
+          opacity: a1.value,
+          child: _TourPopUp(_tour),
+        ),
+      ),
       pageBuilder: (context, animation1, animation2) {},
     );
   }
@@ -139,13 +138,13 @@ class _TourPanel extends StatelessWidget {
           ),
           showAuthor
               ? Text(
-            "von " + _tour.author,
-            maxLines: 1,
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              fontSize: size(14, 15),
-            ),
-          )
+                  "von " + _tour.author,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: size(14, 15),
+                  ),
+                )
               : Container(),
           Container(
             height: verSize(4, 5),
@@ -169,9 +168,9 @@ class _TourPanel extends StatelessWidget {
           ),
           (showID && _tour.searchId != null && _tour.searchId != ""
               ? SelectableText(
-            "Such-ID: " + _tour.searchId,
-            style: TextStyle(fontStyle: FontStyle.italic),
-          )
+                  "Such-ID: " + _tour.searchId,
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                )
               : Container()),
           ButtonBar(
             buttonMinWidth: secondType != PanelType.NONE
@@ -198,7 +197,7 @@ class _TourPanel extends StatelessWidget {
       case PanelType.SHOW:
         return FlatButton(
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           color: _color,
           child: Text("Anzeigen",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
@@ -207,7 +206,7 @@ class _TourPanel extends StatelessWidget {
       case PanelType.DOWNLOAD:
         return FlatButton(
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           color: _color,
           child: Text("Download",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
@@ -216,12 +215,13 @@ class _TourPanel extends StatelessWidget {
       case PanelType.DELETE:
         return FlatButton(
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           color: _color,
           child: Text("Löschen",
               style: TextStyle(fontSize: size(14, 17), color: Colors.white)),
           onPressed: () async {
-            showDialog(context: context,
+            showDialog(
+                context: context,
                 builder: (c) => _deleteTour(_tour.onlineId, context));
             //Scaffold.of(context).showSnackBar(SnackBar(content: Text("Not yet implemented")));
             //print("Not yet implemented");
@@ -237,8 +237,8 @@ class _TourPanel extends StatelessWidget {
       title: Text("WARNUNG"),
       content: Text(
           "Das Löschen von einer Tour kann NICHT rückgängig gemacht werden. "
-              "Die Tour kann anschließend nicht mehr heruntergeladen oder abgelaufen werden.\n"
-              "Bitte sei Dir absolut sicher, bevor du fortfährst."),
+          "Die Tour kann anschließend nicht mehr heruntergeladen oder abgelaufen werden.\n"
+          "Bitte sei Dir absolut sicher, bevor du fortfährst."),
       actions: [
         FlatButton(
           child: Text("Zurück", style: TextStyle(color: COLOR_PROFILE)),
@@ -447,12 +447,11 @@ class _TourPopUpState extends State<_TourPopUp> {
         ),
         FlatButton(
           child: Text("Tour entfernen", style: TextStyle(color: COLOR_TOUR)),
-          onPressed: () =>
-              setState(() {
-                MuseumDatabase().removeTour(widget.tour.id);
-                Navigator.pop(context);
-                Navigator.pop(context);
-              }),
+          onPressed: () => setState(() {
+            MuseumDatabase().removeTour(widget.tour.id);
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }),
         ),
       ],
     );
@@ -504,11 +503,11 @@ class DownloadColumn extends StatefulWidget {
 
   DownloadColumn(this.query,
       {Key key,
-        this.showSearchId = false,
-        this.color = COLOR_PROFILE,
-        this.search = "",
-        this.notFoundText = "\n\nEs konnten keine Touren gefunden werden.",
-        this.deleteTour = false})
+      this.showSearchId = false,
+      this.color = COLOR_PROFILE,
+      this.search = "",
+      this.notFoundText = "\n\nEs konnten keine Touren gefunden werden.",
+      this.deleteTour = false})
       : super(key: key);
 
   @override
@@ -570,13 +569,22 @@ class _DownloadColumnState extends State<DownloadColumn> {
       if (result.hasException)
         print("EXC_downColumnStop: ${result.exception.toString()}");
 
+      Stop s;
       List<dynamic> checkpoints = stopResult.data["checkpointsTour"];
-      if (checkpoints.isEmpty) continue;
-      var firstStop = checkpoints.where((s) => s["index"] == 1).toList()[0];
+      if (checkpoints.isEmpty) {
+        _client.query(QueryOptions(
+          documentNode: gql(MutationBackend.joinTour(token, m["id"])),
+        ));
+        s = await MuseumDatabase().getCustomStop();
+      }
+      else {
+        var firstStop = checkpoints.where((s) => s["index"] == 1).toList()[0];
 
-      Stop s = allStops
-          .firstWhere((e) => e.id == firstStop["museumObject"]["objectId"]);
-      //await MuseumDatabase().getStop(firstStop["museumObject"]["objectId"]);
+        s = allStops
+            .firstWhere((e) => e.id == firstStop["museumObject"]["objectId"]);
+        //await MuseumDatabase().getStop(firstStop["museumObject"]["objectId"]);
+        if (s == null) s = await MuseumDatabase().getCustomStop();
+      }
 
       _list.add(
           TourWithStops(t, <ActualStop>[ActualStop(s, StopFeature(), [])]));
@@ -589,19 +597,18 @@ class _DownloadColumnState extends State<DownloadColumn> {
     //for (var t in _list) print(t.name.text);
     List<Widget> children = _list
         .where((t) {
-      String srch = widget.search.toLowerCase();
-      String title = t.name.text.toLowerCase();
-      //title = title.substring(0, min(title.length, srch.length));
-      return title.contains(srch);
-    })
-        .map((t) =>
-        _TourPanel(
-          t,
-          widget.color,
-          type: PanelType.DOWNLOAD,
-          secondType: widget.deleteTour ? PanelType.DELETE : PanelType.NONE,
-          showID: widget.showSearchId,
-        ))
+          String srch = widget.search.toLowerCase();
+          String title = t.name.text.toLowerCase();
+          //title = title.substring(0, min(title.length, srch.length));
+          return title.contains(srch);
+        })
+        .map((t) => _TourPanel(
+              t,
+              widget.color,
+              type: PanelType.DOWNLOAD,
+              secondType: widget.deleteTour ? PanelType.DELETE : PanelType.NONE,
+              showID: widget.showSearchId,
+            ))
         .toList();
     if (_loading) {
       _loading = false;

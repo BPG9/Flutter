@@ -5,8 +5,8 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:moor/moor.dart';
 import 'package:moor/ffi.dart';
+import 'package:moor/moor.dart';
 import 'package:museum_app/constants.dart';
 import 'package:museum_app/database/dao/users_dao.dart';
 import 'package:museum_app/server_connection/graphqlConf.dart';
@@ -1113,7 +1113,6 @@ class MuseumDatabase extends _$MuseumDatabase {
       }
     }
 
-    print("AAA");
     if (tour == null || tour.stops.isEmpty) return Future.value(false);
 
     print("ID: " +

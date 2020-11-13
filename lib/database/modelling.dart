@@ -114,9 +114,13 @@ class TourWithStops {
         if (task != null && up["text"] is String) {
           String text = up["text"];
           if (type == ExtraType.TASK_TEXT) {
-            if (text.startsWith("Antwort: "))
-              text = text.replaceAll("Antwort: ", "");
-            task.entries[0].valB.text = text;
+            //print(text);
+            //if (text.startsWith("Antwort: "))
+              //text = text.replaceAll("Antwort: ", "");
+            List<String> answers = text.split("; ");
+            answers = answers.map((s) => s.split(": ")[1]).toList();
+            for (int i=0; i<task.entries.length; i++)
+              task.entries[i].valB.text = answers[i].trim();
           } else if (type == ExtraType.TASK_SINGLE) {
             int i;
             try {
@@ -126,7 +130,7 @@ class TourWithStops {
             task.selected = i;
           } else if (type == ExtraType.TASK_MULTI) {
             List l2 = jsonDecode(text);
-            print(l2);
+            //print(l2);
             /*if (text == "[]") continue;
 
             List<int> l = text
